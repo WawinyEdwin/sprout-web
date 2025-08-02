@@ -13,24 +13,19 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-    const pathname = usePathname();
+  const pathname = usePathname()
   const [user, setUser] = useState<StoredUser | null>(null);
 
+  // Hydrate from localStorage on mount
   useEffect(() => {
-    const storedUser = localStorage.getItem("sp-user");
-    const accessToken = localStorage.getItem("sp-access-token");
-
-    if (!storedUser || !accessToken) {
-      const encodedPath = encodeURIComponent(pathname);
-      router.push(`/auth/signin?redirect=${encodedPath}`);
-      return;
-    }
-
-    try {
-      setUser(JSON.parse(storedUser));
-    } catch (error) {
-      console.error("Invalid stored user:", error);
-      // router.push(`/auth/signin?redirect=${encodeURIComponent(pathname)}`);
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.log(error);
+        router.push(`/auth/signin?redirect=${pathname}`);
+      }
     }
   }, []);
 
