@@ -1,0 +1,872 @@
+"use client";
+
+import { useUser } from "@/app/context/UserContext";
+import { DashboardNav } from "@/components/dashboard-nav";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  connectGA,
+  fetchIntegrations,
+  fetchUserIntegrations,
+} from "@/lib/api/integrations";
+import { IMetric, Integration } from "@/lib/types";
+import { useQuery } from "@tanstack/react-query";
+import {
+  AlertCircle,
+  CheckCircle,
+  Database,
+  ExternalLink,
+  Key,
+  Mail,
+  Plus,
+  Search,
+  Settings,
+  Shield,
+  TrendingUp,
+  X,
+} from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+
+interface ConnectionStep {
+  id: string;
+  title: string;
+  description: string;
+  completed: boolean;
+  current: boolean;
+}
+
+interface SourcesClientProps {
+  availableSources: Integration[];
+}
+
+export default function SourcesClient() {
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [selectedSource, setSelectedSource] = useState<any>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [connectionSteps, setConnectionSteps] = useState<ConnectionStep[]>([]);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [connectionProgress, setConnectionProgress] = useState(0);
+  const [credentials, setCredentials] = useState({
+    apiKey: "",
+    clientId: "",
+    clientSecret: "",
+    accountId: "",
+    customFields: {} as Record<string, string>,
+  });
+
+  const { data, error } = useQuery<Integration[]>({
+    queryKey: ["connected_sources"],
+    queryFn: fetchUserIntegrations,
+  });
+
+  // if (error) {
+  //   toast.error("Error fetching user intergrations", {
+  //     description: error?.message || "Internal server error",
+  //   });
+  // }
+  const connectedSources: Integration[] = data ?? [];
+
+  const { data: availableSourcesData, error: error2 } = useQuery<Integration[]>(
+    {
+      queryKey: ["available_sources"],
+      queryFn: fetchIntegrations,
+    }
+  );
+
+  if (error2) {
+    toast.error("Error fetching user intergrations", {
+      description: error2?.message || "Internal server error",
+    });
+  }
+
+  const availableSources: Integration[] = availableSourcesData ?? [];
+
+  const categories = [
+    "all",
+    ...Array.from(new Set(availableSources.map((s) => s.category))),
+  ];
+
+  const filteredSources = availableSources.filter((source) => {
+    const matchesSearch =
+      source.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      source.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory =
+      selectedCategory === "all" || source.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  const handleSourceSelect = (source: Integration) => {
+    setSelectedSource(source);
+
+    const steps: ConnectionStep[] = [
+      {
+        id: "auth",
+        title: "Authentication",
+        description: `Connect your ${source.name} account`,
+        completed: false,
+        current: true,
+      },
+      {
+        id: "permissions",
+        title: "Permissions",
+        description: "Grant necessary data access permissions",
+        completed: false,
+        current: false,
+      },
+      {
+        id: "configure",
+        title: "Configuration",
+        description: "Select data to sync and set preferences",
+        completed: false,
+        current: false,
+      },
+      {
+        id: "test",
+        title: "Test Connection",
+        description: "Verify data connection and sync",
+        completed: false,
+        current: false,
+      },
+    ];
+
+    setConnectionSteps(steps);
+    setCurrentStep(0);
+    setConnectionProgress(0);
+  };
+
+  const handleNextStep = async (source: Integration) => {
+    await handleOauthConnection(source.key);
+    if (currentStep < connectionSteps.length - 1) {
+      const newSteps = [...connectionSteps];
+      newSteps[currentStep].completed = true;
+      newSteps[currentStep].current = false;
+      newSteps[currentStep + 1].current = true;
+
+      setConnectionSteps(newSteps);
+      setCurrentStep(currentStep + 1);
+      setConnectionProgress(((currentStep + 1) / connectionSteps.length) * 100);
+    }
+  };
+
+  const handleConnect = async () => {
+    // Simulate connection process
+    setConnectionProgress(100);
+
+    // Mark final step as completed
+    const newSteps = [...connectionSteps];
+    newSteps[currentStep].completed = true;
+    newSteps[currentStep].current = false;
+    setConnectionSteps(newSteps);
+
+    // Simulate API call delay
+    setTimeout(() => {
+      setIsAddDialogOpen(false);
+      setSelectedSource(null);
+      setConnectionSteps([]);
+      setCurrentStep(0);
+      setConnectionProgress(0);
+      // In real app, would refresh the connected sources list
+    }, 2000);
+  };
+
+  const handleOauthConnection = async (sourceKey: string) => {
+    if (sourceKey === "google_analytics") {
+      const url = await connectGA();
+      if (!url) {
+        toast.error("Unable to initate connection to google analytics");
+      }
+      window.location.href = url;
+    }
+  };
+
+  const renderAuthStep = () => {
+    if (!selectedSource) return null;
+
+    if (selectedSource.authType === "OAuth") {
+      return (
+        <div className="space-y-4">
+          <div className="text-center p-6 bg-slate-50 rounded-lg">
+            <h3 className="font-semibold text-lg mb-2">
+              Connect to {selectedSource.name}
+            </h3>
+            <p className="text-slate-600 mb-4">
+              You'll be redirected to {selectedSource.name} to authorize Sprout
+              to access your data.
+            </p>
+            <Button
+              className="bg-emerald-600 hover:bg-emerald-700"
+              onClick={() => handleNextStep(selectedSource)}
+            >
+              <ExternalLink className="w-4 h-4 mr-2" />
+              Authorize with {selectedSource.name}
+            </Button>
+          </div>
+          <div className="text-xs text-slate-500 text-center">
+            <Shield className="w-4 h-4 inline mr-1" />
+            Your credentials are encrypted and stored securely
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-4">
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="apiKey">API Key</Label>
+            <Input
+              id="apiKey"
+              type="text"
+              aria-label="API Key"
+              placeholder="Enter your API key"
+              value={credentials.apiKey}
+              onChange={(e) =>
+                setCredentials({ ...credentials, apiKey: e.target.value })
+              }
+            />
+          </div>
+
+          {selectedSource.name === "Salesforce" && (
+            <>
+              <div>
+                <Label htmlFor="clientId">Client ID</Label>
+                <Input
+                  id="clientId"
+                  placeholder="Enter client ID"
+                  value={credentials.clientId}
+                  onChange={(e) =>
+                    setCredentials({ ...credentials, clientId: e.target.value })
+                  }
+                />
+              </div>
+              <div className="m-4">
+                <Label htmlFor="clientSecret">Client Secret</Label>
+                <Input
+                  id="clientSecret"
+                  type="password"
+                  placeholder="Enter client secret"
+                  value={credentials.clientSecret}
+                  onChange={(e) =>
+                    setCredentials({
+                      ...credentials,
+                      clientSecret: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            </>
+          )}
+
+          <div className="p-4 bg-emerald-50 rounded-lg">
+            <div className="flex items-start gap-3">
+              <Key className="w-5 h-5 text-emerald-600 mt-0.5" />
+              <div>
+                <h4 className="font-medium text-emerald-900 mb-1">
+                  How to find your API key:
+                </h4>
+                <ol className="text-sm text-emerald-700 space-y-1">
+                  <li>1. Log into your {selectedSource.name} account</li>
+                  <li>2. Go to Settings → API or Developer Settings</li>
+                  <li>3. Generate a new API key with read permissions</li>
+                  <li>4. Copy and paste the key above</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <Button
+          onClick={() => handleNextStep(selectedSource)}
+          disabled={!credentials.apiKey}
+          className="w-full !bg-emerald-500"
+        >
+          Continue
+        </Button>
+      </div>
+    );
+  };
+
+  const renderPermissionsStep = () => (
+    <div className="space-y-4">
+      <div className="text-center mb-6">
+        <h3 className="font-semibold text-lg mb-2">Grant Permissions</h3>
+        <p className="text-slate-600">
+          Sprout needs access to the following data from your{" "}
+          {selectedSource?.name} account:
+        </p>
+      </div>
+
+      <div className="space-y-3">
+        {selectedSource?.metrics.map((metric: IMetric) => (
+          <div
+            key={metric.id}
+            className="flex items-center justify-between p-3 bg-slate-50 rounded-lg"
+          >
+            <div className="flex items-center gap-3">
+              <CheckCircle className="w-5 h-5 text-green-600" />
+              <span className="font-medium">{metric.name}</span>
+            </div>
+            <Badge variant="secondary">Read Only</Badge>
+          </div>
+        ))}
+      </div>
+
+      <div className="p-4 bg-green-50 rounded-lg">
+        <div className="flex items-start gap-3">
+          <Shield className="w-5 h-5 text-green-600 mt-0.5" />
+          <div>
+            <h4 className="font-medium text-green-900 mb-1">Data Security</h4>
+            <p className="text-sm text-green-700">
+              We only request read-only access and never store sensitive
+              information like passwords or payment details.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <Button
+        onClick={() => handleNextStep(selectedSource)}
+        className="w-full !bg-emerald-500"
+      >
+        Grant Permissions
+      </Button>
+    </div>
+  );
+
+  const renderConfigureStep = () => (
+    <div className="space-y-4">
+      <div className="text-center mb-6">
+        <h3 className="font-semibold text-lg mb-2">Configure Data Sync</h3>
+        <p className="text-slate-600">
+          Choose what data to sync and how often to update it.
+        </p>
+      </div>
+
+      <div className="space-y-4">
+        <div>
+          <Label>Sync Frequency</Label>
+          <Select defaultValue="hourly">
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="realtime">Real-time</SelectItem>
+              <SelectItem value="15min">Every 15 minutes</SelectItem>
+              <SelectItem value="hourly">Every hour</SelectItem>
+              <SelectItem value="daily">Daily</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <Label>Historical Data</Label>
+          <Select defaultValue="90days">
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="30days">Last 30 days</SelectItem>
+              <SelectItem value="90days">Last 90 days</SelectItem>
+              <SelectItem value="1year">Last year</SelectItem>
+              <SelectItem value="all">All available data</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <Label>Data Filters (Optional)</Label>
+          <Textarea
+            placeholder="e.g., Only sync data from specific campaigns or date ranges"
+            className="min-h-[80px]"
+          />
+        </div>
+
+        <div className="space-y-3">
+          <Label>Metrics to Sync</Label>
+          {selectedSource?.metrics.map((metric: string, index: number) => (
+            <div
+              key={index}
+              className="flex items-center justify-between p-3 bg-slate-50 rounded-lg"
+            >
+              <span className="font-medium">{metric}</span>
+              <Switch defaultChecked />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <Button
+        onClick={() => handleNextStep(selectedSource)}
+        className="w-full !bg-emerald-500"
+      >
+        Save Configuration
+      </Button>
+    </div>
+  );
+
+  const renderTestStep = () => (
+    <div className="space-y-4">
+      <div className="text-center mb-6">
+        <h3 className="font-semibold text-lg mb-2">Testing Connection</h3>
+        <p className="text-slate-600">
+          We're verifying your connection and syncing initial data...
+        </p>
+      </div>
+
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <div className="flex justify-between text-sm">
+            <span>Connection Status</span>
+            <span className="text-green-600">✓ Connected</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span>Data Access</span>
+            <span className="text-green-600">✓ Verified</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span>Initial Sync</span>
+            <span className="text-yellow-600">⏳ In Progress</span>
+          </div>
+        </div>
+
+        <div className="p-4 bg-slate-50 rounded-lg">
+          <div className="flex items-center gap-3 mb-3">
+            <TrendingUp className="w-5 h-5 text-emerald-600" />
+            <span className="font-medium">Sample Data Preview</span>
+          </div>
+          <div className="space-y-2 text-sm">
+            {selectedSource?.metrics
+              .slice(0, 3)
+              .map((metric: IMetric) => (
+                <div key={metric.id} className="flex justify-between">
+                  <span>{metric.name}</span>
+                </div>
+              ))}
+          </div>
+        </div>
+      </div>
+
+      <Button
+        onClick={handleConnect}
+        className="w-full bg-emerald-500 hover:bg-emerald-500"
+      >
+        <CheckCircle className="w-4 h-4 mr-2" />
+        Complete Connection
+      </Button>
+    </div>
+  );
+
+  const renderCurrentStep = () => {
+    switch (currentStep) {
+      case 0:
+        return renderAuthStep();
+      case 1:
+        return renderPermissionsStep();
+      case 2:
+        return renderConfigureStep();
+      case 3:
+        return renderTestStep();
+      default:
+        return null;
+    }
+  };
+
+  const { user } = useUser();
+
+  return (
+    <div className="min-h-screen bg-slate-50">
+      <DashboardNav user={user} />
+
+      <main className="container mx-auto px-4 py-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">Data Sources</h1>
+            <p className="text-slate-600">
+              Connect and manage your business data sources.
+            </p>
+          </div>
+          <Button
+            className="!bg-emerald-500"
+            onClick={() => setIsAddDialogOpen(true)}
+          >
+            <Plus className="w-4 h-4" />
+            Add Source
+          </Button>
+          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Database className="w-5 h-5" />
+                  {selectedSource
+                    ? `Connect ${selectedSource.name}`
+                    : "Add Data Source"}
+                </DialogTitle>
+                <DialogDescription>
+                  {selectedSource
+                    ? `Follow the steps below to connect your ${selectedSource.name} account`
+                    : "Choose a data source to connect to your Sprout dashboard"}
+                </DialogDescription>
+              </DialogHeader>
+
+              {selectedSource ? (
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Setup Progress</span>
+                      <span>{Math.round(connectionProgress)}%</span>
+                    </div>
+                    <Progress value={connectionProgress} className="h-2" />
+                  </div>
+
+                  <div className="flex items-center justify-between mb-6">
+                    {connectionSteps.map((step, index) => (
+                      <div key={step.id} className="flex items-center">
+                        <div
+                          className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                            step.completed
+                              ? "bg-green-600 text-white"
+                              : step.current
+                              ? "bg-emerald-600 text-white"
+                              : "bg-slate-200 text-slate-600"
+                          }`}
+                        >
+                          {step.completed ? (
+                            <CheckCircle className="w-4 h-4" />
+                          ) : (
+                            index + 1
+                          )}
+                        </div>
+                        <div className="ml-2 hidden sm:block">
+                          <div
+                            className={`text-sm font-medium ${
+                              step.current
+                                ? "text-emerald-600"
+                                : "text-slate-600"
+                            }`}
+                          >
+                            {step.title}
+                          </div>
+                        </div>
+                        {index < connectionSteps.length - 1 && (
+                          <div className="w-12 h-px bg-slate-200 mx-4 hidden sm:block" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  <ScrollArea className="max-h-[400px]">
+                    {renderCurrentStep()}
+                  </ScrollArea>
+
+                  <div className="flex justify-between pt-4 border-t">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setSelectedSource(null);
+                        setConnectionSteps([]);
+                        setCurrentStep(0);
+                        setConnectionProgress(0);
+                      }}
+                    >
+                      <X className="w-4 h-4 mr-2" />
+                      Cancel
+                    </Button>
+                    <div className="text-sm text-slate-500">
+                      Step {currentStep + 1} of {connectionSteps.length}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <Tabs defaultValue="browse" className="space-y-6">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="browse">Browse Sources</TabsTrigger>
+                    <TabsTrigger value="custom">Custom Integration</TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="browse" className="space-y-4">
+                    <div className="flex gap-4">
+                      <div className="relative flex-1">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+                        <Input
+                          placeholder="Search data sources..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="pl-10"
+                        />
+                      </div>
+                      <Select
+                        value={selectedCategory}
+                        onValueChange={setSelectedCategory}
+                      >
+                        <SelectTrigger className="w-48">
+                          <SelectValue placeholder="All Categories" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categories.map((category) => (
+                            <SelectItem key={category} value={category}>
+                              {category === "all" ? "All Categories" : category}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <ScrollArea className="h-[500px]">
+                      <div className="grid md:grid-cols-2 gap-4">
+                        {filteredSources.map((source) => {
+                          return (
+                            <Card
+                              key={source.id}
+                              className="cursor-pointer hover:shadow-md transition-all hover:border-emerald-300"
+                              onClick={() => handleSourceSelect(source)}
+                            >
+                              <CardContent className="p-6">
+                                <div className="flex items-start justify-between mb-4">
+                                  <div className="flex items-center gap-3">
+                                    <div>
+                                      <h3 className="font-semibold">
+                                        {source.name}
+                                      </h3>
+                                      <p className="text-sm text-slate-600">
+                                        {source.description}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div className="space-y-3">
+                                  <div className="flex flex-wrap gap-1">
+                                    {source.metrics
+                                      .slice(0, 3)
+                                      .map((metric) => (
+                                        <Badge
+                                          key={metric.id}
+                                          variant="secondary"
+                                          className="text-xs"
+                                        >
+                                          {metric.name}
+                                        </Badge>
+                                      ))}
+                                    {source.metrics.length > 3 && (
+                                      <Badge
+                                        variant="secondary"
+                                        className="text-xs"
+                                      >
+                                        +{source.metrics.length - 3}
+                                      </Badge>
+                                    )}
+                                  </div>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          );
+                        })}
+                      </div>
+                    </ScrollArea>
+                  </TabsContent>
+
+                  <TabsContent value="custom" className="space-y-4">
+                    <div className="text-center py-8">
+                      <Database className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold text-slate-600 mb-2">
+                        Custom Integration
+                      </h3>
+                      <p className="text-slate-500 mb-6">
+                        Don't see your data source? We can help you create a
+                        custom integration.
+                      </p>
+                      <div className="space-y-4 max-w-md mx-auto">
+                        <div>
+                          <Label htmlFor="customName">Data Source Name</Label>
+                          <Input
+                            id="customName"
+                            placeholder="e.g., Internal CRM System"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="customDescription">Description</Label>
+                          <Textarea
+                            id="customDescription"
+                            placeholder="Describe your data source and what metrics you'd like to track"
+                            className="min-h-[100px]"
+                          />
+                        </div>
+                        <Button className="w-full">
+                          <Mail className="w-4 h-4 mr-2" />
+                          Request Custom Integration
+                        </Button>
+                      </div>
+                    </div>
+                  </TabsContent>
+                </Tabs>
+              )}
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-8">
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Connected Sources</h2>
+            <div className="space-y-4">
+              {connectedSources.length === 0 ? (
+                <Card className="border-dashed border-2 border-gray-300 bg-muted/40 shadow-none">
+                  <CardContent className="p-10 text-center space-y-4">
+                    <div className="flex justify-center">
+                      <AlertCircle className="w-10 h-10 text-gray-400" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-800">
+                      No data sources connected
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      Connect a data source like Google Analytics, Stripe, or
+                      HubSpot to start syncing metrics.
+                    </p>
+                    <Button
+                      className="!bg-emerald-500"
+                      onClick={() => setIsAddDialogOpen(true)}
+                    >
+                      <Plus className="w-4 h-4" />
+                      Add Source
+                    </Button>
+                  </CardContent>
+                </Card>
+              ) : (
+                connectedSources.map((source) => (
+                  <Card key={source.id}>
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-start gap-4">
+                          <div className="flex-1">
+                            <h3 className="font-semibold mb-1">
+                              {source.name}
+                            </h3>
+                            <p className="text-sm text-slate-600 mb-3">
+                              {source.description}
+                            </p>
+                            <div className="flex items-center gap-4 mb-3">
+                              <div className="flex items-center gap-2">
+                                {source.connected ? (
+                                  <CheckCircle className="w-4 h-4 text-green-600" />
+                                ) : (
+                                  <AlertCircle className="w-4 h-4 text-red-600" />
+                                )}
+                                <span className="text-sm">
+                                  {source.connected
+                                    ? "Connected"
+                                    : "Connection Error"}
+                                </span>
+                              </div>
+                              <span className="text-sm text-slate-500">
+                                Last sync: {source.lastSynced}
+                              </span>
+                            </div>
+                            <div className="flex flex-wrap gap-1">
+                              {source.metrics.map((metric) => (
+                                <Badge
+                                  key={metric.id}
+                                  variant="outline"
+                                  className="text-xs"
+                                >
+                                  {metric.name}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Switch
+                            className="bg-emerald-500"
+                            defaultChecked={source.connected!}
+                          />
+                          <Button variant="ghost" size="sm">
+                            <Settings className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Popular Sources</h2>
+            <div className="space-y-4">
+              {availableSources &&
+                availableSources.map((source) => {
+                  return (
+                    <Card
+                      key={source.id}
+                      className="hover:shadow-md transition-shadow cursor-pointer"
+                    >
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            <div>
+                              <h3 className="font-semibold mb-1">
+                                {source.name}
+                              </h3>
+                              <p className="text-sm text-slate-600">
+                                {source.description}
+                              </p>
+                              {/* <div className="flex items-center gap-2 mt-2">
+                              <Badge variant="outline" className="text-xs">
+                                {source.setupTime}
+                              </Badge>
+                              <div className="flex items-center gap-1">
+                                <TrendingUp className="w-3 h-3 text-green-600" />
+                                <span className="text-xs text-green-600">
+                                  {source.popularity}%
+                                </span>
+                              </div>
+                            </div> */}
+                            </div>
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setIsAddDialogOpen(true);
+                              handleSourceSelect(source);
+                            }}
+                          >
+                            <Plus className="w-4 h-4 mr-1" />
+                            Connect
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
