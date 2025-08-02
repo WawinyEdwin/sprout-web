@@ -1,26 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useUser } from "@/app/context/UserContext";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
-export default function ProtectedRoute({
+export default function ProctectedRoute({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [checked, setChecked] = useState(false);
+  const { user, loading } = useUser();
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem("sp-access-token");
-    if (!token) {
+    if (!loading && !user) {
       router.replace(`/auth/signin?redirect=${window.location.pathname}`);
-    } else {
-      setChecked(true);
     }
-  }, []);
+  }, [user, loading, router]);
 
-  if (!checked) return null; // Or a spinner/loading component
+  if (loading || !user) {
+    return <div>Loading...</div>;
+  }
 
   return <>{children}</>;
 }

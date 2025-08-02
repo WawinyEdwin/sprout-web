@@ -6,12 +6,15 @@ export interface Integration {
   difficulty?: string;
   setupTime?: string;
   popularity?: string;
-  lastSynced?: string;
-  connected: boolean;
   key: string;
   metrics: IMetric[];
 }
-
+export interface UserIntegration {
+  id: string;
+  integration: Integration;
+  lastSynced: string;
+  connected: boolean;
+}
 export interface IMetric {
   id: string;
   key: string;

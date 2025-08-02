@@ -30,8 +30,11 @@ import {
   connectGA,
   fetchIntegrations,
   fetchUserIntegrations,
+  updateUserIntegration,
 } from "@/lib/api/integrations";
-import { IMetric, Integration } from "@/lib/types";
+import { DataSyncFrequencyEnum, HistoricalDataEnum } from "@/lib/enums";
+import { IMetric, Integration, UserIntegration } from "@/lib/types";
+import { enumToSelectOptions } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import {
   AlertCircle,
@@ -44,10 +47,10 @@ import {
   Search,
   Settings,
   Shield,
-  TrendingUp,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 interface ConnectionStep {
@@ -58,11 +61,9 @@ interface ConnectionStep {
   current: boolean;
 }
 
-interface SourcesClientProps {
-  availableSources: Integration[];
-}
-
 export default function SourcesClient() {
+  const syncFrequencyOptions = enumToSelectOptions(DataSyncFrequencyEnum);
+  const historicalDataOptions = enumToSelectOptions(HistoricalDataEnum);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [selectedSource, setSelectedSource] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -77,18 +78,15 @@ export default function SourcesClient() {
     accountId: "",
     customFields: {} as Record<string, string>,
   });
+  const [config, setConfig] = useState({
+    syncFrequency: "daily",
+    historicalData: "all_available_data",
+  });
 
-  const { data, error } = useQuery<Integration[]>({
+  const { data } = useQuery<UserIntegration[]>({
     queryKey: ["connected_sources"],
     queryFn: fetchUserIntegrations,
   });
-
-  // if (error) {
-  //   toast.error("Error fetching user intergrations", {
-  //     description: error?.message || "Internal server error",
-  //   });
-  // }
-  const connectedSources: Integration[] = data ?? [];
 
   const { data: availableSourcesData, error: error2 } = useQuery<Integration[]>(
     {
@@ -98,19 +96,24 @@ export default function SourcesClient() {
   );
 
   if (error2) {
-    toast.error("Error fetching user intergrations", {
+    toast.error("Error fetching user integrations", {
       description: error2?.message || "Internal server error",
     });
   }
 
+  const connectedSources: UserIntegration[] = data ?? [];
   const availableSources: Integration[] = availableSourcesData ?? [];
+  const connectedIds = new Set(connectedSources.map((c) => c.integration.id));
+  const filteredAvailableSources = availableSources.filter(
+    (available) => !connectedIds.has(available.id)
+  );
 
   const categories = [
     "all",
-    ...Array.from(new Set(availableSources.map((s) => s.category))),
+    ...Array.from(new Set(filteredAvailableSources.map((s) => s.category))),
   ];
 
-  const filteredSources = availableSources.filter((source) => {
+  const filteredSources = filteredAvailableSources.filter((source) => {
     const matchesSearch =
       source.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       source.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -158,8 +161,19 @@ export default function SourcesClient() {
     setConnectionProgress(0);
   };
 
-  const handleNextStep = async (source: Integration) => {
-    await handleOauthConnection(source.key);
+  const handleNextStep = async () => {
+    if (!selectedSource) return;
+
+    const currentStepConfig = connectionSteps[currentStep];
+
+    if (
+      currentStepConfig.id === "auth" &&
+      currentStepConfig.completed === false
+    ) {
+      await handleOauthConnection();
+      return;
+    }
+
     if (currentStep < connectionSteps.length - 1) {
       const newSteps = [...connectionSteps];
       newSteps[currentStep].completed = true;
@@ -170,13 +184,15 @@ export default function SourcesClient() {
       setCurrentStep(currentStep + 1);
       setConnectionProgress(((currentStep + 1) / connectionSteps.length) * 100);
     }
+
+    if (currentStepConfig.id === "configure" && currentStepConfig.completed) {
+      await updateUserIntegration(selectedSource.id, config);
+    }
   };
 
   const handleConnect = async () => {
-    // Simulate connection process
     setConnectionProgress(100);
 
-    // Mark final step as completed
     const newSteps = [...connectionSteps];
     newSteps[currentStep].completed = true;
     newSteps[currentStep].current = false;
@@ -193,15 +209,85 @@ export default function SourcesClient() {
     }, 2000);
   };
 
-  const handleOauthConnection = async (sourceKey: string) => {
-    if (sourceKey === "google_analytics") {
+  const handleOauthConnection = async () => {
+    sessionStorage.setItem(
+      "oauth_connection_flow",
+      JSON.stringify(selectedSource)
+    );
+
+    if (selectedSource.key === "google_analytics") {
       const url = await connectGA();
       if (!url) {
         toast.error("Unable to initate connection to google analytics");
+        sessionStorage.removeItem("oauth_connection_flow");
       }
       window.location.href = url;
     }
   };
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Handles the return from the OAuth redirect
+  useEffect(() => {
+    const status = searchParams.get("connect");
+    const storedState = sessionStorage.getItem("oauth_connection_flow");
+
+    if (status && storedState) {
+      const source: Integration = JSON.parse(storedState);
+
+      if (status === "success") {
+        toast.success(`${source.name} authorized successfully!`);
+
+        setIsAddDialogOpen(true);
+        setSelectedSource(source);
+
+        const newSteps: ConnectionStep[] = [
+          {
+            id: "auth",
+            title: "Authentication",
+            description: `Connect your ${source.name} account`,
+            completed: true,
+            current: true,
+          },
+          {
+            id: "permissions",
+            title: "Permissions",
+            description: "Grant necessary data access permissions",
+            completed: false,
+            current: false,
+          },
+          {
+            id: "configure",
+            title: "Configuration",
+            description: "Select data to sync and set preferences",
+            completed: false,
+            current: false,
+          },
+          {
+            id: "test",
+            title: "Test Connection",
+            description: "Verify data connection and sync",
+            completed: false,
+            current: false,
+          },
+        ];
+
+        setConnectionSteps(newSteps);
+        setCurrentStep(1);
+        setConnectionProgress((1 / newSteps.length) * 100);
+      } else if (status === "error") {
+        toast.error(
+          `Failed to authorize with ${source.name}. Please try again.`
+        );
+        setIsAddDialogOpen(true);
+        handleSourceSelect(source);
+      }
+
+      sessionStorage.removeItem("oauth_connection_flow");
+      router.replace(window.location.pathname, { scroll: false });
+    }
+  }, [searchParams]);
 
   const renderAuthStep = () => {
     if (!selectedSource) return null;
@@ -219,7 +305,7 @@ export default function SourcesClient() {
             </p>
             <Button
               className="bg-emerald-600 hover:bg-emerald-700"
-              onClick={() => handleNextStep(selectedSource)}
+              onClick={() => handleNextStep()}
             >
               <ExternalLink className="w-4 h-4 mr-2" />
               Authorize with {selectedSource.name}
@@ -300,7 +386,7 @@ export default function SourcesClient() {
         </div>
 
         <Button
-          onClick={() => handleNextStep(selectedSource)}
+          onClick={() => handleNextStep()}
           disabled={!credentials.apiKey}
           className="w-full !bg-emerald-500"
         >
@@ -311,7 +397,7 @@ export default function SourcesClient() {
   };
 
   const renderPermissionsStep = () => (
-    <div className="space-y-4">
+    <div className="space-y-4 mb-2">
       <div className="text-center mb-6">
         <h3 className="font-semibold text-lg mb-2">Grant Permissions</h3>
         <p className="text-slate-600">
@@ -347,13 +433,14 @@ export default function SourcesClient() {
           </div>
         </div>
       </div>
-
-      <Button
-        onClick={() => handleNextStep(selectedSource)}
-        className="w-full !bg-emerald-500"
-      >
-        Grant Permissions
-      </Button>
+      <div className="p-3">
+        <Button
+          onClick={() => handleNextStep()}
+          className="w-full !bg-emerald-500"
+        >
+          Grant Permissions
+        </Button>
+      </div>
     </div>
   );
 
@@ -367,37 +454,45 @@ export default function SourcesClient() {
       </div>
 
       <div className="space-y-4">
-        <div>
+        <div className="m-3">
           <Label>Sync Frequency</Label>
-          <Select defaultValue="hourly">
+          <Select
+            defaultValue="daily"
+            onValueChange={(val) =>
+              setConfig((prev) => ({ ...prev, syncFrequency: val }))
+            }
+          >
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="realtime">Real-time</SelectItem>
-              <SelectItem value="15min">Every 15 minutes</SelectItem>
-              <SelectItem value="hourly">Every hour</SelectItem>
-              <SelectItem value="daily">Daily</SelectItem>
+              {syncFrequencyOptions.map((opt) => (
+                <SelectItem value={opt.value}>{opt.label}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
 
-        <div>
+        <div className="m-3">
           <Label>Historical Data</Label>
-          <Select defaultValue="90days">
+          <Select
+            defaultValue="all_available_data"
+            onValueChange={(val) =>
+              setConfig((prev) => ({ ...prev, historicalData: val }))
+            }
+          >
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="30days">Last 30 days</SelectItem>
-              <SelectItem value="90days">Last 90 days</SelectItem>
-              <SelectItem value="1year">Last year</SelectItem>
-              <SelectItem value="all">All available data</SelectItem>
+              {historicalDataOptions.map((opt) => (
+                <SelectItem value={opt.value}>{opt.label}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
 
-        <div>
+        <div className="m-3">
           <Label>Data Filters (Optional)</Label>
           <Textarea
             placeholder="e.g., Only sync data from specific campaigns or date ranges"
@@ -405,14 +500,14 @@ export default function SourcesClient() {
           />
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-3 m-2">
           <Label>Metrics to Sync</Label>
-          {selectedSource?.metrics.map((metric: string, index: number) => (
+          {selectedSource?.metrics.map((metric: IMetric) => (
             <div
-              key={index}
+              key={metric.id}
               className="flex items-center justify-between p-3 bg-slate-50 rounded-lg"
             >
-              <span className="font-medium">{metric}</span>
+              <span className="font-medium">{metric.name}</span>
               <Switch defaultChecked />
             </div>
           ))}
@@ -420,7 +515,7 @@ export default function SourcesClient() {
       </div>
 
       <Button
-        onClick={() => handleNextStep(selectedSource)}
+        onClick={() => handleNextStep()}
         className="w-full !bg-emerald-500"
       >
         Save Configuration
@@ -450,22 +545,6 @@ export default function SourcesClient() {
           <div className="flex justify-between text-sm">
             <span>Initial Sync</span>
             <span className="text-yellow-600">⏳ In Progress</span>
-          </div>
-        </div>
-
-        <div className="p-4 bg-slate-50 rounded-lg">
-          <div className="flex items-center gap-3 mb-3">
-            <TrendingUp className="w-5 h-5 text-emerald-600" />
-            <span className="font-medium">Sample Data Preview</span>
-          </div>
-          <div className="space-y-2 text-sm">
-            {selectedSource?.metrics
-              .slice(0, 3)
-              .map((metric: IMetric) => (
-                <div key={metric.id} className="flex justify-between">
-                  <span>{metric.name}</span>
-                </div>
-              ))}
           </div>
         </div>
       </div>
@@ -517,7 +596,7 @@ export default function SourcesClient() {
             Add Source
           </Button>
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden">
+            <DialogContent className="max-w-4xl max-h-[90vh]">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
                   <Database className="w-5 h-5" />
@@ -578,7 +657,7 @@ export default function SourcesClient() {
                     ))}
                   </div>
 
-                  <ScrollArea className="max-h-[400px]">
+                  <ScrollArea className="max-h-[400px] overflow-auto">
                     {renderCurrentStep()}
                   </ScrollArea>
 
@@ -762,10 +841,10 @@ export default function SourcesClient() {
                         <div className="flex items-start gap-4">
                           <div className="flex-1">
                             <h3 className="font-semibold mb-1">
-                              {source.name}
+                              {source.integration.name}
                             </h3>
                             <p className="text-sm text-slate-600 mb-3">
-                              {source.description}
+                              {source.integration.description}
                             </p>
                             <div className="flex items-center gap-4 mb-3">
                               <div className="flex items-center gap-2">
@@ -785,7 +864,7 @@ export default function SourcesClient() {
                               </span>
                             </div>
                             <div className="flex flex-wrap gap-1">
-                              {source.metrics.map((metric) => (
+                              {source.integration.metrics.map((metric) => (
                                 <Badge
                                   key={metric.id}
                                   variant="outline"
@@ -800,7 +879,9 @@ export default function SourcesClient() {
                         <div className="flex items-center gap-2">
                           <Switch
                             className="bg-emerald-500"
-                            defaultChecked={source.connected!}
+                            disabled
+                            aria-readonly
+                            defaultChecked={source.connected}
                           />
                           <Button variant="ghost" size="sm">
                             <Settings className="w-4 h-4" />
@@ -817,8 +898,8 @@ export default function SourcesClient() {
           <div>
             <h2 className="text-xl font-semibold mb-4">Popular Sources</h2>
             <div className="space-y-4">
-              {availableSources &&
-                availableSources.map((source) => {
+              {filteredAvailableSources &&
+                filteredAvailableSources.map((source) => {
                   return (
                     <Card
                       key={source.id}

@@ -29,7 +29,12 @@ import Link from "next/link";
 import { useUser } from "./context/UserContext";
 
 export default function HomePage() {
-  const { user } = useUser();
+  const { user, loading } = useUser();
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
       <header className="sticky top-0 z-50 w-full border-b border-slate-200/60 bg-white/80 backdrop-blur-xl">

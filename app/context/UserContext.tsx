@@ -7,30 +7,31 @@ import { createContext, useContext, useEffect, useState } from "react";
 type UserContextType = {
   user: StoredUser | null;
   setUser: (user: StoredUser | null) => void;
+  loading: boolean;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
-  const pathname = usePathname()
   const [user, setUser] = useState<StoredUser | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Hydrate from localStorage on mount
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       try {
         setUser(JSON.parse(storedUser));
       } catch (error) {
-        console.log(error);
-        router.push(`/auth/signin?redirect=${pathname}`);
+        console.error("Failed to parse user from localStorage", error);
+        localStorage.removeItem("user");
+        setUser(null);
       }
     }
+    setLoading(false);
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, loading }}>
       {children}
     </UserContext.Provider>
   );
