@@ -16,6 +16,11 @@ export const connectGA = async (): Promise<string> => {
   return response.data;
 };
 
+export const connectGAds = async (): Promise<string> => {
+  const response = await axiosClient.get("/integrations/google-ads/connect");
+  return response.data;
+};
+
 export const updateUserIntegration = async (
   integrationId: string,
   config: {

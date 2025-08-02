@@ -28,6 +28,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import {
   connectGA,
+  connectGAds,
   fetchIntegrations,
   fetchUserIntegrations,
   updateUserIntegration,
@@ -198,15 +199,11 @@ export default function SourcesClient() {
     newSteps[currentStep].current = false;
     setConnectionSteps(newSteps);
 
-    // Simulate API call delay
-    setTimeout(() => {
-      setIsAddDialogOpen(false);
-      setSelectedSource(null);
-      setConnectionSteps([]);
-      setCurrentStep(0);
-      setConnectionProgress(0);
-      // In real app, would refresh the connected sources list
-    }, 2000);
+    setIsAddDialogOpen(false);
+    setSelectedSource(null);
+    setConnectionSteps([]);
+    setCurrentStep(0);
+    setConnectionProgress(0);
   };
 
   const handleOauthConnection = async () => {
@@ -219,6 +216,13 @@ export default function SourcesClient() {
       const url = await connectGA();
       if (!url) {
         toast.error("Unable to initate connection to google analytics");
+        sessionStorage.removeItem("oauth_connection_flow");
+      }
+      window.location.href = url;
+    } else if (selectedSource.key === "google_ads") {
+      const url = await connectGAds();
+      if (!url) {
+        toast.error("Unable to initate connection to google ads");
         sessionStorage.removeItem("oauth_connection_flow");
       }
       window.location.href = url;
@@ -457,7 +461,7 @@ export default function SourcesClient() {
         <div className="m-3">
           <Label>Sync Frequency</Label>
           <Select
-            defaultValue="daily"
+            defaultValue="Daily"
             onValueChange={(val) =>
               setConfig((prev) => ({ ...prev, syncFrequency: val }))
             }
