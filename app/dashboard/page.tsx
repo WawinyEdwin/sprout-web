@@ -33,15 +33,15 @@ import { useUser } from "../context/UserContext";
 export default function DashboardPage() {
   const { user } = useUser();
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
+    <div className="min-h-screen  from-slate-50 via-white to-slate-50">
       <DashboardNav user={user} />
 
       <main className="container mx-auto px-4 py-8">
-        <div className="mb-8 p-4 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl border border-emerald-200">
+        <div className="mb-8 p-4  from-emerald-50 to-teal-50 rounded-xl border border-emerald-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center">
-                <Brain className="w-5 h-5 text-white" />
+              <div className="w-10 h-10 rounded-full flex items-center justify-center">
+                <Brain className="w-5 h-5 " />
               </div>
               <div>
                 <h3 className="font-medium text-emerald-900">
@@ -61,7 +61,7 @@ export default function DashboardPage() {
 
         <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-10">
           <div>
-            <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold mb-3   bg-clip-text ">
               Welcome back, {user?.firstName}
             </h1>
             <p className="text-slate-600 text-lg">
@@ -79,10 +79,7 @@ export default function DashboardPage() {
                 Connect Data
               </Link>
             </Button>
-            <Button
-              className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-lg font-medium"
-              asChild
-            >
+            <Button className="!bg-emerald-500 shadow-lg font-medium" asChild>
               <Link href="/dashboard/chat">
                 <MessageSquare className="w-4 h-4 mr-2" />
                 Ask AI Brain
@@ -92,11 +89,11 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6 mb-10">
-          <Card className="lg:col-span-2 bg-gradient-to-br from-white to-slate-50">
+          <Card className="lg:col-span-2  from-white to-slate-50">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-3 text-xl">
-                  <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-orange-500 rounded-xl flex items-center justify-center">
+                  <div className="w-10 h-10  from-red-500 to-orange-500 rounded-xl flex items-center justify-center">
                     <AlertTriangle className="w-5 h-5 text-white" />
                   </div>
                   Urgent AI Insights
@@ -107,7 +104,7 @@ export default function DashboardPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="p-4 bg-gradient-to-r from-red-50 to-orange-50 rounded-xl border border-red-200">
+              <div className="p-4  from-red-50 to-orange-50 rounded-xl border border-red-200">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="w-5 h-5 text-red-600" />
@@ -140,7 +137,7 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              <div className="p-4 bg-gradient-to-r from-yellow-50 to-orange-50  border-yellow-200">
+              <div className="p-4  from-yellow-50 to-orange-50  border-yellow-200">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <TrendingUp className="w-5 h-5 text-yellow-600" />
@@ -171,7 +168,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-0  bg-gradient-to-br from-white to-slate-50">
+          <Card className="border-0   from-white to-slate-50">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Zap className="w-5 h-5 text-blue-600" />
@@ -179,7 +176,7 @@ export default function DashboardPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-between p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
+              <div className="flex items-center justify-between p-3  from-green-50 to-emerald-50 rounded-lg border border-green-200">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-green-600" />
                   <span className="text-sm font-medium text-slate-900">
@@ -191,7 +188,7 @@ export default function DashboardPage() {
                 </span>
               </div>
 
-              <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border border-blue-200">
+              <div className="flex items-center justify-between p-3  from-blue-50 to-cyan-50 rounded-lg border border-blue-200">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-blue-600" />
                   <span className="text-sm font-medium text-slate-900">
@@ -203,7 +200,7 @@ export default function DashboardPage() {
                 </span>
               </div>
 
-              <div className="flex items-center justify-between p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200">
+              <div className="flex items-center justify-between p-3  from-purple-50 to-pink-50 rounded-lg border border-purple-200">
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4 text-purple-600" />
                   <span className="text-sm font-medium text-slate-900">
@@ -234,12 +231,12 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-          <Card className="bg-gradient-to-br from-white to-slate-50 transition-all duration-300">
+          <Card className=" from-white to-slate-50 transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
               <CardTitle className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
                 Revenue (Predicted)
               </CardTitle>
-              <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center">
                 <DollarSign className="h-5 w-5 text-white" />
               </div>
             </CardHeader>
@@ -258,12 +255,12 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-white to-slate-50  transition-all duration-300">
+          <Card className=" from-white to-slate-50  transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
               <CardTitle className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
                 Churn Risk
               </CardTitle>
-              <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10  from-orange-500 to-red-500 rounded-xl flex items-center justify-center">
                 <Users className="h-5 w-5 text-white" />
               </div>
             </CardHeader>
@@ -282,12 +279,12 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-white to-slate-50 transition-all duration-300">
+          <Card className=" from-white to-slate-50 transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
               <CardTitle className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
                 Conversion Forecast
               </CardTitle>
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10  from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center">
                 <BarChart3 className="h-5 w-5 text-white" />
               </div>
             </CardHeader>
@@ -304,12 +301,12 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-white to-slate-50 transition-all duration-300">
+          <Card className=" from-white to-slate-50 transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
               <CardTitle className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
                 AI Monitoring
               </CardTitle>
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10  from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
                 <Brain className="h-5 w-5 text-white" />
               </div>
             </CardHeader>
@@ -331,13 +328,13 @@ export default function DashboardPage() {
 
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            <Card className="bg-gradient-to-br from-white to-slate-50">
+            <Card className=" from-white to-slate-50">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle className="flex items-center gap-3 text-xl">
-                      <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center">
-                        <Brain className="w-5 h-5 text-white" />
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center">
+                        <Brain className="w-5 h-5" />
                       </div>
                       AI Business Brain
                     </CardTitle>
@@ -347,7 +344,7 @@ export default function DashboardPage() {
                     </CardDescription>
                   </div>
                   <Button
-                    className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-lg font-medium"
+                    className=" !bg-emerald-500 shadow-lg font-medium"
                     asChild
                   >
                     <Link href="/dashboard/chat">
@@ -358,7 +355,7 @@ export default function DashboardPage() {
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl p-6 border border-slate-200">
+                <div className=" from-slate-50 to-slate-100 rounded-xl p-6 border border-slate-200">
                   <div className="flex items-start gap-4">
                     <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                       <MessageSquare className="w-5 h-5 text-blue-600" />
@@ -375,10 +372,10 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
-                <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-6 border border-emerald-200">
+                <div className=" from-emerald-50 to-teal-50 rounded-xl p-6 border border-emerald-200">
                   <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-full flex items-center justify-center">
-                      <Brain className="w-5 h-5 text-white" />
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center">
+                      <Brain className="w-5 h-5" />
                     </div>
                     <div className="flex-1">
                       <p className="font-semibold text-slate-900 mb-3">
@@ -423,7 +420,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="space-y-6">
-            <Card className="bg-gradient-to-br from-white to-slate-50">
+            <Card className=" from-white to-slate-50">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2">
@@ -445,13 +442,8 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200">
+                  <div className="flex items-center justify-between p-4  from-green-50 to-emerald-50 rounded-xl border border-green-200">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
-                        <div className="w-5 h-5 bg-white rounded-sm flex items-center justify-center text-xs font-bold text-orange-600">
-                          GA
-                        </div>
-                      </div>
                       <div>
                         <p className="font-semibold text-slate-900">
                           Google Analytics
@@ -469,13 +461,8 @@ export default function DashboardPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-200">
+                  <div className="flex items-center justify-between p-4  from-blue-50 to-cyan-50 rounded-xl border border-blue-200">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
-                        <div className="w-5 h-5 bg-white rounded-sm flex items-center justify-center text-xs font-bold text-green-600">
-                          SH
-                        </div>
-                      </div>
                       <div>
                         <p className="font-semibold text-slate-900">Shopify</p>
                         <p className="text-xs text-slate-500">
@@ -491,13 +478,8 @@ export default function DashboardPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200">
+                  <div className="flex items-center justify-between p-4  from-purple-50 to-pink-50 rounded-xl border border-purple-200">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                        <div className="w-5 h-5 bg-white rounded-sm flex items-center justify-center text-xs font-bold text-purple-600">
-                          ST
-                        </div>
-                      </div>
                       <div>
                         <p className="font-semibold text-slate-900">Stripe</p>
                         <p className="text-xs text-slate-500">
@@ -529,7 +511,7 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-white to-slate-50">
+            <Card className=" from-white to-slate-50">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Brain className="w-5 h-5 text-emerald-600" />

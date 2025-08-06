@@ -1,7 +1,6 @@
 "use client";
 
 import { StoredUser } from "@/lib/types";
-import { usePathname, useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 
 type UserContextType = {
@@ -17,13 +16,14 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
+    const storedUser = localStorage.getItem("sp-user");
+    console.log(storedUser)
     if (storedUser) {
       try {
         setUser(JSON.parse(storedUser));
       } catch (error) {
         console.error("Failed to parse user from localStorage", error);
-        localStorage.removeItem("user");
+        localStorage.removeItem("sp-user");
         setUser(null);
       }
     }

@@ -27,13 +27,12 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  connectGA,
-  connectGAds,
   fetchIntegrations,
   fetchUserIntegrations,
   updateUserIntegration,
 } from "@/lib/api/integrations";
 import { DataSyncFrequencyEnum, HistoricalDataEnum } from "@/lib/enums";
+import { QUERY_KEYS } from "@/lib/query-keys";
 import { IMetric, Integration, UserIntegration } from "@/lib/types";
 import { enumToSelectOptions } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -53,6 +52,7 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { connectionHandlers } from "../utils";
 
 interface ConnectionStep {
   id: string;
@@ -66,7 +66,8 @@ export default function SourcesClient() {
   const syncFrequencyOptions = enumToSelectOptions(DataSyncFrequencyEnum);
   const historicalDataOptions = enumToSelectOptions(HistoricalDataEnum);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [selectedSource, setSelectedSource] = useState<any>(null);
+  const [selectedSource, setSelectedSource] = useState<Integration | null>();
+  const [shopName, setShopifyShop] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [connectionSteps, setConnectionSteps] = useState<ConnectionStep[]>([]);
@@ -80,18 +81,18 @@ export default function SourcesClient() {
     customFields: {} as Record<string, string>,
   });
   const [config, setConfig] = useState({
-    syncFrequency: "daily",
+    syncFrequency: "Daily",
     historicalData: "all_available_data",
   });
 
   const { data } = useQuery<UserIntegration[]>({
-    queryKey: ["connected_sources"],
+    queryKey: QUERY_KEYS.integrations.connected,
     queryFn: fetchUserIntegrations,
   });
 
   const { data: availableSourcesData, error: error2 } = useQuery<Integration[]>(
     {
-      queryKey: ["available_sources"],
+      queryKey: QUERY_KEYS.integrations.available,
       queryFn: fetchIntegrations,
     }
   );
@@ -193,12 +194,10 @@ export default function SourcesClient() {
 
   const handleConnect = async () => {
     setConnectionProgress(100);
-
     const newSteps = [...connectionSteps];
     newSteps[currentStep].completed = true;
     newSteps[currentStep].current = false;
     setConnectionSteps(newSteps);
-
     setIsAddDialogOpen(false);
     setSelectedSource(null);
     setConnectionSteps([]);
@@ -207,25 +206,38 @@ export default function SourcesClient() {
   };
 
   const handleOauthConnection = async () => {
+    if (!selectedSource || !connectionHandlers[selectedSource.key]) {
+      toast.error("Unsupported source selected.");
+      return;
+    }
+
     sessionStorage.setItem(
       "oauth_connection_flow",
       JSON.stringify(selectedSource)
     );
 
-    if (selectedSource.key === "google_analytics") {
-      const url = await connectGA();
+    try {
+      const connectFn = connectionHandlers[selectedSource.key];
+      const url = await connectFn({
+        shop: shopName!,
+        workspaceId: user?.workspace.workspaceId!,
+      });
+
       if (!url) {
-        toast.error("Unable to initate connection to google analytics");
-        sessionStorage.removeItem("oauth_connection_flow");
+        throw new Error(
+          `Unable to initiate connection to ${
+            selectedSource.name || selectedSource.key
+          }`
+        );
       }
+
       window.location.href = url;
-    } else if (selectedSource.key === "google_ads") {
-      const url = await connectGAds();
-      if (!url) {
-        toast.error("Unable to initate connection to google ads");
-        sessionStorage.removeItem("oauth_connection_flow");
-      }
-      window.location.href = url;
+    } catch (error) {
+      console.error("OAuth connection error:", error);
+      toast.error(
+        "An error occurred while trying to connect. Please try again."
+      );
+      sessionStorage.removeItem("oauth_connection_flow");
     }
   };
 
@@ -296,6 +308,50 @@ export default function SourcesClient() {
   const renderAuthStep = () => {
     if (!selectedSource) return null;
 
+    if (
+      selectedSource.authType === "OAuth" &&
+      selectedSource.key === "shopify"
+    ) {
+      return (
+        <div className="space-y-4">
+          <div className="p-4 bg-slate-50 rounded-lg space-y-4">
+            <h3 className="font-semibold text-lg text-center">
+              Connect to your Shopify store
+            </h3>
+            <p className="text-slate-600 text-center">
+              Please enter your Shopify store's custom URL to begin the
+              connection process.
+            </p>
+            <div>
+              <Label htmlFor="shopName" className="sr-only">
+                Shop Name
+              </Label>
+              <Input
+                id="shopName"
+                type="text"
+                aria-label="Shop Name"
+                placeholder="your-store-name.myshopify.com"
+                value={shopName!}
+                onChange={(e) => setShopifyShop(e.target.value)}
+              />
+            </div>
+          </div>
+          <Button
+            onClick={() => handleNextStep()}
+            disabled={!shopName}
+            className="w-full bg-emerald-600 hover:bg-emerald-700"
+          >
+            <ExternalLink className="w-4 h-4 mr-2" />
+            Connect to Shopify
+          </Button>
+          <div className="text-xs text-slate-500 text-center">
+            <Shield className="w-4 h-4 inline mr-1" />
+            Your credentials are encrypted and stored securely
+          </div>
+        </div>
+      );
+    }
+
     if (selectedSource.authType === "OAuth") {
       return (
         <div className="space-y-4">
@@ -339,38 +395,6 @@ export default function SourcesClient() {
               }
             />
           </div>
-
-          {selectedSource.name === "Salesforce" && (
-            <>
-              <div>
-                <Label htmlFor="clientId">Client ID</Label>
-                <Input
-                  id="clientId"
-                  placeholder="Enter client ID"
-                  value={credentials.clientId}
-                  onChange={(e) =>
-                    setCredentials({ ...credentials, clientId: e.target.value })
-                  }
-                />
-              </div>
-              <div className="m-4">
-                <Label htmlFor="clientSecret">Client Secret</Label>
-                <Input
-                  id="clientSecret"
-                  type="password"
-                  placeholder="Enter client secret"
-                  value={credentials.clientSecret}
-                  onChange={(e) =>
-                    setCredentials({
-                      ...credentials,
-                      clientSecret: e.target.value,
-                    })
-                  }
-                />
-              </div>
-            </>
-          )}
-
           <div className="p-4 bg-emerald-50 rounded-lg">
             <div className="flex items-start gap-3">
               <Key className="w-5 h-5 text-emerald-600 mt-0.5" />
@@ -470,8 +494,10 @@ export default function SourcesClient() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {syncFrequencyOptions.map((opt) => (
-                <SelectItem value={opt.value}>{opt.label}</SelectItem>
+              {syncFrequencyOptions.map((opt, index) => (
+                <SelectItem value={opt.value} key={index}>
+                  {opt.label}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -489,8 +515,10 @@ export default function SourcesClient() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {historicalDataOptions.map((opt) => (
-                <SelectItem value={opt.value}>{opt.label}</SelectItem>
+              {historicalDataOptions.map((opt, index) => (
+                <SelectItem value={opt.value} key={index}>
+                  {opt.label}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>

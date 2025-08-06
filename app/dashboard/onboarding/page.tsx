@@ -19,9 +19,8 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
-import { updateUser } from "../auth/actions";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const onboardingSteps = [
   {
@@ -76,7 +75,7 @@ const suggestedIntegrations = [
 ];
 
 export default function OnboardingPage() {
-  const router = useRouter()
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedIntegrations, setSelectedIntegrations] = useState<string[]>(
     []
@@ -96,19 +95,19 @@ export default function OnboardingPage() {
     // await updateUser({
     //   completedOnboarding: true,
     // });
-    router.push("/dashboard")
+    router.push("/dashboard");
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-screen  from-slate-50 to-slate-100">
       <header className="border-b bg-white">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-emerald-600 to-emerald-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8  from-emerald-600 to-emerald-600 rounded-lg flex items-center justify-center">
                 <Database className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-600 bg-clip-text text-transparent">
+              <span className="text-xl font-bold  from-emerald-600 to-emerald-600 bg-clip-text ">
                 Sprout
               </span>
             </div>

@@ -30,7 +30,7 @@ import { toast } from "sonner";
 
 export default function SignUpPage() {
   const router = useRouter();
-  const { handleSubmit, control } = useForm<AuthPayload>({
+  const { handleSubmit, control} = useForm<AuthPayload>({
     defaultValues: {
       email: "",
       password: "",
@@ -39,7 +39,7 @@ export default function SignUpPage() {
         lastName: "",
         companyIndustry: "",
         companyName: "",
-        agreedToTerms: false,
+        agreedToTerms: true,
         completedOnboarding: false,
       },
     },
@@ -60,19 +60,17 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
+    <div className="min-h-screen  from-slate-50 to-slate-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center space-x-3">
             <div className="relative">
-              <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
-                <Brain className="w-6 h-6 text-white" />
+              <div className="w-12 h-12   rounded-xl flex items-center justify-center shadow-lg">
+                <Brain className="w-6 h-6" />
               </div>
             </div>
             <div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-                Sprout
-              </span>
+              <span className="text-2xl font-bold   bg-clip-text ">Sprout</span>
               <div className="text-xs text-emerald-600 font-medium -mt-1">
                 Business Intelligence
               </div>
@@ -89,7 +87,7 @@ export default function SignUpPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-lg p-4 border border-emerald-200">
+            <div className=" from-emerald-50 to-teal-50 rounded-lg p-4 border border-emerald-200">
               <div className="flex items-center gap-2 mb-2">
                 <Zap className="w-5 h-5 text-emerald-600" />
                 <span className="font-semibold text-emerald-900">
@@ -205,7 +203,7 @@ export default function SignUpPage() {
                   name="userMetadata.companyName"
                   control={control}
                   render={({ field }) => (
-                    <Checkbox id="agreeToTerms" {...field} />
+                    <Checkbox id="agreeToTerms" {...field}  defaultValue={field.value} />
                   )}
                 />
                 <Label htmlFor="agreeToTerms" className="text-sm">
@@ -226,10 +224,7 @@ export default function SignUpPage() {
                 </Label>
               </div>
 
-              <Button
-                className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
-                type="submit"
-              >
+              <Button className="w-full  !bg-emerald-500" type="submit">
                 Create Account
               </Button>
             </form>

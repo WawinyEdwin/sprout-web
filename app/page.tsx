@@ -36,20 +36,18 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
+    <div className="min-h-screen  from-slate-50 via-white to-slate-50">
       <header className="sticky top-0 z-50 w-full border-b border-slate-200/60 bg-white/80 backdrop-blur-xl">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="relative">
-              <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
-                <Brain className="w-6 h-6 text-white" />
+              <div className="w-10 h-10   rounded-xl flex items-center justify-center shadow-lg">
+                <Brain className="w-6 h-6 text-emerald-500" />
               </div>
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full animate-pulse-slow"></div>
+              <div className="absolute -top-1 -right-1 w-4 h-4  from-emerald-400 to-teal-400 rounded-full animate-pulse-slow"></div>
             </div>
             <div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-                Sprout
-              </span>
+              <span className="text-2xl font-bold   bg-clip-text ">Sprout</span>
               <div className="text-xs text-emerald-600 font-medium -mt-1">
                 AI-Native KPI Brain
               </div>
@@ -88,7 +86,7 @@ export default function HomePage() {
             ) : (
               <>
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
                   className="font-medium"
                   asChild
@@ -97,7 +95,7 @@ export default function HomePage() {
                 </Button>
                 <Button
                   size="sm"
-                  className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-lg font-medium"
+                  className=" !bg-emerald-500 shadow-lg font-medium"
                   asChild
                 >
                   <Link href="/auth/signup">Start Free Trial</Link>
@@ -109,22 +107,20 @@ export default function HomePage() {
       </header>
 
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 via-teal-50/30 to-cyan-50/50"></div>
+        <div className="absolute inset-0  from-emerald-50/50 via-teal-50/30 to-cyan-50/50"></div>
         <div className="container mx-auto px-4 py-24 relative">
           <div className="text-center max-w-5xl mx-auto">
             <Badge
               variant="secondary"
-              className="mb-6 px-4 py-2 bg-emerald-100 text-emerald-700 border-emerald-200 font-medium"
+              className="mb-6 px-4 py-2 text-emerald-700 border-emerald-200 font-medium"
             >
               <Brain className="w-4 h-4 mr-2" />
               The World's First AI-Native KPI Brain for SMBs
             </Badge>
             <h1 className="text-6xl md:text-7xl font-bold mb-8 leading-tight">
-              <span className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 bg-clip-text text-transparent">
-                Stop reacting to data.
-              </span>
+              <span className="  bg-clip-text">Stop reacting to data.</span>
               <br />
-              <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">
+              <span className=" text-emerald-600 bg-clip-text ">
                 Start predicting it.
               </span>
             </h1>
@@ -135,10 +131,9 @@ export default function HomePage() {
               data into proactive intelligence.
             </p>
 
-            {/* Value Props */}
             <div className="grid md:grid-cols-3 gap-6 mb-12 max-w-4xl mx-auto">
               <div className="flex items-center gap-3 p-4 bg-white/60 backdrop-blur-sm rounded-xl border border-white/20">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10  from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center">
                   <MessageSquare className="w-5 h-5 text-white" />
                 </div>
                 <div className="text-left">
@@ -151,7 +146,7 @@ export default function HomePage() {
                 </div>
               </div>
               <div className="flex items-center gap-3 p-4 bg-white/60 backdrop-blur-sm rounded-xl border border-white/20">
-                <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10  from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center">
                   <AlertTriangle className="w-5 h-5 text-white" />
                 </div>
                 <div className="text-left">
@@ -164,7 +159,7 @@ export default function HomePage() {
                 </div>
               </div>
               <div className="flex items-center gap-3 p-4 bg-white/60 backdrop-blur-sm rounded-xl border border-white/20">
-                <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10  from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
                   <Target className="w-5 h-5 text-white" />
                 </div>
                 <div className="text-left">
@@ -181,12 +176,12 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <Button
                 size="lg"
-                className="text-lg px-8 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-xl font-semibold"
+                className="text-lg px-8 py-4  bg-emerald-600 shadow-xl font-semibold"
                 asChild
               >
                 <Link href="/auth/signup">
                   Experience the AI Brain
-                  <ArrowRight className="ml-2 w-5 h-5" />
+                  <ArrowRight className="ml-2 w-5 h-5 " />
                 </Link>
               </Button>
               <Button
@@ -200,7 +195,7 @@ export default function HomePage() {
 
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-2xl max-w-3xl mx-auto">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center">
+                <div className="w-8 h-8  from-emerald-500 to-teal-500 rounded-full flex items-center justify-center">
                   <Brain className="w-4 h-4 text-white" />
                 </div>
                 <span className="font-semibold text-slate-900">
@@ -211,7 +206,7 @@ export default function HomePage() {
                 </Badge>
               </div>
               <div className="text-left space-y-4">
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
+                <div className="rounded-lg p-4 border border-blue-200">
                   <p className="text-slate-800 font-medium mb-2">
                     💬 "How can I increase my profit margin by 5%?"
                   </p>
@@ -219,7 +214,7 @@ export default function HomePage() {
                     Natural language question based on your actual business data
                   </p>
                 </div>
-                <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-lg p-4 border border-emerald-200">
+                <div className=" from-emerald-50 to-teal-50 rounded-lg p-4 border border-emerald-200">
                   <p className="text-slate-800 font-medium mb-2">
                     🧠 AI analyzes your Shopify, QuickBooks & Google Analytics
                     data...
@@ -265,7 +260,7 @@ export default function HomePage() {
             >
               What Makes Sprout Different
             </Badge>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6   bg-clip-text ">
               6 Unique Advantages Over Traditional BI
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
@@ -275,10 +270,10 @@ export default function HomePage() {
           </div>
 
           <div className="grid lg:grid-cols-2 gap-12 mb-20">
-            <Card className="border-0 shadow-2xl bg-gradient-to-br from-white to-blue-50 hover:shadow-3xl transition-all duration-500 hover:-translate-y-2">
+            <Card className="border-0 shadow-2xl  from-white to-blue-50 hover:shadow-3xl transition-all duration-500 hover:-translate-y-2">
               <CardHeader className="pb-6">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-6">
-                  <MessageSquare className="w-8 h-8 text-white" />
+                <div className="w-16 h-16  rounded-2xl flex items-center justify-center mb-2">
+                  <MessageSquare className="w-8 h-8" />
                 </div>
                 <CardTitle className="text-2xl font-bold mb-3">
                   AI Chat with Business Context
@@ -289,7 +284,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+                <div className=" from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
                   <div className="flex items-center gap-2 mb-2">
                     <Brain className="w-5 h-5 text-blue-600" />
                     <span className="font-semibold text-blue-900">
@@ -319,10 +314,10 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-2xl bg-gradient-to-br from-white to-red-50 hover:shadow-3xl transition-all duration-500 hover:-translate-y-2">
+            <Card className="border-0 shadow-2xl  from-white to-red-50 hover:shadow-3xl transition-all duration-500 hover:-translate-y-2">
               <CardHeader className="pb-6">
-                <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-orange-600 rounded-2xl flex items-center justify-center mb-6">
-                  <AlertTriangle className="w-8 h-8 text-white" />
+                <div className="w-16 h-16  rounded-2xl flex items-center justify-center mb-2">
+                  <AlertTriangle className="w-8 h-8" />
                 </div>
                 <CardTitle className="text-2xl font-bold mb-3">
                   Real-Time AI Red Flags
@@ -333,7 +328,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl p-4 border border-red-100">
+                <div className=" from-red-50 to-orange-50 rounded-xl p-4 border border-red-100">
                   <div className="flex items-center gap-2 mb-2">
                     <Zap className="w-5 h-5 text-red-600" />
                     <span className="font-semibold text-red-900">
@@ -362,10 +357,10 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-2xl bg-gradient-to-br from-white to-purple-50 hover:shadow-3xl transition-all duration-500 hover:-translate-y-2">
+            <Card className="border-0 shadow-2xl  from-white to-purple-50 hover:shadow-3xl transition-all duration-500 hover:-translate-y-2">
               <CardHeader className="pb-6">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mb-6">
-                  <Target className="w-8 h-8 text-white" />
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-2">
+                  <Target className="w-8 h-8" />
                 </div>
                 <CardTitle className="text-2xl font-bold mb-3">
                   AI Decision Support, Not Just Visualization
@@ -376,7 +371,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-100">
+                <div className=" from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-100">
                   <div className="flex items-center gap-2 mb-2">
                     <Lightbulb className="w-5 h-5 text-purple-600" />
                     <span className="font-semibold text-purple-900">
@@ -405,10 +400,10 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-2xl bg-gradient-to-br from-white to-emerald-50 hover:shadow-3xl transition-all duration-500 hover:-translate-y-2">
+            <Card className="border-0 shadow-2xl  from-white to-emerald-50 hover:shadow-3xl transition-all duration-500 hover:-translate-y-2">
               <CardHeader className="pb-6">
-                <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mb-6">
-                  <Building2 className="w-8 h-8 text-white" />
+                <div className="w-16 h-16  rounded-2xl flex items-center justify-center mb-2">
+                  <Building2 className="w-8 h-8 " />
                 </div>
                 <CardTitle className="text-2xl font-bold mb-3">
                   Designed for SMBs with Advanced AI
@@ -419,7 +414,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-4 border border-emerald-100">
+                <div className=" from-emerald-50 to-teal-50 rounded-xl p-4 border border-emerald-100">
                   <div className="flex items-center gap-2 mb-2">
                     <Users className="w-5 h-5 text-emerald-600" />
                     <span className="font-semibold text-emerald-900">
@@ -449,10 +444,10 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-2xl bg-gradient-to-br from-white to-cyan-50 hover:shadow-3xl transition-all duration-500 hover:-translate-y-2">
+            <Card className="border-0 shadow-2xl  from-white to-cyan-50 hover:shadow-3xl transition-all duration-500 hover:-translate-y-2">
               <CardHeader className="pb-6">
-                <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6">
-                  <Database className="w-8 h-8 text-white" />
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-2">
+                  <Database className="w-8 h-8 " />
                 </div>
                 <CardTitle className="text-2xl font-bold mb-3">
                   100+ SMB Tool Integrations
@@ -463,7 +458,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-xl p-4 border border-cyan-100">
+                <div className=" from-cyan-50 to-blue-50 rounded-xl p-4 border border-cyan-100">
                   <div className="flex items-center gap-2 mb-2">
                     <Shield className="w-5 h-5 text-cyan-600" />
                     <span className="font-semibold text-cyan-900">
@@ -492,10 +487,10 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-2xl bg-gradient-to-br from-white to-yellow-50 hover:shadow-3xl transition-all duration-500 hover:-translate-y-2">
+            <Card className="border-0 shadow-2xl  from-white to-yellow-50 hover:shadow-3xl transition-all duration-500 hover:-translate-y-2">
               <CardHeader className="pb-6">
-                <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl flex items-center justify-center mb-6">
-                  <TrendingUp className="w-8 h-8 text-white" />
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-2">
+                  <TrendingUp className="w-8 h-8" />
                 </div>
                 <CardTitle className="text-2xl font-bold mb-3">
                   Personalized Growth Roadmaps
@@ -506,7 +501,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-4 border border-yellow-100">
+                <div className=" from-yellow-50 to-orange-50 rounded-xl p-4 border border-yellow-100">
                   <div className="flex items-center gap-2 mb-2">
                     <Target className="w-5 h-5 text-yellow-600" />
                     <span className="font-semibold text-yellow-900">
@@ -538,7 +533,7 @@ export default function HomePage() {
             </Card>
           </div>
 
-          <div className="bg-gradient-to-r from-slate-50 to-white rounded-2xl p-8 border border-slate-200">
+          <div className=" from-slate-50 to-white rounded-2xl p-8 border border-slate-200">
             <h3 className="text-2xl font-bold text-center mb-8">
               Sprout vs Traditional BI Tools
             </h3>
@@ -631,10 +626,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section
-        id="how-it-works"
-        className="py-24 bg-gradient-to-br from-slate-50 to-white"
-      >
+      <section id="how-it-works" className="py-24  from-slate-50 to-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-20">
             <Badge
@@ -643,7 +635,7 @@ export default function HomePage() {
             >
               AI-Native Intelligence
             </Badge>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6   bg-clip-text ">
               How Sprout's AI Brain Works
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
@@ -653,11 +645,11 @@ export default function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 mb-16">
-            <Card className="group border-0 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 bg-gradient-to-br from-white to-slate-50 relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
+            <Card className="group border-0 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2  from-white to-slate-50 relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1"></div>
               <CardHeader className="pb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Activity className="w-8 h-8 text-white" />
+                <div className="w-16 h-16  rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <Activity className="w-8 h-8" />
                 </div>
                 <CardTitle className="text-2xl font-bold mb-3">
                   1. Continuous Monitoring
@@ -668,7 +660,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+                <div className=" from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
                   <div className="flex items-center gap-2 mb-2">
                     <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
                     <span className="text-sm font-medium text-blue-700">
@@ -682,11 +674,11 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="group border-0 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 bg-gradient-to-br from-white to-slate-50 relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-teal-500"></div>
+            <Card className="group border-0 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2  from-white to-slate-50 relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1  from-emerald-500 to-teal-500"></div>
               <CardHeader className="pb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Brain className="w-8 h-8 text-white" />
+                <div className="w-16 h-16  from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <Brain className="w-8 h-8" />
                 </div>
                 <CardTitle className="text-2xl font-bold mb-3">
                   2. Predictive Analysis
@@ -697,7 +689,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-4 border border-emerald-100">
+                <div className=" from-emerald-50 to-teal-50 rounded-xl p-4 border border-emerald-100">
                   <div className="text-sm font-medium text-emerald-700 mb-1">
                     Forecast Accuracy: 94%
                   </div>
@@ -708,11 +700,11 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="group border-0 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 bg-gradient-to-br from-white to-slate-50 relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-pink-500"></div>
+            <Card className="group border-0 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2  from-white to-slate-50 relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1  from-purple-500 to-pink-500"></div>
               <CardHeader className="pb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Target className="w-8 h-8 text-white" />
+                <div className="w-16 h-16  from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <Target className="w-8 h-8" />
                 </div>
                 <CardTitle className="text-2xl font-bold mb-3">
                   3. Automated Actions
@@ -723,7 +715,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-100">
+                <div className=" from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-100">
                   <div className="text-sm font-medium text-purple-700 mb-1">
                     Actions Taken Today: 12
                   </div>
@@ -740,7 +732,7 @@ export default function HomePage() {
       <section id="features" className="py-24 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6   bg-clip-text ">
               Beyond Traditional Dashboards
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
@@ -790,12 +782,12 @@ export default function HomePage() {
             ].map((feature, i) => (
               <Card
                 key={i}
-                className="border-0 bg-gradient-to-br from-white to-slate-50 p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                className="border-0  from-white to-slate-50 p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
               >
                 <div
-                  className={`w-12 h-12 bg-gradient-to-br ${feature.color} rounded-xl flex items-center justify-center mb-4`}
+                  className={`w-12 h-12  ${feature.color} rounded-xl flex items-center justify-center mb-4`}
                 >
-                  <feature.icon className="w-6 h-6 text-white" />
+                  <feature.icon className="w-6 h-6" />
                 </div>
                 <h3 className="font-bold text-slate-900 mb-2 text-lg">
                   {feature.title}
@@ -807,10 +799,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section
-        id="pricing"
-        className="py-24 bg-gradient-to-br from-slate-50 to-white"
-      >
+      <section id="pricing" className="py-24  from-slate-50 to-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-20">
             <Badge
@@ -819,7 +808,7 @@ export default function HomePage() {
             >
               Simple, Transparent Pricing
             </Badge>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6   bg-clip-text ">
               Choose Your AI Intelligence Level
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
@@ -829,10 +818,10 @@ export default function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-12">
-            <Card className="border-2 border-slate-200 hover:border-emerald-300 transition-all duration-300 hover:shadow-xl bg-gradient-to-br from-white to-slate-50">
+            <Card className="border-2 border-slate-200 hover:border-emerald-300 transition-all duration-300 hover:shadow-xl  from-white to-slate-50">
               <CardHeader className="text-center pb-8">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <BarChart3 className="w-8 h-8 text-white" />
+                <div className="w-16 h-16  rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <BarChart3 className="w-8 h-8 " />
                 </div>
                 <CardTitle className="text-2xl font-bold mb-2">
                   Professional
@@ -870,7 +859,7 @@ export default function HomePage() {
                 </div>
                 <div className="pt-6">
                   <Button
-                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                    className="w-full  from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
                     asChild
                   >
                     <Link href="/auth/signup">Start Free Trial</Link>
@@ -879,15 +868,15 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-2 border-emerald-500 hover:border-emerald-600 transition-all duration-300 hover:shadow-2xl bg-gradient-to-br from-white to-emerald-50 relative">
+            <Card className="border-2 border-emerald-500 hover:border-emerald-600 transition-all duration-300 hover:shadow-2xl  from-white to-emerald-50 relative">
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <Badge className="bg-emerald-600 text-white hover:bg-emerald-600 px-4 py-1">
+                <Badge className="bg-emerald-600  hover:bg-emerald-600 px-4 py-1">
                   Most Popular
                 </Badge>
               </div>
               <CardHeader className="text-center pb-8 pt-8">
-                <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <Brain className="w-8 h-8 text-white" />
+                <div className="w-16 h-16  from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Brain className="w-8 h-8 " />
                 </div>
                 <CardTitle className="text-2xl font-bold mb-2">
                   Growth
@@ -931,7 +920,7 @@ export default function HomePage() {
                 </div>
                 <div className="pt-6">
                   <Button
-                    className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-lg"
+                    className="w-full  from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-lg"
                     asChild
                   >
                     <Link href="/auth/signup">Start Free Trial</Link>
@@ -940,10 +929,10 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-2 border-slate-200 hover:border-purple-300 transition-all duration-300 hover:shadow-xl bg-gradient-to-br from-white to-slate-50">
+            <Card className="border-2 border-slate-200 hover:border-purple-300 transition-all duration-300 hover:shadow-xl  from-white to-slate-50">
               <CardHeader className="text-center pb-8">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <Target className="w-8 h-8 text-white" />
+                <div className="w-16 h-16  from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Target className="w-8 h-8" />
                 </div>
                 <CardTitle className="text-2xl font-bold mb-2">
                   Enterprise
@@ -989,7 +978,7 @@ export default function HomePage() {
                 </div>
                 <div className="pt-6">
                   <Button
-                    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                    className="w-full  from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
                     asChild
                   >
                     <Link href="/auth/signup">Contact Sales</Link>
@@ -999,10 +988,10 @@ export default function HomePage() {
             </Card>
           </div>
 
-          <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-8 border border-emerald-200 max-w-4xl mx-auto">
+          <div className=" from-emerald-50 to-teal-50 rounded-2xl p-8 border border-emerald-200 max-w-4xl mx-auto">
             <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Zap className="w-8 h-8 text-white" />
+              <div className="w-16 h-16   rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <Zap className="w-8 h-8 " />
               </div>
               <h3 className="text-2xl font-bold text-slate-900 mb-4">
                 Start Your 7-Day Free Trial
@@ -1028,7 +1017,7 @@ export default function HomePage() {
               </div>
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-lg font-semibold"
+                className=" !bg-emerald-600 shadow-lg font-semibold"
                 asChild
               >
                 <Link href="/auth/signup">
@@ -1042,14 +1031,14 @@ export default function HomePage() {
       </section>
 
       <section className="relative py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-600"></div>
+        <div className="absolute inset-0 "></div>
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="container mx-auto px-4 text-center relative z-10">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 ">
               Ready to stop reacting and start predicting?
             </h2>
-            <p className="text-xl mb-10 text-emerald-100 leading-relaxed">
+            <p className="text-xl mb-10 text-emerald-500 leading-relaxed">
               Join forward-thinking SMBs using Sprout's AI brain to predict
               problems, explain causes, and automate solutions with business
               context that understands YOUR data.
@@ -1057,7 +1046,7 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
               <Button
                 size="lg"
-                className="text-lg px-8 py-4 bg-white text-emerald-600 hover:bg-slate-50 shadow-xl font-semibold"
+                className="text-lg px-8 py-4  !bg-emerald-500 shadow-xl font-semibold"
                 asChild
               >
                 <Link href="/auth/signup">
@@ -1066,9 +1055,9 @@ export default function HomePage() {
                 </Link>
               </Button>
               <Button
-                variant="outline"
+                // variant="outline"
                 size="lg"
-                className="text-lg px-8 py-4 border-2 border-white text-white hover:bg-white/10 font-semibold bg-transparent"
+                className="text-lg px-8 py-4 border-2 font-semibold"
               >
                 Schedule AI Demo
               </Button>
@@ -1091,12 +1080,12 @@ export default function HomePage() {
         </div>
       </section>
 
-      <footer className="bg-slate-900 text-slate-300 py-16">
+      <footer className="bg-emerald-700 text-white py-16">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-4 gap-8 mb-12">
             <div>
               <div className="flex items-center space-x-3 mb-6">
-                <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10   rounded-xl flex items-center justify-center">
                   <Brain className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -1106,7 +1095,7 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
-              <p className="text-slate-400 leading-relaxed">
+              <p className="leading-relaxed">
                 The world's first AI-native business intelligence platform
                 designed specifically for SMBs that predicts, explains, and
                 acts.
@@ -1188,26 +1177,26 @@ export default function HomePage() {
               </ul>
             </div>
           </div>
-          <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-slate-400">
+          <div className="border-t border-white-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+            <p className="">
               © 2025 Sprout. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <Link
                 href="#"
-                className="text-slate-400 hover:text-white transition-colors"
+                className="transition-colors"
               >
                 Privacy
               </Link>
               <Link
                 href="#"
-                className="text-slate-400 hover:text-white transition-colors"
+                className="transition-colors"
               >
                 Terms
               </Link>
               <Link
                 href="#"
-                className="text-slate-400 hover:text-white transition-colors"
+                className="transition-colors"
               >
                 Cookies
               </Link>

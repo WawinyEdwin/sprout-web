@@ -919,7 +919,7 @@ export default function KPIBuilderPage() {
                           </div>
 
                           {/* Mock Chart Area */}
-                          <div className="h-32 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg flex items-center justify-center">
+                          <div className="h-32  from-blue-50 to-indigo-50 rounded-lg flex items-center justify-center">
                             <div className="text-slate-400 text-sm">
                               {selectedChart === "line" &&
                                 "📈 Line chart visualization"}

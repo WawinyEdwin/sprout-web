@@ -6,9 +6,23 @@ export interface Integration {
   difficulty?: string;
   setupTime?: string;
   popularity?: string;
-  key: string;
+  authType: string;
+  key: IntegrationType;
   metrics: IMetric[];
 }
+
+export type IntegrationType =
+  | "google_analytics"
+  | "facebook_ads"
+  | "google_ads"
+  | "shopify"
+  | "salesforce"
+  | "stripe"
+  // | "zendesk"
+  // | "mailchimp"
+  // | "hubspot"
+  | "quick_books";
+
 export interface UserIntegration {
   id: string;
   integration: Integration;
@@ -44,12 +58,16 @@ export type StoredUser = {
   completedOnboarding: boolean;
   companyName: string;
   companyIndustry: string;
+  workspace: {
+    workspaceId: string;
+    owner: string;
+  };
 };
 
 export interface AuthPayload {
   email: string;
   password: string;
-  userMetadata?: {
+  userMetadata: {
     firstName: string;
     lastName: string;
     agreedToTerms: boolean;

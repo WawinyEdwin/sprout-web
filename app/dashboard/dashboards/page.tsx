@@ -1,36 +1,46 @@
-"use client"
+"use client";
 
-import { useState, useCallback } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { useUser } from "@/app/context/UserContext";
+import { DashboardNav } from "@/components/dashboard-nav";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
-  Plus,
-  TrendingUp,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
   DollarSign,
-  Users,
-  ShoppingCart,
-  Target,
-  Save,
-  Settings,
+  Edit,
+  Eye,
   Grid3X3,
   Layout,
-  Eye,
-  Edit,
-  Trash2,
   Maximize2,
   Minimize2,
-} from "lucide-react"
-import { DashboardNav } from "@/components/dashboard-nav"
-import { Responsive, WidthProvider, type Layout as GridLayout } from "react-grid-layout"
-import "react-grid-layout/css/styles.css"
-import "react-resizable/css/styles.css"
-import { useUser } from "@/app/context/UserContext"
+  Plus,
+  Save,
+  Settings,
+  ShoppingCart,
+  Target,
+  Trash2,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import { useCallback, useState } from "react";
+import {
+  Responsive,
+  WidthProvider,
+  type Layout as GridLayout,
+} from "react-grid-layout";
+import "react-grid-layout/css/styles.css";
+import "react-resizable/css/styles.css";
 
-const ResponsiveGridLayout = WidthProvider(Responsive)
+const ResponsiveGridLayout = WidthProvider(Responsive);
 
 // Mock KPI data
 const availableKPIs = [
@@ -94,11 +104,11 @@ const availableKPIs = [
     icon: Users,
     chartType: "bar",
   },
-]
+];
 
 // Widget component
 const KPIWidget = ({ kpi, onEdit, onDelete, onMaximize, isMaximized }: any) => {
-  const IconComponent = kpi.icon
+  const IconComponent = kpi.icon;
   const colorClasses = {
     emerald: "bg-emerald-100 text-emerald-600",
     blue: "bg-blue-100 text-blue-600",
@@ -106,21 +116,35 @@ const KPIWidget = ({ kpi, onEdit, onDelete, onMaximize, isMaximized }: any) => {
     orange: "bg-orange-100 text-orange-600",
     green: "bg-green-100 text-green-600",
     red: "bg-red-100 text-red-600",
-  }
+  };
 
   return (
-    <Card className="h-full border-0 shadow-lg bg-gradient-to-br from-white to-slate-50 hover:shadow-xl transition-all duration-300">
+    <Card className="h-full border-0 shadow-lg  from-white to-slate-50 hover:shadow-xl transition-all duration-300">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${colorClasses[kpi.color]}`}>
+            <div
+              className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                colorClasses[kpi.color]
+              }`}
+            >
               <IconComponent className="w-4 h-4" />
             </div>
-            <CardTitle className="text-sm font-semibold text-slate-600 uppercase tracking-wide">{kpi.name}</CardTitle>
+            <CardTitle className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
+              {kpi.name}
+            </CardTitle>
           </div>
           <div className="flex items-center gap-1">
-            <Button variant="ghost" size="sm" onClick={() => onMaximize(kpi.id)}>
-              {isMaximized ? <Minimize2 className="w-3 h-3" /> : <Maximize2 className="w-3 h-3" />}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onMaximize(kpi.id)}
+            >
+              {isMaximized ? (
+                <Minimize2 className="w-3 h-3" />
+              ) : (
+                <Maximize2 className="w-3 h-3" />
+              )}
             </Button>
             <Button variant="ghost" size="sm" onClick={() => onEdit(kpi.id)}>
               <Settings className="w-3 h-3" />
@@ -134,10 +158,16 @@ const KPIWidget = ({ kpi, onEdit, onDelete, onMaximize, isMaximized }: any) => {
           <div className="flex items-center justify-between">
             <div
               className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${
-                kpi.trend === "up" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"
+                kpi.trend === "up"
+                  ? "bg-green-50 text-green-700"
+                  : "bg-red-50 text-red-700"
               }`}
             >
-              <TrendingUp className={`w-3 h-3 ${kpi.trend === "down" ? "rotate-180" : ""}`} />
+              <TrendingUp
+                className={`w-3 h-3 ${
+                  kpi.trend === "down" ? "rotate-180" : ""
+                }`}
+              />
               {kpi.change}
             </div>
             <Badge variant="outline" className="text-xs">
@@ -146,7 +176,7 @@ const KPIWidget = ({ kpi, onEdit, onDelete, onMaximize, isMaximized }: any) => {
           </div>
 
           {/* Mock Chart Area */}
-          <div className="h-16 bg-gradient-to-r from-slate-50 to-slate-100 rounded-lg flex items-center justify-center">
+          <div className="h-16  from-slate-50 to-slate-100 rounded-lg flex items-center justify-center">
             <div className="text-slate-400 text-xs">
               {kpi.chartType === "line" && "📈"}
               {kpi.chartType === "bar" && "📊"}
@@ -157,8 +187,8 @@ const KPIWidget = ({ kpi, onEdit, onDelete, onMaximize, isMaximized }: any) => {
         </div>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
 export default function DashboardsPage() {
   const [layouts, setLayouts] = useState({
@@ -170,22 +200,22 @@ export default function DashboardsPage() {
       { i: "aov", x: 0, y: 2, w: 6, h: 3 },
       { i: "cac", x: 6, y: 2, w: 6, h: 3 },
     ],
-  })
+  });
 
-  const [dashboardKPIs, setDashboardKPIs] = useState(availableKPIs)
-  const [isEditing, setIsEditing] = useState(false)
-  const [maximizedWidget, setMaximizedWidget] = useState<string | null>(null)
-  const [dashboardName, setDashboardName] = useState("Business Overview")
+  const [dashboardKPIs, setDashboardKPIs] = useState(availableKPIs);
+  const [isEditing, setIsEditing] = useState(false);
+  const [maximizedWidget, setMaximizedWidget] = useState<string | null>(null);
+  const [dashboardName, setDashboardName] = useState("Business Overview");
 
   const onLayoutChange = useCallback((layout: GridLayout[], layouts: any) => {
-    setLayouts(layouts)
+    setLayouts(layouts);
     // In real app, save to backend/localStorage
-    localStorage.setItem("dashboard-layout", JSON.stringify(layouts))
-  }, [])
+    localStorage.setItem("dashboard-layout", JSON.stringify(layouts));
+  }, []);
 
   const handleAddKPI = (kpi: any) => {
     if (!dashboardKPIs.find((k) => k.id === kpi.id)) {
-      setDashboardKPIs([...dashboardKPIs, kpi])
+      setDashboardKPIs([...dashboardKPIs, kpi]);
       // Add to layout
       const newLayout = {
         i: kpi.id,
@@ -193,30 +223,30 @@ export default function DashboardsPage() {
         y: 0,
         w: 3,
         h: 2,
-      }
+      };
       setLayouts({
         ...layouts,
         lg: [...layouts.lg, newLayout],
-      })
+      });
     }
-  }
+  };
 
   const handleRemoveKPI = (kpiId: string) => {
-    setDashboardKPIs(dashboardKPIs.filter((k) => k.id !== kpiId))
+    setDashboardKPIs(dashboardKPIs.filter((k) => k.id !== kpiId));
     setLayouts({
       ...layouts,
       lg: layouts.lg.filter((l) => l.i !== kpiId),
-    })
-  }
+    });
+  };
 
   const handleEditKPI = (kpiId: string) => {
-    console.log("Edit KPI:", kpiId)
+    console.log("Edit KPI:", kpiId);
     // Open edit modal or navigate to edit page
-  }
+  };
 
   const handleMaximizeWidget = (kpiId: string) => {
-    setMaximizedWidget(maximizedWidget === kpiId ? null : kpiId)
-  }
+    setMaximizedWidget(maximizedWidget === kpiId ? null : kpiId);
+  };
 
   const saveDashboard = () => {
     const dashboardConfig = {
@@ -224,12 +254,12 @@ export default function DashboardsPage() {
       kpis: dashboardKPIs,
       layouts: layouts,
       createdAt: new Date().toISOString(),
-    }
-    localStorage.setItem("dashboard-config", JSON.stringify(dashboardConfig))
-    console.log("Dashboard saved:", dashboardConfig)
-  }
+    };
+    localStorage.setItem("dashboard-config", JSON.stringify(dashboardConfig));
+    console.log("Dashboard saved:", dashboardConfig);
+  };
 
-  const { user} = useUser()
+  const { user } = useUser();
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -243,7 +273,10 @@ export default function DashboardsPage() {
                 <Layout className="w-8 h-8 text-blue-600" />
                 Dashboard Builder
               </h1>
-              <p className="text-slate-600">Create and customize your KPI dashboards with drag-and-drop widgets.</p>
+              <p className="text-slate-600">
+                Create and customize your KPI dashboards with drag-and-drop
+                widgets.
+              </p>
             </div>
           </div>
           <div className="flex gap-2 mt-4 md:mt-0">
@@ -271,19 +304,27 @@ export default function DashboardsPage() {
                   <Plus className="w-5 h-5 text-blue-600" />
                   Add Widgets
                 </CardTitle>
-                <CardDescription>Drag KPIs to your dashboard or click to add</CardDescription>
+                <CardDescription>
+                  Drag KPIs to your dashboard or click to add
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2 mb-4">
                   <Label htmlFor="dashboardName">Dashboard Name</Label>
-                  <Input id="dashboardName" value={dashboardName} onChange={(e) => setDashboardName(e.target.value)} />
+                  <Input
+                    id="dashboardName"
+                    value={dashboardName}
+                    onChange={(e) => setDashboardName(e.target.value)}
+                  />
                 </div>
 
                 <ScrollArea className="h-[600px]">
                   <div className="space-y-3">
                     {availableKPIs.map((kpi) => {
-                      const IconComponent = kpi.icon
-                      const isAdded = dashboardKPIs.find((k) => k.id === kpi.id)
+                      const IconComponent = kpi.icon;
+                      const isAdded = dashboardKPIs.find(
+                        (k) => k.id === kpi.id
+                      );
 
                       return (
                         <Card
@@ -301,9 +342,13 @@ export default function DashboardsPage() {
                                 <IconComponent className="w-4 h-4" />
                               </div>
                               <div className="flex-1 min-w-0">
-                                <h3 className="font-semibold text-sm truncate">{kpi.name}</h3>
+                                <h3 className="font-semibold text-sm truncate">
+                                  {kpi.name}
+                                </h3>
                                 <div className="flex items-center gap-2">
-                                  <span className="text-xs text-slate-500">{kpi.value}</span>
+                                  <span className="text-xs text-slate-500">
+                                    {kpi.value}
+                                  </span>
                                   <Badge variant="outline" className="text-xs">
                                     {kpi.chartType}
                                   </Badge>
@@ -314,8 +359,8 @@ export default function DashboardsPage() {
                                   variant="ghost"
                                   size="sm"
                                   onClick={(e) => {
-                                    e.stopPropagation()
-                                    handleRemoveKPI(kpi.id)
+                                    e.stopPropagation();
+                                    handleRemoveKPI(kpi.id);
                                   }}
                                 >
                                   <Trash2 className="w-3 h-3" />
@@ -324,7 +369,7 @@ export default function DashboardsPage() {
                             </div>
                           </CardContent>
                         </Card>
-                      )
+                      );
                     })}
                   </div>
                 </ScrollArea>
@@ -345,7 +390,9 @@ export default function DashboardsPage() {
                     </CardDescription>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge variant={isEditing ? "default" : "secondary"}>{isEditing ? "Edit Mode" : "View Mode"}</Badge>
+                    <Badge variant={isEditing ? "default" : "secondary"}>
+                      {isEditing ? "Edit Mode" : "View Mode"}
+                    </Badge>
                     <Button variant="ghost" size="sm">
                       <Grid3X3 className="w-4 h-4" />
                     </Button>
@@ -356,8 +403,12 @@ export default function DashboardsPage() {
                 {dashboardKPIs.length === 0 ? (
                   <div className="text-center py-20">
                     <Layout className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-slate-600 mb-2">No Widgets Added</h3>
-                    <p className="text-slate-500 mb-4">Add KPIs from the sidebar to start building your dashboard</p>
+                    <h3 className="text-lg font-semibold text-slate-600 mb-2">
+                      No Widgets Added
+                    </h3>
+                    <p className="text-slate-500 mb-4">
+                      Add KPIs from the sidebar to start building your dashboard
+                    </p>
                     <Button onClick={() => handleAddKPI(availableKPIs[0])}>
                       <Plus className="w-4 h-4 mr-2" />
                       Add First Widget
@@ -368,7 +419,13 @@ export default function DashboardsPage() {
                     className="layout"
                     layouts={layouts}
                     onLayoutChange={onLayoutChange}
-                    breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                    breakpoints={{
+                      lg: 1200,
+                      md: 996,
+                      sm: 768,
+                      xs: 480,
+                      xxs: 0,
+                    }}
                     cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
                     rowHeight={60}
                     isDraggable={isEditing}
@@ -377,7 +434,10 @@ export default function DashboardsPage() {
                     containerPadding={[0, 0]}
                   >
                     {dashboardKPIs.map((kpi) => (
-                      <div key={kpi.id} className={maximizedWidget === kpi.id ? "z-50" : ""}>
+                      <div
+                        key={kpi.id}
+                        className={maximizedWidget === kpi.id ? "z-50" : ""}
+                      >
                         <KPIWidget
                           kpi={kpi}
                           onEdit={handleEditKPI}
@@ -400,7 +460,8 @@ export default function DashboardsPage() {
             {[
               {
                 name: "E-commerce Overview",
-                description: "Revenue, orders, conversion rates, and customer metrics",
+                description:
+                  "Revenue, orders, conversion rates, and customer metrics",
                 kpis: ["Revenue", "Orders", "AOV", "Conversion Rate"],
                 preview: "🛒",
               },
@@ -417,11 +478,18 @@ export default function DashboardsPage() {
                 preview: "💼",
               },
             ].map((template, index) => (
-              <Card key={index} className="cursor-pointer hover:shadow-lg transition-all">
+              <Card
+                key={index}
+                className="cursor-pointer hover:shadow-lg transition-all"
+              >
                 <CardContent className="p-6">
                   <div className="text-4xl mb-4">{template.preview}</div>
-                  <h3 className="font-semibold text-lg mb-2">{template.name}</h3>
-                  <p className="text-slate-600 text-sm mb-4">{template.description}</p>
+                  <h3 className="font-semibold text-lg mb-2">
+                    {template.name}
+                  </h3>
+                  <p className="text-slate-600 text-sm mb-4">
+                    {template.description}
+                  </p>
                   <div className="flex flex-wrap gap-1 mb-4">
                     {template.kpis.map((kpi) => (
                       <Badge key={kpi} variant="outline" className="text-xs">
@@ -439,5 +507,5 @@ export default function DashboardsPage() {
         </div>
       </main>
     </div>
-  )
+  );
 }

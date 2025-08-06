@@ -11,13 +11,61 @@ export const fetchUserIntegrations = async (): Promise<UserIntegration[]> => {
   return response.data;
 };
 
-export const connectGA = async (): Promise<string> => {
-  const response = await axiosClient.get("/integrations/ga/connect");
+export const connectGA = async (workspaceId: string): Promise<string> => {
+  const response = await axiosClient.get(
+    `/integrations/ga/connect?workspaceId=${workspaceId}`
+  );
   return response.data;
 };
 
-export const connectGAds = async (): Promise<string> => {
-  const response = await axiosClient.get("/integrations/google-ads/connect");
+export const connectGAds = async (workspaceId: string): Promise<string> => {
+  const response = await axiosClient.get(
+    `/integrations/google-ads/connect?workspaceId=${workspaceId}`
+  );
+  return response.data;
+};
+
+export const connectFacebookAds = async (
+  workspaceId: string
+): Promise<string> => {
+  const response = await axiosClient.get(
+    `/integrations/facebook-ads/connect?workspaceId=${workspaceId}`
+  );
+  return response.data;
+};
+
+export const connectStripe = async (workspaceId: string): Promise<string> => {
+  const response = await axiosClient.get(
+    `/integrations/stripe/connect?workspaceId=${workspaceId}`
+  );
+  return response.data;
+};
+
+export const connectQuickbooks = async (
+  workspaceId: string
+): Promise<string> => {
+  const response = await axiosClient.get(
+    `/integrations/quickbooks/connect?workspaceId=${workspaceId}`
+  );
+  return response.data;
+};
+
+export const connectSalesforce = async (
+  workspaceId: string
+): Promise<string> => {
+  const response = await axiosClient.get(
+    `/integrations/salesforce/connect?workspaceId=${workspaceId}`
+  );
+  return response.data;
+};
+
+export const connectShopify = async (
+  shop: string,
+  workspaceId: string
+): Promise<string> => {
+  const response = await axiosClient.get(
+    `/integrations/shopify/connect?shop=${shop}&workspaceId=${workspaceId}`
+  );
   return response.data;
 };
 
@@ -32,6 +80,5 @@ export const updateUserIntegration = async (
     `/integrations/user/${integrationId}`,
     config
   );
-  console.log(response.data);
   return response.data;
 };

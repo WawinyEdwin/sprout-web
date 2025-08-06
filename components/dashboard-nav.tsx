@@ -62,15 +62,13 @@ export function DashboardNav({ user }: DashboardNavProps) {
         <div className="flex items-center justify-between">
           <Link href="/dashboard" className="flex items-center space-x-3">
             <div className="relative">
-              <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
-                <Brain className="w-6 h-6 text-white" />
+              <div className="w-10 h-10   rounded-xl flex items-center justify-center shadow-lg">
+                <Brain className="w-6 h-6" />
               </div>
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full animate-pulse-slow"></div>
+              <div className="absolute -top-1 -right-1 w-4 h-4  from-emerald-400 to-teal-400 rounded-full animate-pulse-slow"></div>
             </div>
             <div>
-              <span className="text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-                Sprout
-              </span>
+              <span className="text-xl font-bold   bg-clip-text ">Sprout</span>
               <div className="text-xs text-emerald-600 font-medium -mt-1">
                 AI-Native KPI Brain
               </div>
@@ -113,8 +111,8 @@ export function DashboardNav({ user }: DashboardNavProps) {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  size="sm"
-                  className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600"
+                  // size="sm"
+                  className="w-8 h-8 rounded-full  hover:to-teal-600"
                 >
                   <User className="w-4 h-4" />
                 </Button>

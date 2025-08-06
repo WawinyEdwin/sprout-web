@@ -37,9 +37,13 @@ export default function SignInPage() {
         description: "Redirecting...",
       });
 
-      localStorage.setItem("sp-access-token", data.session.access_token);
-      localStorage.setItem("user", JSON.stringify(data.user.user_metadata));
-      setUser(data.user);
+      localStorage.setItem("sp-access-token", data.access_token);
+      const spUser = {
+        ...data.user_metadata,
+        workspace: data.workspace,
+      };
+      localStorage.setItem("sp-user", JSON.stringify(spUser));
+      setUser(spUser);
 
       const searchParams = new URLSearchParams(window.location.search);
       const redirect = searchParams.get("redirect") ?? "/dashboard";
@@ -52,7 +56,7 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 flex items-center justify-center p-4">
+    <div className="min-h-screen  from-slate-50 via-white to-slate-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <Link
           href="/"
@@ -65,14 +69,12 @@ export default function SignInPage() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center space-x-3">
             <div className="relative">
-              <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
-                <Brain className="w-6 h-6 text-white" />
+              <div className="w-12 h-12   rounded-xl flex items-center justify-center shadow-lg">
+                <Brain className="w-6 h-6" />
               </div>
             </div>
             <div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-                Sprout
-              </span>
+              <span className="text-2xl font-bold   bg-clip-text ">Sprout</span>
               <div className="text-xs text-emerald-600 font-medium -mt-1">
                 Business Intelligence
               </div>
@@ -129,7 +131,7 @@ export default function SignInPage() {
                 />
               </div>
               <Button
-                className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 font-semibold shadow-lg"
+                className="w-full !bg-emerald-500 font-semibold shadow-lg"
                 type="submit"
               >
                 Sign In
@@ -139,7 +141,7 @@ export default function SignInPage() {
             <div className="text-center">
               <Link
                 href="/auth/forgot-password"
-                className="text-emerald-600 hover:text-emerald-700 font-medium transition-colors"
+                className="text-emerald-600 hover:underline  font-medium transition-colors"
               >
                 Forgot your password?
               </Link>
@@ -151,7 +153,7 @@ export default function SignInPage() {
               <span className="text-slate-600">Don't have an account? </span>
               <Link
                 href="/auth/signup"
-                className="text-emerald-600 hover:text-emerald-700 font-semibold transition-colors"
+                className="text-emerald-600 hover:underline  font-semibold transition-colors"
               >
                 Sign up for free
               </Link>
