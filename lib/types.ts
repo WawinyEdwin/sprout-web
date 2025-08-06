@@ -19,7 +19,7 @@ export type IntegrationType =
   | "salesforce"
   | "stripe"
   // | "zendesk"
-  // | "mailchimp"
+  | "mailchimp"
   // | "hubspot"
   | "quick_books";
 

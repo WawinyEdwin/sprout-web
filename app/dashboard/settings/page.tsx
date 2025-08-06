@@ -115,32 +115,12 @@ export default function SettingsPage() {
               <CardContent className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label>Detailed Responses</Label>
-                    <p className="text-sm text-slate-600">
-                      Get more comprehensive answers from the AI
-                    </p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-                <Separator />
-                <div className="flex items-center justify-between">
-                  <div>
                     <Label>Proactive Insights</Label>
                     <p className="text-sm text-slate-600">
                       Receive automatic insights about your data
                     </p>
                   </div>
                   <Switch defaultChecked />
-                </div>
-                <Separator />
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label>Data Suggestions</Label>
-                    <p className="text-sm text-slate-600">
-                      Get suggestions for new data sources to connect
-                    </p>
-                  </div>
-                  <Switch />
                 </div>
               </CardContent>
             </Card>
@@ -204,7 +184,7 @@ export default function SettingsPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Current Plan</Label>
-                    <p className="text-sm text-slate-600">Professional Plan</p>
+                    <p className="text-sm text-slate-600">{user?.workspace.workspaceId} Plan</p>
                   </div>
                   <Badge className="!bg-emerald-500">Active</Badge>
                 </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useUser } from "@/app/context/UserContext";
 import { DashboardNav } from "@/components/dashboard-nav";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -197,20 +198,22 @@ export default function ChatPage() {
     setInput(suggestion);
   };
 
+  const { user } = useUser();
+
   return (
-    <div className="min-h-screen  from-slate-50 via-white to-slate-50">
-      <DashboardNav />
+    <div className="min-h-screen">
+      <DashboardNav user={user} />
 
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-5xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-4xl font-bold mb-3 flex items-center gap-3">
+            <h1 className="font-bold mb-3 flex items-center gap-3">
               <div className="w-12 h-12  from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center">
-                <Brain className="w-7 h-7 text-white" />
+                <Brain className="w-7 h-7" />
               </div>
               <span className="  bg-clip-text ">AI Business Brain</span>
             </h1>
-            <p className="text-slate-600 text-lg">
+            <p className="text-slate-600">
               Ask questions, get predictions, understand root causes, and
               receive automated recommendations.
             </p>
@@ -220,7 +223,7 @@ export default function ChatPage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10  from-emerald-500 to-teal-500 rounded-full flex items-center justify-center">
-                  <Brain className="w-5 h-5 text-white" />
+                  <Brain className="w-5 h-5" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-emerald-900">
@@ -241,8 +244,8 @@ export default function ChatPage() {
             </div>
           </div>
 
-          <Card className="h-[700px] flex flex-col border-0 shadow-2xl  from-white to-slate-50">
-            <CardHeader className="border-b  from-slate-50 to-white">
+          <Card className=" flex flex-col border-0 shadow-xl ">
+            <CardHeader className="border-b ">
               <CardTitle className="flex items-center gap-3">
                 <Brain className="w-6 h-6 text-emerald-600" />
                 AI Business Brain Chat
@@ -284,16 +287,16 @@ export default function ChatPage() {
                             }`}
                           >
                             {message.type === "user" ? (
-                              <Users className="w-5 h-5 text-white" />
+                              <Users className="w-5 h-5" />
                             ) : (
-                              <Brain className="w-5 h-5 text-white" />
+                              <Brain className="w-5 h-5" />
                             )}
                           </div>
                           <div
-                            className={`rounded-2xl p-6 ${
+                            className={`rounded-lg p-6 ${
                               message.type === "user"
-                                ? " from-blue-600 to-indigo-600 text-white"
-                                : " from-slate-50 to-white border border-slate-200 text-slate-900"
+                                ? ""
+                                : " border border-slate-200 text-slate-900"
                             }`}
                           >
                             <p className="text-sm leading-relaxed">
@@ -338,7 +341,7 @@ export default function ChatPage() {
                                             <Button
                                               key={actionIndex}
                                               size="sm"
-                                              className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                                              className="bg-emerald-600 hover:bg-emerald-700"
                                             >
                                               {action}
                                             </Button>
@@ -394,7 +397,7 @@ export default function ChatPage() {
                         <div className="w-10 h-10  from-emerald-600 to-teal-600 rounded-full flex items-center justify-center">
                           <Brain className="w-5 h-5 text-white" />
                         </div>
-                        <div className=" from-slate-50 to-white border border-slate-200 rounded-2xl p-6">
+                        <div className=" border border-slate-200 rounded-2xl p-6">
                           <div className="flex items-center gap-3">
                             <div className="flex space-x-1">
                               <div className="w-2 h-2 bg-emerald-500 rounded-full animate-bounce"></div>
@@ -418,7 +421,7 @@ export default function ChatPage() {
                 </div>
               </ScrollArea>
 
-              <div className="border-t  from-slate-50 to-white p-6">
+              <div className="border-t  p-6">
                 <div className="flex gap-3 mb-4">
                   <Input
                     value={input}
@@ -440,7 +443,7 @@ export default function ChatPage() {
                 <div className="flex flex-wrap gap-2">
                   <Badge
                     variant="outline"
-                    className="text-xs cursor-pointer hover:bg-slate-100 border-emerald-200 text-emerald-700"
+                    className="text-xs cursor-pointer text-emerald-700"
                     onClick={() =>
                       handleSuggestionClick("Predict next month's revenue")
                     }
@@ -450,7 +453,7 @@ export default function ChatPage() {
                   </Badge>
                   <Badge
                     variant="outline"
-                    className="text-xs cursor-pointer hover:bg-slate-100 border-blue-200 text-blue-700"
+                    className="text-xs cursor-pointer text-blue-700"
                     onClick={() =>
                       handleSuggestionClick("Why are my costs increasing?")
                     }
@@ -460,7 +463,7 @@ export default function ChatPage() {
                   </Badge>
                   <Badge
                     variant="outline"
-                    className="text-xs cursor-pointer hover:bg-slate-100 border-purple-200 text-purple-700"
+                    className="text-xs cursor-pointer text-purple-700"
                     onClick={() =>
                       handleSuggestionClick(
                         "Which campaigns should I optimize?"
@@ -472,7 +475,7 @@ export default function ChatPage() {
                   </Badge>
                   <Badge
                     variant="outline"
-                    className="text-xs cursor-pointer hover:bg-slate-100 border-orange-200 text-orange-700"
+                    className="text-xs cursor-pointer text-orange-700"
                     onClick={() =>
                       handleSuggestionClick("Show me churn risk analysis")
                     }

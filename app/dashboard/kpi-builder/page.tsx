@@ -240,7 +240,7 @@ export default function KPIBuilderPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold mb-2 flex items-center gap-2">
-              <Target className="w-8 h-8 text-blue-600" />
+              <Target className="w-8 h-8 text-emerald-600" />
               KPI Builder & Metric Library
             </h1>
             <p className="text-slate-600">
@@ -253,21 +253,19 @@ export default function KPIBuilderPage() {
               <Eye className="w-4 h-4 mr-2" />
               Preview
             </Button>
-            <Button>
-              <Save className="w-4 h-4 mr-2" />
+            <Button className="!bg-emerald-500">
+              <Save className="w-4 h-4 mr-2 " />
               Save KPI
             </Button>
           </div>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Left Panel - Metric Library & AI */}
           <div className="lg:col-span-1 space-y-6">
-            {/* AI Suggestions */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Brain className="w-5 h-5 text-purple-600" />
+                  <Brain className="w-5 h-5 text-emerald-600" />
                   Ask AI for Metrics
                 </CardTitle>
                 <CardDescription>
@@ -283,13 +281,12 @@ export default function KPIBuilderPage() {
                 />
                 <Button
                   onClick={handleAIPrompt}
-                  className="w-full bg-purple-600 hover:bg-purple-700"
+                  className="w-full bg-emerald-600 hover:bg-emerald-700"
                 >
                   <Sparkles className="w-4 h-4 mr-2" />
                   Get AI Suggestions
                 </Button>
 
-                {/* AI Response Preview */}
                 {aiPrompt && (
                   <div className="mt-4 p-4 bg-purple-50 rounded-lg border border-purple-200">
                     <div className="flex items-center gap-2 mb-2">
@@ -323,17 +320,15 @@ export default function KPIBuilderPage() {
               </CardContent>
             </Card>
 
-            {/* Metric Library */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Database className="w-5 h-5 text-blue-600" />
+                  <Database className="w-5 h-5 text-emerald-600" />
                   Metric Library
                 </CardTitle>
                 <CardDescription>Browse proven KPI templates</CardDescription>
               </CardHeader>
               <CardContent>
-                {/* Search & Filter */}
                 <div className="space-y-4 mb-6">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
@@ -362,9 +357,8 @@ export default function KPIBuilderPage() {
                   </Select>
                 </div>
 
-                {/* Metrics List */}
                 <ScrollArea className="h-[600px]">
-                  <div className="space-y-3">
+                  <div className="space-y-3 m-2">
                     {filteredMetrics.map((metric) => {
                       const IconComponent = metric.icon;
                       return (
@@ -437,7 +431,6 @@ export default function KPIBuilderPage() {
             </Card>
           </div>
 
-          {/* Right Panel - KPI Configuration */}
           <div className="lg:col-span-2">
             <Tabs defaultValue="template" className="space-y-6">
               <TabsList className="grid w-full grid-cols-3">
@@ -446,7 +439,6 @@ export default function KPIBuilderPage() {
                 <TabsTrigger value="preview">Preview & Test</TabsTrigger>
               </TabsList>
 
-              {/* Template Configuration */}
               <TabsContent value="template" className="space-y-6">
                 <Card>
                   <CardHeader>
@@ -460,7 +452,6 @@ export default function KPIBuilderPage() {
                   <CardContent className="space-y-6">
                     {selectedMetric ? (
                       <>
-                        {/* Metric Details */}
                         <div className="p-4 bg-slate-50 rounded-lg">
                           <div className="flex items-start gap-4">
                             <div
@@ -493,7 +484,6 @@ export default function KPIBuilderPage() {
                           </div>
                         </div>
 
-                        {/* Configuration Options */}
                         <div className="grid grid-cols-2 gap-4">
                           <div>
                             <Label htmlFor="kpiName">KPI Name</Label>
@@ -602,7 +592,6 @@ export default function KPIBuilderPage() {
                 </Card>
               </TabsContent>
 
-              {/* Custom KPI Builder */}
               <TabsContent value="custom" className="space-y-6">
                 <Card>
                   <CardHeader>
@@ -778,7 +767,6 @@ export default function KPIBuilderPage() {
                       />
                     </div>
 
-                    {/* Formula Preview */}
                     {customKPI.aggregation && customKPI.field && (
                       <div className="p-4 bg-slate-50 rounded-lg">
                         <Label className="text-sm font-medium text-slate-700">
@@ -797,10 +785,8 @@ export default function KPIBuilderPage() {
                 </Card>
               </TabsContent>
 
-              {/* Preview & Visualization */}
               <TabsContent value="preview" className="space-y-6">
                 <div className="grid lg:grid-cols-2 gap-6">
-                  {/* Chart Type Selection */}
                   <Card>
                     <CardHeader>
                       <CardTitle>Visualization</CardTitle>
@@ -883,7 +869,6 @@ export default function KPIBuilderPage() {
                     </CardContent>
                   </Card>
 
-                  {/* KPI Preview */}
                   <Card>
                     <CardHeader>
                       <CardTitle>KPI Preview</CardTitle>
@@ -918,7 +903,6 @@ export default function KPIBuilderPage() {
                             +12.5% from last month
                           </div>
 
-                          {/* Mock Chart Area */}
                           <div className="h-32  from-blue-50 to-indigo-50 rounded-lg flex items-center justify-center">
                             <div className="text-slate-400 text-sm">
                               {selectedChart === "line" &&
@@ -935,7 +919,6 @@ export default function KPIBuilderPage() {
                   </Card>
                 </div>
 
-                {/* Data Preview */}
                 <Card>
                   <CardHeader>
                     <CardTitle>Data Preview</CardTitle>

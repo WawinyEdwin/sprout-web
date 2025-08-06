@@ -296,12 +296,11 @@ export default function DashboardsPage() {
         </div>
 
         <div className="grid lg:grid-cols-4 gap-8">
-          {/* Sidebar - KPI Library */}
           <div className="lg:col-span-1">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Plus className="w-5 h-5 text-blue-600" />
+                  <Plus className="w-5 h-5 text-emerald-600" />
                   Add Widgets
                 </CardTitle>
                 <CardDescription>

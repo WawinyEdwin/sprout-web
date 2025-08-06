@@ -2,6 +2,7 @@ import {
   connectFacebookAds,
   connectGA,
   connectGAds,
+  connectMailchimp,
   connectQuickbooks,
   connectSalesforce,
   connectShopify,
@@ -20,6 +21,7 @@ export const connectionHandlers: Record<IntegrationType, ConnectionHandler> = {
   stripe: async ({ workspaceId }) => connectStripe(workspaceId),
   quick_books: async ({ workspaceId }) => connectQuickbooks(workspaceId),
   salesforce: async ({ workspaceId }) => connectSalesforce(workspaceId),
+  mailchimp: async ({ workspaceId }) => connectMailchimp(workspaceId),
   shopify: async ({ shop, workspaceId }) => {
     if (!shop) throw new Error("Missing shop domain for Shopify connection");
     return connectShopify(shop, workspaceId);

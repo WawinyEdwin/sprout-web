@@ -69,6 +69,15 @@ export const connectShopify = async (
   return response.data;
 };
 
+export const connectMailchimp = async (
+  workspaceId: string
+): Promise<string> => {
+  const response = await axiosClient.get(
+    `/integrations/mailchimp/connect?workspaceId=${workspaceId}`
+  );
+  return response.data;
+};
+
 export const updateUserIntegration = async (
   integrationId: string,
   config: {

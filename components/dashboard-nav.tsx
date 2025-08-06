@@ -5,7 +5,6 @@ import { logout } from "@/lib/api/auth";
 import { StoredUser } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import {
-  Bell,
   Brain,
   Database,
   LayoutDashboard,
@@ -101,17 +100,11 @@ export function DashboardNav({ user }: DashboardNavProps) {
           </nav>
 
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" className="relative">
-              <Bell className="w-4 h-4" />
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center">
-                <span className="text-xs text-white font-bold">3</span>
-              </div>
-            </Button>
+            <span className="text-sm font-bold">{user?.companyName} Workspace</span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  // size="sm"
                   className="w-8 h-8 rounded-full  hover:to-teal-600"
                 >
                   <User className="w-4 h-4" />
