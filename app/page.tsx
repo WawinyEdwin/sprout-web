@@ -1032,7 +1032,7 @@ export default function HomePage() {
 
       <section className="relative py-24 overflow-hidden">
         <div className="absolute inset-0 "></div>
-        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="absolute inset-0"></div>
         <div className="container mx-auto px-4 text-center relative z-10">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 ">
@@ -1055,14 +1055,14 @@ export default function HomePage() {
                 </Link>
               </Button>
               <Button
-                // variant="outline"
                 size="lg"
+                variant={'outline'}
                 className="text-lg px-8 py-4 border-2 font-semibold"
               >
                 Schedule AI Demo
               </Button>
             </div>
-            <div className="flex items-center justify-center gap-8 text-emerald-100">
+            <div className="flex items-center justify-center gap-8 ">
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5" />
                 <span>No credit card required</span>
