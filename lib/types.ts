@@ -11,6 +11,12 @@ export interface Integration {
   metrics: IMetric[];
 }
 
+export interface Subscription {
+  id: string;
+  plan: string;
+  currentPeriodEnd: string;
+}
+
 export type IntegrationType =
   | "google_analytics"
   | "facebook_ads"
@@ -20,7 +26,7 @@ export type IntegrationType =
   | "stripe"
   // | "zendesk"
   | "mailchimp"
-  // | "hubspot"
+  | "hubspot"
   | "quick_books";
 
 export interface UserIntegration {
@@ -61,6 +67,11 @@ export type StoredUser = {
   workspace: {
     workspaceId: string;
     owner: string;
+    subscription: {
+      id: string;
+      plan: string;
+      currentPeriodEnd: string;
+    };
   };
 };
 

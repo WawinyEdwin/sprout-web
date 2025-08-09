@@ -78,6 +78,13 @@ export const connectMailchimp = async (
   return response.data;
 };
 
+export const connectHubspot = async (workspaceId: string): Promise<string> => {
+  const response = await axiosClient.get(
+    `/integrations/hubspot/connect?workspaceId=${workspaceId}`
+  );
+  return response.data;
+};
+
 export const updateUserIntegration = async (
   integrationId: string,
   config: {
@@ -89,5 +96,16 @@ export const updateUserIntegration = async (
     `/integrations/user/${integrationId}`,
     config
   );
+  return response.data;
+};
+
+export const syncIntegration = async (
+  workspaceIntegrationId: string,
+  workspaceId: string
+) => {
+  const response = await axiosClient.post(`/integrations/sync`, {
+    workspaceId,
+    workspaceIntegrationId,
+  });
   return response.data;
 };

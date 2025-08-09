@@ -18,6 +18,7 @@ import {
   CheckCircle,
   Database,
   Lightbulb,
+  Loader,
   MessageSquare,
   Shield,
   Target,
@@ -32,7 +33,11 @@ export default function HomePage() {
   const { user, loading } = useUser();
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen w-full">
+        <Loader /> Loading...
+      </div>
+    );
   }
 
   return (
@@ -75,9 +80,8 @@ export default function HomePage() {
             {user ? (
               <>
                 <Button
-                  variant="ghost"
                   size="sm"
-                  className="font-medium !bg-emerald-500 text-white"
+                  className="font-medium !bg-emerald-500"
                   asChild
                 >
                   <Link href="/dashboard">Dashboard</Link>
@@ -134,7 +138,7 @@ export default function HomePage() {
             <div className="grid md:grid-cols-3 gap-6 mb-12 max-w-4xl mx-auto">
               <div className="flex items-center gap-3 p-4 bg-white/60 backdrop-blur-sm rounded-xl border border-white/20">
                 <div className="w-10 h-10  from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center">
-                  <MessageSquare className="w-5 h-5 text-white" />
+                  <MessageSquare className="w-5 h-5 text-emerald-500" />
                 </div>
                 <div className="text-left">
                   <div className="font-semibold text-slate-900">
@@ -147,7 +151,7 @@ export default function HomePage() {
               </div>
               <div className="flex items-center gap-3 p-4 bg-white/60 backdrop-blur-sm rounded-xl border border-white/20">
                 <div className="w-10 h-10  from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center">
-                  <AlertTriangle className="w-5 h-5 text-white" />
+                  <AlertTriangle className="w-5 h-5 text-emerald-500" />
                 </div>
                 <div className="text-left">
                   <div className="font-semibold text-slate-900">
@@ -160,7 +164,7 @@ export default function HomePage() {
               </div>
               <div className="flex items-center gap-3 p-4 bg-white/60 backdrop-blur-sm rounded-xl border border-white/20">
                 <div className="w-10 h-10  from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                  <Target className="w-5 h-5 text-white" />
+                  <Target className="w-5 h-5 text-emerald-500" />
                 </div>
                 <div className="text-left">
                   <div className="font-semibold text-slate-900">
@@ -176,12 +180,12 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <Button
                 size="lg"
-                className="text-lg px-8 py-4  bg-emerald-600 shadow-xl font-semibold"
+                className="text-lg px-8 py-4  !bg-emerald-500 shadow-xl font-semibold"
                 asChild
               >
                 <Link href="/auth/signup">
                   Experience the AI Brain
-                  <ArrowRight className="ml-2 w-5 h-5 " />
+                  <ArrowRight className="ml-2 w-5 h-5" />
                 </Link>
               </Button>
               <Button
@@ -273,7 +277,7 @@ export default function HomePage() {
             <Card className="border-0 shadow-2xl  from-white to-blue-50 hover:shadow-3xl transition-all duration-500 hover:-translate-y-2">
               <CardHeader className="pb-6">
                 <div className="w-16 h-16  rounded-2xl flex items-center justify-center mb-2">
-                  <MessageSquare className="w-8 h-8" />
+                  <MessageSquare className="w-8 h-8 text-emerald-500" />
                 </div>
                 <CardTitle className="text-2xl font-bold mb-3">
                   AI Chat with Business Context
@@ -317,7 +321,7 @@ export default function HomePage() {
             <Card className="border-0 shadow-2xl  from-white to-red-50 hover:shadow-3xl transition-all duration-500 hover:-translate-y-2">
               <CardHeader className="pb-6">
                 <div className="w-16 h-16  rounded-2xl flex items-center justify-center mb-2">
-                  <AlertTriangle className="w-8 h-8" />
+                  <AlertTriangle className="w-8 h-8 text-emerald-500" />
                 </div>
                 <CardTitle className="text-2xl font-bold mb-3">
                   Real-Time AI Red Flags
@@ -360,7 +364,7 @@ export default function HomePage() {
             <Card className="border-0 shadow-2xl  from-white to-purple-50 hover:shadow-3xl transition-all duration-500 hover:-translate-y-2">
               <CardHeader className="pb-6">
                 <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-2">
-                  <Target className="w-8 h-8" />
+                  <Target className="w-8 h-8 text-emerald-500" />
                 </div>
                 <CardTitle className="text-2xl font-bold mb-3">
                   AI Decision Support, Not Just Visualization
@@ -403,7 +407,7 @@ export default function HomePage() {
             <Card className="border-0 shadow-2xl  from-white to-emerald-50 hover:shadow-3xl transition-all duration-500 hover:-translate-y-2">
               <CardHeader className="pb-6">
                 <div className="w-16 h-16  rounded-2xl flex items-center justify-center mb-2">
-                  <Building2 className="w-8 h-8 " />
+                  <Building2 className="w-8 h-8 text-emerald-500" />
                 </div>
                 <CardTitle className="text-2xl font-bold mb-3">
                   Designed for SMBs with Advanced AI
@@ -447,7 +451,7 @@ export default function HomePage() {
             <Card className="border-0 shadow-2xl  from-white to-cyan-50 hover:shadow-3xl transition-all duration-500 hover:-translate-y-2">
               <CardHeader className="pb-6">
                 <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-2">
-                  <Database className="w-8 h-8 " />
+                  <Database className="w-8 h-8 text-emerald-500" />
                 </div>
                 <CardTitle className="text-2xl font-bold mb-3">
                   100+ SMB Tool Integrations
@@ -490,7 +494,7 @@ export default function HomePage() {
             <Card className="border-0 shadow-2xl  from-white to-yellow-50 hover:shadow-3xl transition-all duration-500 hover:-translate-y-2">
               <CardHeader className="pb-6">
                 <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-2">
-                  <TrendingUp className="w-8 h-8" />
+                  <TrendingUp className="w-8 h-8 text-emerald-500" />
                 </div>
                 <CardTitle className="text-2xl font-bold mb-3">
                   Personalized Growth Roadmaps
@@ -533,7 +537,7 @@ export default function HomePage() {
             </Card>
           </div>
 
-          <div className=" from-slate-50 to-white rounded-2xl p-8 border border-slate-200">
+          <div className="rounded-2xl p-8 border border-slate-200">
             <h3 className="text-2xl font-bold text-center mb-8">
               Sprout vs Traditional BI Tools
             </h3>
@@ -649,7 +653,7 @@ export default function HomePage() {
               <div className="absolute top-0 left-0 w-full h-1"></div>
               <CardHeader className="pb-4">
                 <div className="w-16 h-16  rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Activity className="w-8 h-8" />
+                  <Activity className="w-8 h-8 text-emerald-500" />
                 </div>
                 <CardTitle className="text-2xl font-bold mb-3">
                   1. Continuous Monitoring
@@ -678,7 +682,7 @@ export default function HomePage() {
               <div className="absolute top-0 left-0 w-full h-1  from-emerald-500 to-teal-500"></div>
               <CardHeader className="pb-4">
                 <div className="w-16 h-16  from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Brain className="w-8 h-8" />
+                  <Brain className="w-8 h-8 text-emerald-500" />
                 </div>
                 <CardTitle className="text-2xl font-bold mb-3">
                   2. Predictive Analysis
@@ -704,7 +708,7 @@ export default function HomePage() {
               <div className="absolute top-0 left-0 w-full h-1  from-purple-500 to-pink-500"></div>
               <CardHeader className="pb-4">
                 <div className="w-16 h-16  from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Target className="w-8 h-8" />
+                  <Target className="w-8 h-8 text-emerald-500" />
                 </div>
                 <CardTitle className="text-2xl font-bold mb-3">
                   3. Automated Actions
@@ -787,7 +791,7 @@ export default function HomePage() {
                 <div
                   className={`w-12 h-12  ${feature.color} rounded-xl flex items-center justify-center mb-4`}
                 >
-                  <feature.icon className="w-6 h-6" />
+                  <feature.icon className="w-6 h-6 text-emerald-500" />
                 </div>
                 <h3 className="font-bold text-slate-900 mb-2 text-lg">
                   {feature.title}
@@ -1056,7 +1060,7 @@ export default function HomePage() {
               </Button>
               <Button
                 size="lg"
-                variant={'outline'}
+                variant={"outline"}
                 className="text-lg px-8 py-4 border-2 font-semibold"
               >
                 Schedule AI Demo
@@ -1178,26 +1182,15 @@ export default function HomePage() {
             </div>
           </div>
           <div className="border-t border-white-800 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="">
-              © 2025 Sprout. All rights reserved.
-            </p>
+            <p className="">© 2025 Sprout. All rights reserved.</p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <Link
-                href="#"
-                className="transition-colors"
-              >
+              <Link href="#" className="transition-colors">
                 Privacy
               </Link>
-              <Link
-                href="#"
-                className="transition-colors"
-              >
+              <Link href="#" className="transition-colors">
                 Terms
               </Link>
-              <Link
-                href="#"
-                className="transition-colors"
-              >
+              <Link href="#" className="transition-colors">
                 Cookies
               </Link>
             </div>

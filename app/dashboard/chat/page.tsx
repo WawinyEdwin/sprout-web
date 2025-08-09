@@ -7,16 +7,17 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { askQuestion } from "@/lib/api/chat";
 import {
   AlertTriangle,
+  ArrowUp,
   BarChart3,
   Brain,
-  Send,
   Target,
   TrendingUp,
   Users,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface Message {
   id: string;
@@ -67,131 +68,38 @@ export default function ChatPage() {
     setInput("");
     setIsLoading(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const aiResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        type: "ai",
-        content: getAIResponse(input),
-        timestamp: new Date(),
-        insights: getAIInsights(input),
-      };
-      setMessages((prev) => [...prev, aiResponse]);
+    if (!user?.workspace?.workspaceId) {
+      console.error("Workspace ID is missing");
       setIsLoading(false);
-    }, 2000);
-  };
-
-  const getAIResponse = (question: string): string => {
-    const lowerQuestion = question.toLowerCase();
-
-    if (
-      lowerQuestion.includes("conversion") &&
-      lowerQuestion.includes("drop")
-    ) {
-      return "I've analyzed your conversion rate drop and identified the root cause. Here's my detailed analysis with actionable recommendations:";
+      return;
     }
 
-    if (
-      lowerQuestion.includes("revenue") &&
-      lowerQuestion.includes("forecast")
-    ) {
-      return "Based on my predictive models analyzing 47 KPIs and external market data, here's your revenue forecast with confidence intervals:";
+    try {
+      const { answer } = await askQuestion(user.workspace.workspaceId, input);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          type: "ai",
+          content: answer,
+          timestamp: new Date(),
+        },
+      ]);
+    } catch (error) {
+      console.error("Error asking question:", error);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          type: "ai",
+          content:
+            "⚠️ Sorry, I couldn’t process your question. Please try again.",
+          timestamp: new Date(),
+        },
+      ]);
+    } finally {
+      setIsLoading(false);
     }
-
-    if (
-      lowerQuestion.includes("campaigns") &&
-      lowerQuestion.includes("pause")
-    ) {
-      return "I've identified underperforming campaigns that are draining your budget. Here are my recommendations based on ROI analysis:";
-    }
-
-    if (lowerQuestion.includes("churn")) {
-      return "I've analyzed customer behavior patterns and identified key churn indicators. Here's my comprehensive churn reduction strategy:";
-    }
-
-    return "I've analyzed your business data across all connected sources and identified key opportunities for optimization. Here are my insights:";
-  };
-
-  const getAIInsights = (question: string): any[] => {
-    const lowerQuestion = question.toLowerCase();
-
-    if (
-      lowerQuestion.includes("conversion") &&
-      lowerQuestion.includes("drop")
-    ) {
-      return [
-        {
-          type: "explanation",
-          title: "Root Cause Analysis",
-          description:
-            "Conversion dropped 0.8% due to mobile checkout issues affecting 23% of users. Payment gateway timeout increased by 3 seconds.",
-          confidence: 96,
-        },
-        {
-          type: "prediction",
-          title: "Impact Forecast",
-          description:
-            "If unresolved, this will cost $12,400 in lost revenue over the next 7 days.",
-          confidence: 89,
-          impact: "High",
-        },
-        {
-          type: "recommendation",
-          title: "Immediate Actions",
-          description:
-            "Fix payment gateway timeout, A/B test simplified checkout, monitor mobile performance.",
-          actions: [
-            "Fix payment timeout",
-            "Deploy simplified checkout",
-            "Set up mobile monitoring",
-          ],
-        },
-      ];
-    }
-
-    if (
-      lowerQuestion.includes("revenue") &&
-      lowerQuestion.includes("forecast")
-    ) {
-      return [
-        {
-          type: "prediction",
-          title: "Revenue Forecast",
-          description:
-            "Next month: $52,400 (+16% vs current). Key drivers: holiday boost (+$8K), new product launch (+$12K).",
-          confidence: 94,
-          impact: "Positive",
-        },
-        {
-          type: "explanation",
-          title: "Forecast Factors",
-          description:
-            "Based on seasonality, current trends, and 3 external market indicators including economic data.",
-          confidence: 91,
-        },
-        {
-          type: "recommendation",
-          title: "Optimization Opportunities",
-          description:
-            "Increase email marketing budget by 40% to capture additional $3,200 in revenue.",
-          actions: [
-            "Increase email budget",
-            "Launch holiday campaign",
-            "Optimize product pages",
-          ],
-        },
-      ];
-    }
-
-    return [
-      {
-        type: "explanation",
-        title: "Business Health Analysis",
-        description:
-          "Your business is performing well with 3 optimization opportunities identified.",
-        confidence: 92,
-      },
-    ];
   };
 
   const handleSuggestionClick = (suggestion: string) => {
@@ -200,12 +108,17 @@ export default function ChatPage() {
 
   const { user } = useUser();
 
+  const bottomRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   return (
     <div className="min-h-screen">
       <DashboardNav user={user} />
 
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-5xl mx-auto">
+        <div className="w-full max-w-7xl mx-auto px-4">
           <div className="mb-8">
             <h1 className="font-bold mb-3 flex items-center gap-3">
               <div className="w-12 h-12  from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center">
@@ -244,7 +157,7 @@ export default function ChatPage() {
             </div>
           </div>
 
-          <Card className=" flex flex-col border-0 shadow-xl ">
+          <Card className=" flex flex-col border-0 shadow-sm ">
             <CardHeader className="border-b ">
               <CardTitle className="flex items-center gap-3">
                 <Brain className="w-6 h-6 text-emerald-600" />
@@ -257,6 +170,7 @@ export default function ChatPage() {
 
             <CardContent className="flex-1 flex flex-col p-0">
               <ScrollArea className="flex-1 p-6">
+                <div ref={bottomRef} />
                 <div className="space-y-8">
                   {messages.map((message) => (
                     <div
@@ -422,21 +336,22 @@ export default function ChatPage() {
               </ScrollArea>
 
               <div className="border-t  p-6">
-                <div className="flex gap-3 mb-4">
+                <div className="relative mt-4 flex items-center space-x-2 mb-3">
                   <Input
+                    type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="Ask your AI Brain anything about your business..."
-                    onKeyPress={(e) => e.key === "Enter" && handleSend()}
+                    onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                    placeholder="Ask anything about your data..."
                     disabled={isLoading}
-                    className="flex-1 h-12 border-2 focus:border-emerald-500 transition-colors"
+                    className="flex-1 h-12 rounded-full px-4 border border-input shadow-sm focus-visible:ring-1 focus-visible:ring-ring transition"
                   />
                   <Button
                     onClick={handleSend}
                     disabled={isLoading || !input.trim()}
-                    className="h-12 px-6  from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-lg"
+                    className="h-12 w-12 p-0 rounded-full !bg-emerald-600 shadow-lg hover:bg-emerald-700 transition"
                   >
-                    <Send className="w-4 h-4" />
+                    <ArrowUp className="w-5 h-5" />
                   </Button>
                 </div>
 

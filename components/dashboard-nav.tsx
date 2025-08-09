@@ -5,29 +5,43 @@ import { logout } from "@/lib/api/auth";
 import { StoredUser } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import {
+  Bell,
   Brain,
+  CreditCard,
   Database,
   LayoutDashboard,
   LogOut,
+  Menu,
   Settings,
-  Target,
   User,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
+import { Badge } from "./ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "./ui/sheet";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "AI Brain", href: "/dashboard/chat", icon: Brain },
-  { name: "KPI Builder", href: "/dashboard/kpi-builder", icon: Target },
+  // { name: "Dashboards", href: "/dashboard/dashboards", icon: Layout },
+  // { name: "KPI Builder", href: "/dashboard/kpi-builder", icon: Target },
   { name: "Data Sources", href: "/dashboard/sources", icon: Database },
-  { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
 export function useLogout() {
@@ -53,7 +67,9 @@ interface DashboardNavProps {
   user: StoredUser | null;
 }
 export function DashboardNav({ user }: DashboardNavProps) {
+  const router = useRouter();
   const pathname = usePathname();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-200/60 bg-white/80 backdrop-blur-xl">
@@ -99,22 +115,100 @@ export function DashboardNav({ user }: DashboardNavProps) {
             })}
           </nav>
 
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="sm" className="lg:hidden">
+                <Menu className="w-5 h-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-80">
+              <SheetHeader>
+                <SheetTitle className="flex items-center gap-2">
+                  <div className="w-6 h-6  rounded-lg flex items-center justify-center">
+                    <Brain className="w-4 h-4" />
+                  </div>
+                  Sprout AI
+                </SheetTitle>
+                <SheetDescription>Navigate your dashboard</SheetDescription>
+              </SheetHeader>
+              <div className="mt-8 space-y-2">
+                {navigation.map((item) => {
+                  const isActive = pathname === item.href;
+                  const IconComponent = item.icon;
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Button
+                        variant={isActive ? "secondary" : "ghost"}
+                        className={`w-full justify-start gap-2 ${
+                          isActive
+                            ? "bg-blue-50 text-blue-700"
+                            : "text-slate-600"
+                        }`}
+                      >
+                        <IconComponent className="w-4 h-4" />
+                        {item.name}
+                        {item.name === "KPI Builder" && (
+                          <Badge
+                            variant="secondary"
+                            className="ml-auto bg-green-100 text-green-700 text-xs"
+                          >
+                            New
+                          </Badge>
+                        )}
+                      </Button>
+                    </Link>
+                  );
+                })}
+              </div>
+            </SheetContent>
+          </Sheet>
+
           <div className="flex items-center gap-2">
-            <span className="text-sm font-bold">{user?.companyName} Workspace</span>
+            <Button variant="ghost" size="sm" className="relative">
+              <Bell className="w-4 h-4" />
+              <Badge className="absolute -top-1 -right-1 w-2 h-2 p-0 bg-red-500" />
+            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="w-8 h-8 rounded-full  hover:to-teal-600"
-                >
-                  <User className="w-4 h-4" />
+                <Button variant="ghost" className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center">
+                    <User className="w-4 h-4" />
+                  </div>
+                  <span className="hidden md:block font-medium">
+                    {user?.companyName} Workspace
+                  </span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                  <Button variant="ghost" size="sm" onClick={useLogout()}>
-                    <LogOut /> Logout
-                  </Button>
+                  <User className="w-4 h-4 mr-2" />
+                  Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => router.push("/dashboard/billing")}
+                >
+                  <CreditCard className="w-4 h-4 mr-2" />
+                  Billing
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => router.push("/dashboard/settings")}
+                >
+                  <Settings className="w-4 h-4 mr-2" />
+                  Settings
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="text-red-600"
+                  onClick={useLogout()}
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sign out
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

@@ -22,15 +22,18 @@ import {
 } from "@/components/ui/select";
 import { signupUser } from "@/lib/api/auth";
 import { AuthPayload, INDUSTRY_OPTIONS } from "@/lib/types";
-import { Brain, Zap } from "lucide-react";
+import { Eye, EyeOff, Zap } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import BrandHeader from "../_components/BrandHeader";
 
 export default function SignUpPage() {
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
-  const { handleSubmit, control} = useForm<AuthPayload>({
+  const { handleSubmit, control, formState } = useForm<AuthPayload>({
     defaultValues: {
       email: "",
       password: "",
@@ -43,6 +46,7 @@ export default function SignUpPage() {
         completedOnboarding: false,
       },
     },
+    mode: "onChange",
   });
 
   const onSubmit = async (formData: AuthPayload) => {
@@ -60,23 +64,9 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen  from-slate-50 to-slate-100 flex items-center justify-center p-4">
+    <div className="min-h-screen  flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center space-x-3">
-            <div className="relative">
-              <div className="w-12 h-12   rounded-xl flex items-center justify-center shadow-lg">
-                <Brain className="w-6 h-6" />
-              </div>
-            </div>
-            <div>
-              <span className="text-2xl font-bold   bg-clip-text ">Sprout</span>
-              <div className="text-xs text-emerald-600 font-medium -mt-1">
-                Business Intelligence
-              </div>
-            </div>
-          </Link>
-        </div>
+        <BrandHeader />
 
         <Card>
           <CardHeader className="text-center">
@@ -87,7 +77,7 @@ export default function SignUpPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className=" from-emerald-50 to-teal-50 rounded-lg p-4 border border-emerald-200">
+            <div className="  rounded-lg p-4 border border-emerald-200">
               <div className="flex items-center gap-2 mb-2">
                 <Zap className="w-5 h-5 text-emerald-600" />
                 <span className="font-semibold text-emerald-900">
@@ -109,6 +99,7 @@ export default function SignUpPage() {
                   <Controller
                     name="userMetadata.firstName"
                     control={control}
+                    rules={{ required: true }}
                     render={({ field }) => (
                       <Input id="firstName" placeholder="John" {...field} />
                     )}
@@ -119,6 +110,7 @@ export default function SignUpPage() {
                   <Controller
                     name="userMetadata.lastName"
                     control={control}
+                    rules={{ required: true }}
                     render={({ field }) => (
                       <Input id="lastName" placeholder="Doe" {...field} />
                     )}
@@ -130,6 +122,7 @@ export default function SignUpPage() {
                 <Controller
                   name="email"
                   control={control}
+                  rules={{ required: true }}
                   render={({ field }) => (
                     <Input
                       id="email"
@@ -144,6 +137,7 @@ export default function SignUpPage() {
                 <Controller
                   name="userMetadata.companyName"
                   control={control}
+                  rules={{ required: true }}
                   render={({ field }) => (
                     <Input
                       id="company"
@@ -158,6 +152,7 @@ export default function SignUpPage() {
                 <Controller
                   name="userMetadata.companyIndustry"
                   control={control}
+                  rules={{ required: true }}
                   render={({ field }) => (
                     <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger className="w-full" id="industry">
@@ -187,13 +182,28 @@ export default function SignUpPage() {
                 <Controller
                   name="password"
                   control={control}
+                  rules={{ required: true }}
                   render={({ field }) => (
-                    <Input
-                      id="password"
-                      type="password"
-                      placeholder="Create a password"
-                      {...field}
-                    />
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Create a password"
+                        {...field}
+                      />
+                      <button
+                        type="button"
+                        className="absolute right-2 top-2.5 text-gray-500"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        aria-label="Toggle password visibility"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="w-5 h-5" />
+                        ) : (
+                          <Eye className="w-5 h-5" />
+                        )}
+                      </button>
+                    </div>
                   )}
                 />
               </div>
@@ -202,8 +212,13 @@ export default function SignUpPage() {
                 <Controller
                   name="userMetadata.companyName"
                   control={control}
+                  rules={{ required: true }}
                   render={({ field }) => (
-                    <Checkbox id="agreeToTerms" {...field}  defaultValue={field.value} />
+                    <Checkbox
+                      id="agreeToTerms"
+                      {...field}
+                      defaultValue={field.value}
+                    />
                   )}
                 />
                 <Label htmlFor="agreeToTerms" className="text-sm">
@@ -224,7 +239,11 @@ export default function SignUpPage() {
                 </Label>
               </div>
 
-              <Button className="w-full  !bg-emerald-500" type="submit">
+              <Button
+                className="w-full  !bg-emerald-500"
+                type="submit"
+                disabled={!formState.isValid || formState.isSubmitting}
+              >
                 Create Account
               </Button>
             </form>

@@ -14,20 +14,24 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { login } from "@/lib/api/auth";
 import { AuthPayload } from "@/lib/types";
-import { ArrowLeft, Brain } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import BrandHeader from "../_components/BrandHeader";
 
 export default function SignInPage() {
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const { setUser } = useUser();
-  const { handleSubmit, control } = useForm<AuthPayload>({
+  const { handleSubmit, control, formState } = useForm<AuthPayload>({
     defaultValues: {
       email: "",
       password: "",
     },
+    mode: "onChange",
   });
 
   const onSubmit = async (formData: AuthPayload) => {
@@ -41,6 +45,7 @@ export default function SignInPage() {
       const spUser = {
         ...data.user_metadata,
         workspace: data.workspace,
+        subscription: data.subscription,
       };
       localStorage.setItem("sp-user", JSON.stringify(spUser));
       setUser(spUser);
@@ -48,15 +53,15 @@ export default function SignInPage() {
       const searchParams = new URLSearchParams(window.location.search);
       const redirect = searchParams.get("redirect") ?? "/dashboard";
       router.push(redirect);
-    } catch (error) {
+    } catch (error: any) {
       toast.error("Failed to sign in.", {
-        description: "Check your credentials again.",
+        description: error?.response?.data?.message || error.message,
       });
     }
   };
 
   return (
-    <div className="min-h-screen  from-slate-50 via-white to-slate-50 flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <Link
           href="/"
@@ -66,23 +71,9 @@ export default function SignInPage() {
           Back to home
         </Link>
 
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center space-x-3">
-            <div className="relative">
-              <div className="w-12 h-12   rounded-xl flex items-center justify-center shadow-lg">
-                <Brain className="w-6 h-6" />
-              </div>
-            </div>
-            <div>
-              <span className="text-2xl font-bold   bg-clip-text ">Sprout</span>
-              <div className="text-xs text-emerald-600 font-medium -mt-1">
-                Business Intelligence
-              </div>
-            </div>
-          </Link>
-        </div>
+        <BrandHeader />
 
-        <Card className="border-0 shadow-2xl bg-white/80 backdrop-blur-xl">
+        <Card className="border-0 shadow-sm bg-white/80 backdrop-blur-xl">
           <CardHeader className="text-center pb-8">
             <CardTitle className="text-2xl font-bold text-slate-900">
               Welcome back
@@ -100,6 +91,7 @@ export default function SignInPage() {
                 <Controller
                   name="email"
                   control={control}
+                  rules={{ required: true }}
                   render={({ field }) => (
                     <Input
                       id="email"
@@ -120,19 +112,35 @@ export default function SignInPage() {
                 <Controller
                   name="password"
                   control={control}
+                  rules={{ required: true }}
                   render={({ field }) => (
-                    <Input
-                      id="password"
-                      type="password"
-                      placeholder="Enter your password"
-                      {...field}
-                    />
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Enter your password"
+                        {...field}
+                      />
+                      <button
+                        type="button"
+                        className="absolute right-2 top-2.5 text-gray-500"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        aria-label="Toggle password visibility"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="w-5 h-5" />
+                        ) : (
+                          <Eye className="w-5 h-5" />
+                        )}
+                      </button>
+                    </div>
                   )}
                 />
               </div>
               <Button
                 className="w-full !bg-emerald-500 font-semibold shadow-lg"
                 type="submit"
+                disabled={!formState.isValid || formState.isSubmitting}
               >
                 Sign In
               </Button>

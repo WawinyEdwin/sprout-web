@@ -20,3 +20,19 @@ export const logout = async () => {
   const response = await axiosClient.get("/auth/logout");
   return response.data;
 };
+
+export const resetPassword = async (password: string, email: string) => {
+  const response = await axiosClient.post("/auth/reset-password", {
+    password,
+    email,
+  });
+  return response.data;
+};
+
+export const forgotPassword = async (email: string, redirectTo: string) => {
+  const response = await axiosClient.post("/auth/forgot-password", {
+    email,
+    redirectTo,
+  });
+  return response.data;
+};

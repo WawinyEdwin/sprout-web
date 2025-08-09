@@ -19,6 +19,7 @@ import {
   Edit,
   Eye,
   Grid3X3,
+  GripVertical,
   Layout,
   Maximize2,
   Minimize2,
@@ -31,16 +32,7 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
-import { useCallback, useState } from "react";
-import {
-  Responsive,
-  WidthProvider,
-  type Layout as GridLayout,
-} from "react-grid-layout";
-import "react-grid-layout/css/styles.css";
-import "react-resizable/css/styles.css";
-
-const ResponsiveGridLayout = WidthProvider(Responsive);
+import { useState } from "react";
 
 // Mock KPI data
 const availableKPIs = [
@@ -107,7 +99,14 @@ const availableKPIs = [
 ];
 
 // Widget component
-const KPIWidget = ({ kpi, onEdit, onDelete, onMaximize, isMaximized }: any) => {
+const KPIWidget = ({
+  kpi,
+  onEdit,
+  onDelete,
+  onMaximize,
+  isMaximized,
+  isEditing,
+}: any) => {
   const IconComponent = kpi.icon;
   const colorClasses = {
     emerald: "bg-emerald-100 text-emerald-600",
@@ -119,7 +118,13 @@ const KPIWidget = ({ kpi, onEdit, onDelete, onMaximize, isMaximized }: any) => {
   };
 
   return (
-    <Card className="h-full border-0 shadow-lg  from-white to-slate-50 hover:shadow-xl transition-all duration-300">
+    <Card className="h-full border-0 shadow-lg bg-gradient-to-br from-white to-slate-50 hover:shadow-xl transition-all duration-300 relative group">
+      {isEditing && (
+        <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity cursor-move">
+          <GripVertical className="w-4 h-4 text-slate-400" />
+        </div>
+      )}
+
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -176,7 +181,7 @@ const KPIWidget = ({ kpi, onEdit, onDelete, onMaximize, isMaximized }: any) => {
           </div>
 
           {/* Mock Chart Area */}
-          <div className="h-16  from-slate-50 to-slate-100 rounded-lg flex items-center justify-center">
+          <div className="h-16 bg-gradient-to-r from-slate-50 to-slate-100 rounded-lg flex items-center justify-center">
             <div className="text-slate-400 text-xs">
               {kpi.chartType === "line" && "📈"}
               {kpi.chartType === "bar" && "📊"}
@@ -191,52 +196,19 @@ const KPIWidget = ({ kpi, onEdit, onDelete, onMaximize, isMaximized }: any) => {
 };
 
 export default function DashboardsPage() {
-  const [layouts, setLayouts] = useState({
-    lg: [
-      { i: "revenue", x: 0, y: 0, w: 3, h: 2 },
-      { i: "users", x: 3, y: 0, w: 3, h: 2 },
-      { i: "conversion", x: 6, y: 0, w: 3, h: 2 },
-      { i: "orders", x: 9, y: 0, w: 3, h: 2 },
-      { i: "aov", x: 0, y: 2, w: 6, h: 3 },
-      { i: "cac", x: 6, y: 2, w: 6, h: 3 },
-    ],
-  });
-
-  const [dashboardKPIs, setDashboardKPIs] = useState(availableKPIs);
+  const [dashboardKPIs, setDashboardKPIs] = useState(availableKPIs.slice(0, 4));
   const [isEditing, setIsEditing] = useState(false);
   const [maximizedWidget, setMaximizedWidget] = useState<string | null>(null);
   const [dashboardName, setDashboardName] = useState("Business Overview");
 
-  const onLayoutChange = useCallback((layout: GridLayout[], layouts: any) => {
-    setLayouts(layouts);
-    // In real app, save to backend/localStorage
-    localStorage.setItem("dashboard-layout", JSON.stringify(layouts));
-  }, []);
-
   const handleAddKPI = (kpi: any) => {
     if (!dashboardKPIs.find((k) => k.id === kpi.id)) {
       setDashboardKPIs([...dashboardKPIs, kpi]);
-      // Add to layout
-      const newLayout = {
-        i: kpi.id,
-        x: 0,
-        y: 0,
-        w: 3,
-        h: 2,
-      };
-      setLayouts({
-        ...layouts,
-        lg: [...layouts.lg, newLayout],
-      });
     }
   };
 
   const handleRemoveKPI = (kpiId: string) => {
     setDashboardKPIs(dashboardKPIs.filter((k) => k.id !== kpiId));
-    setLayouts({
-      ...layouts,
-      lg: layouts.lg.filter((l) => l.i !== kpiId),
-    });
   };
 
   const handleEditKPI = (kpiId: string) => {
@@ -252,7 +224,6 @@ export default function DashboardsPage() {
     const dashboardConfig = {
       name: dashboardName,
       kpis: dashboardKPIs,
-      layouts: layouts,
       createdAt: new Date().toISOString(),
     };
     localStorage.setItem("dashboard-config", JSON.stringify(dashboardConfig));
@@ -266,6 +237,7 @@ export default function DashboardsPage() {
       <DashboardNav user={user} />
 
       <main className="container mx-auto px-4 py-8">
+        {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
           <div className="flex items-center gap-4">
             <div>
@@ -300,11 +272,11 @@ export default function DashboardsPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Plus className="w-5 h-5 text-emerald-600" />
+                  <Plus className="w-5 h-5 text-blue-600" />
                   Add Widgets
                 </CardTitle>
                 <CardDescription>
-                  Drag KPIs to your dashboard or click to add
+                  Click KPIs to add them to your dashboard
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -414,28 +386,15 @@ export default function DashboardsPage() {
                     </Button>
                   </div>
                 ) : (
-                  <ResponsiveGridLayout
-                    className="layout"
-                    layouts={layouts}
-                    onLayoutChange={onLayoutChange}
-                    breakpoints={{
-                      lg: 1200,
-                      md: 996,
-                      sm: 768,
-                      xs: 480,
-                      xxs: 0,
-                    }}
-                    cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
-                    rowHeight={60}
-                    isDraggable={isEditing}
-                    isResizable={isEditing}
-                    margin={[16, 16]}
-                    containerPadding={[0, 0]}
-                  >
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     {dashboardKPIs.map((kpi) => (
                       <div
                         key={kpi.id}
-                        className={maximizedWidget === kpi.id ? "z-50" : ""}
+                        className={`${
+                          maximizedWidget === kpi.id
+                            ? "md:col-span-2 xl:col-span-3"
+                            : ""
+                        }`}
                       >
                         <KPIWidget
                           kpi={kpi}
@@ -443,10 +402,11 @@ export default function DashboardsPage() {
                           onDelete={handleRemoveKPI}
                           onMaximize={handleMaximizeWidget}
                           isMaximized={maximizedWidget === kpi.id}
+                          isEditing={isEditing}
                         />
                       </div>
                     ))}
-                  </ResponsiveGridLayout>
+                  </div>
                 )}
               </CardContent>
             </Card>

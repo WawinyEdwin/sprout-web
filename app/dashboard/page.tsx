@@ -511,7 +511,7 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
 
-            <Card className=" from-white to-slate-50">
+            <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Brain className="w-5 h-5 text-emerald-600" />
@@ -524,7 +524,7 @@ export default function DashboardPage() {
                   className="w-full justify-start border-2 font-medium bg-transparent"
                   asChild
                 >
-                  <Link href="/dashbaord/chat">
+                  <Link href="/dashboard/chat">
                     <MessageSquare className="w-4 h-4 mr-2" />
                     Ask AI Brain
                   </Link>

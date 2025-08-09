@@ -29,6 +29,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   fetchIntegrations,
   fetchUserIntegrations,
+  syncIntegration,
   updateUserIntegration,
 } from "@/lib/api/integrations";
 import { DataSyncFrequencyEnum, HistoricalDataEnum } from "@/lib/enums";
@@ -42,8 +43,10 @@ import {
   Database,
   ExternalLink,
   Key,
+  Loader,
   Mail,
   Plus,
+  RefreshCcw,
   Search,
   Settings,
   Shield,
@@ -63,6 +66,8 @@ interface ConnectionStep {
 }
 
 export default function SourcesClient() {
+  const { user } = useUser();
+  const [syncingId, setSyncingId] = useState<string | null>(null);
   const syncFrequencyOptions = enumToSelectOptions(DataSyncFrequencyEnum);
   const historicalDataOptions = enumToSelectOptions(HistoricalDataEnum);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -606,7 +611,18 @@ export default function SourcesClient() {
     }
   };
 
-  const { user } = useUser();
+  const handleSync = async (sourceId: string) => {
+    try {
+      setSyncingId(sourceId);
+      await syncIntegration(user?.workspace.workspaceId!, sourceId);
+      toast.success("Sync started successfully!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Sync failed.");
+    } finally {
+      setSyncingId(null);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -915,6 +931,23 @@ export default function SourcesClient() {
                             aria-readonly
                             defaultChecked={source.connected}
                           />
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleSync(source.id)}
+                            disabled={
+                              !source.connected || syncingId === source.id
+                            }
+                            className="flex items-center gap-1"
+                          >
+                            {syncingId === source.id ? (
+                              <Loader className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <RefreshCcw className="w-4 h-4" />
+                            )}
+                            <span className="text-sm">Sync</span>
+                          </Button>
+
                           <Button variant="ghost" size="sm">
                             <Settings className="w-4 h-4" />
                           </Button>
@@ -947,17 +980,6 @@ export default function SourcesClient() {
                               <p className="text-sm text-slate-600">
                                 {source.description}
                               </p>
-                              {/* <div className="flex items-center gap-2 mt-2">
-                              <Badge variant="outline" className="text-xs">
-                                {source.setupTime}
-                              </Badge>
-                              <div className="flex items-center gap-1">
-                                <TrendingUp className="w-3 h-3 text-green-600" />
-                                <span className="text-xs text-green-600">
-                                  {source.popularity}%
-                                </span>
-                              </div>
-                            </div> */}
                             </div>
                           </div>
                           <Button
