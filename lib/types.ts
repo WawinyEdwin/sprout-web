@@ -30,7 +30,7 @@ export type IntegrationType =
   | "hubspot"
   | "quick_books";
 
-export interface UserIntegration {
+export interface WorkspaceIntegration {
   id: string;
   integration: Integration;
   lastSynced: string;

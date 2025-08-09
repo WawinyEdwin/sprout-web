@@ -28,13 +28,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import {
   fetchIntegrations,
-  fetchUserIntegrations,
+  fetchWorkspaceIntegrations,
   syncIntegration,
   updateUserIntegration,
 } from "@/lib/api/integrations";
 import { DataSyncFrequencyEnum, HistoricalDataEnum } from "@/lib/enums";
 import { QUERY_KEYS } from "@/lib/query-keys";
-import { IMetric, Integration, UserIntegration } from "@/lib/types";
+import { IMetric, Integration, WorkspaceIntegration } from "@/lib/types";
 import { enumToSelectOptions } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -67,6 +67,7 @@ interface ConnectionStep {
 
 export default function SourcesClient() {
   const { user } = useUser();
+  const workspaceId = user?.workspace.workspaceId!;
   const [syncingId, setSyncingId] = useState<string | null>(null);
   const syncFrequencyOptions = enumToSelectOptions(DataSyncFrequencyEnum);
   const historicalDataOptions = enumToSelectOptions(HistoricalDataEnum);
@@ -90,9 +91,10 @@ export default function SourcesClient() {
     historicalData: "all_available_data",
   });
 
-  const { data } = useQuery<UserIntegration[]>({
-    queryKey: QUERY_KEYS.integrations.connected,
-    queryFn: fetchUserIntegrations,
+  const { data } = useQuery<WorkspaceIntegration[]>({
+    queryKey: [QUERY_KEYS.integrations.connected, workspaceId],
+    queryFn: () => fetchWorkspaceIntegrations(workspaceId),
+    enabled: !!workspaceId, // don't run until we have an ID
   });
 
   const { data: availableSourcesData, error: error2 } = useQuery<Integration[]>(
@@ -108,7 +110,7 @@ export default function SourcesClient() {
     });
   }
 
-  const connectedSources: UserIntegration[] = data ?? [];
+  const connectedSources: WorkspaceIntegration[] = data ?? [];
   const availableSources: Integration[] = availableSourcesData ?? [];
   const connectedIds = new Set(connectedSources.map((c) => c.integration.id));
   const filteredAvailableSources = availableSources.filter(

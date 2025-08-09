@@ -1,13 +1,17 @@
 import axiosClient from "../axiosClient";
-import { Integration, UserIntegration } from "../types";
+import { Integration, WorkspaceIntegration } from "../types";
 
 export const fetchIntegrations = async (): Promise<Integration[]> => {
   const response = await axiosClient.get("/integrations");
   return response.data;
 };
 
-export const fetchUserIntegrations = async (): Promise<UserIntegration[]> => {
-  const response = await axiosClient.get("/integrations/user");
+export const fetchWorkspaceIntegrations = async (
+  workspaceId: string
+): Promise<WorkspaceIntegration[]> => {
+  const response = await axiosClient.get(
+    `/integrations/workspaces?workspaceId=${workspaceId}`
+  );
   return response.data;
 };
 
@@ -99,7 +103,7 @@ export const updateUserIntegration = async (
   }
 ): Promise<Integration[]> => {
   const response = await axiosClient.patch(
-    `/integrations/user/${integrationId}`,
+    `/integrations/workspaces/${integrationId}`,
     config
   );
   return response.data;
