@@ -10,34 +10,41 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { fetchWorkspaceIntegrations } from "@/lib/api/integrations";
+import { QUERY_KEYS } from "@/lib/query-keys";
+import { WorkspaceIntegration } from "@/lib/types";
+import { useQuery } from "@tanstack/react-query";
 import {
   Activity,
   AlertTriangle,
   ArrowRight,
   BarChart3,
   Brain,
-  CheckCircle,
-  Clock,
   Database,
   DollarSign,
   MessageSquare,
   Plus,
-  Target,
   TrendingUp,
   Users,
-  Zap,
 } from "lucide-react";
 import Link from "next/link";
 import { useUser } from "../context/UserContext";
 
 export default function DashboardPage() {
   const { user } = useUser();
-  return (
-    <div className="min-h-screen  from-slate-50 via-white to-slate-50">
-      <DashboardNav user={user} />
+  const workspaceId = user?.workspace.workspaceId!;
 
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-8 p-4  from-emerald-50 to-teal-50 rounded-xl border border-emerald-200">
+  const { data: sources } = useQuery<WorkspaceIntegration[]>({
+    queryKey: [QUERY_KEYS.integrations.connected, workspaceId],
+    queryFn: () => fetchWorkspaceIntegrations(workspaceId),
+    enabled: !!workspaceId, // don't run until we have an ID
+  });
+
+  return (
+    <div className="min-h-screen">
+      <DashboardNav user={user} />
+      <main className="container mx-auto px-4 py-2">
+        <div className="mb-8 p-4 rounded-xl border border-emerald-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full flex items-center justify-center">
@@ -121,20 +128,6 @@ export default function DashboardPage() {
                   Facebook ad performance in Canada. Root cause: 30% decrease in
                   ad spend correlating with 40% drop in returning users.
                 </p>
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    className="bg-red-600 hover:bg-red-700 text-white"
-                  >
-                    Auto-pause underperforming ads
-                  </Button>
-                  <Button size="sm" variant="outline">
-                    Reallocate to Google Ads
-                  </Button>
-                  <Button size="sm" variant="ghost">
-                    View Details
-                  </Button>
-                </div>
               </div>
 
               <div className="p-4  from-yellow-50 to-orange-50  border-yellow-200">
@@ -153,78 +146,105 @@ export default function DashboardPage() {
                   Email campaign performance up 45% this week. AI recommends
                   increasing budget by $2,000 for potential 23% revenue boost.
                 </p>
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    className="bg-yellow-600 hover:bg-yellow-700 text-white"
-                  >
-                    Increase Email Budget
-                  </Button>
-                  <Button size="sm" variant="outline">
-                    See Forecast
-                  </Button>
-                </div>
               </div>
             </CardContent>
           </Card>
-
-          <Card className="border-0   ">
+          <Card className=" ">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Zap className="w-5 h-5 text-blue-600" />
-                AI Actions Today
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between p-3  from-green-50 to-emerald-50 rounded-lg border border-green-200">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span className="text-sm font-medium text-slate-900">
-                    Paused 3 underperforming ads
-                  </span>
-                </div>
-                <span className="text-xs text-green-600 font-semibold">
-                  Saved $1,200
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between p-3  from-blue-50 to-cyan-50 rounded-lg border border-blue-200">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-blue-600" />
-                  <span className="text-sm font-medium text-slate-900">
-                    Optimized email send times
-                  </span>
-                </div>
-                <span className="text-xs text-blue-600 font-semibold">
-                  +12% open rate
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between p-3  from-purple-50 to-pink-50 rounded-lg border border-purple-200">
-                <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-purple-600" />
-                  <span className="text-sm font-medium text-slate-900">
-                    Budget reallocation pending
-                  </span>
-                </div>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="w-5 h-5 text-emerald-600" />
+                  AI Data Sources
+                </CardTitle>
                 <Button
                   size="sm"
                   variant="outline"
-                  className="text-xs bg-transparent"
+                  className="border-2 font-medium bg-transparent"
+                  asChild
                 >
-                  Approve
+                  <Link href="/dashboard/sources">
+                    <Plus className="w-4 h-4 mr-1" />
+                    Add
+                  </Link>
                 </Button>
               </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {sources?.length ? (
+                  sources.map((s) => (
+                    <div
+                      key={s.id}
+                      className="flex items-center justify-between p-4 rounded-xl border border-green-200"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div>
+                          <p className="font-semibold text-slate-900">
+                            {s.integration.name}
+                          </p>
+                          <p className="text-xs text-slate-500">
+                            AI monitoring: Active
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                        <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
+                          Live
+                        </Badge>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-12 border border-dashed border-slate-300 rounded-xl bg-slate-50">
+                    <div className="mb-4 p-3 rounded-full bg-emerald-100 text-emerald-600">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 8v4l3 3"
+                        />
+                      </svg>
+                    </div>
+                    <p className="text-slate-800 font-medium mb-1">
+                      No integrations yet
+                    </p>
+                    <p className="text-slate-500 text-sm mb-4 text-center max-w-xs">
+                      Connect a data source to start AI monitoring and see live
+                      updates here.
+                    </p>
+                    <Button
+                      size="sm"
+                      className="font-medium  !bg-emerald-500"
+                      asChild
+                    >
+                      <Link href="/dashboard/sources">
+                        <Plus className="w-4 h-4 mr-1" />
+                        Connect source
+                      </Link>
+                    </Button>
+                  </div>
+                )}
+              </div>
 
-              <div className="pt-4 border-t border-slate-200">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-emerald-600">
-                    $3,400
-                  </div>
-                  <div className="text-sm text-slate-600">
-                    Total saved this week
-                  </div>
+              <div className="mt-6 pt-6 border-t border-slate-200">
+                <div className="flex justify-between text-sm mb-3">
+                  <span className="font-medium text-slate-700">
+                    AI Coverage
+                  </span>
+                  <span className="font-semibold text-emerald-600">94%</span>
                 </div>
+                <Progress value={94} className="h-3 bg-slate-200" />
+                <p className="text-xs text-slate-500 mt-2">
+                  AI monitoring all critical KPIs
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -326,7 +346,7 @@ export default function DashboardPage() {
           </Card>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-1 gap-8">
           <div className="lg:col-span-2">
             <Card className=" ">
               <CardHeader>
@@ -372,7 +392,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
-                <div className=" from-emerald-50 to-teal-50 rounded-xl p-6 border border-emerald-200">
+                <div className=" rounded-xl p-6 border border-emerald-200">
                   <div className="flex items-start gap-4">
                     <div className="w-10 h-10 rounded-full flex items-center justify-center">
                       <Brain className="w-5 h-5" />
@@ -415,141 +435,6 @@ export default function DashboardPage() {
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="space-y-6">
-            <Card className=" ">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <Activity className="w-5 h-5 text-emerald-600" />
-                    AI Data Sources
-                  </CardTitle>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="border-2 font-medium bg-transparent"
-                    asChild
-                  >
-                    <Link href="/dashboard/sources">
-                      <Plus className="w-4 h-4 mr-1" />
-                      Add
-                    </Link>
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4  from-green-50 to-emerald-50 rounded-xl border border-green-200">
-                    <div className="flex items-center gap-3">
-                      <div>
-                        <p className="font-semibold text-slate-900">
-                          Google Analytics
-                        </p>
-                        <p className="text-xs text-slate-500">
-                          AI monitoring: Active
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                      <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
-                        Live
-                      </Badge>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between p-4  from-blue-50 to-cyan-50 rounded-xl border border-blue-200">
-                    <div className="flex items-center gap-3">
-                      <div>
-                        <p className="font-semibold text-slate-900">Shopify</p>
-                        <p className="text-xs text-slate-500">
-                          AI predictions: 94% accuracy
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                      <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
-                        Live
-                      </Badge>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between p-4  from-purple-50 to-pink-50 rounded-xl border border-purple-200">
-                    <div className="flex items-center gap-3">
-                      <div>
-                        <p className="font-semibold text-slate-900">Stripe</p>
-                        <p className="text-xs text-slate-500">
-                          AI anomaly detection: On
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                      <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
-                        Live
-                      </Badge>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-6 pt-6 border-t border-slate-200">
-                  <div className="flex justify-between text-sm mb-3">
-                    <span className="font-medium text-slate-700">
-                      AI Coverage
-                    </span>
-                    <span className="font-semibold text-emerald-600">94%</span>
-                  </div>
-                  <Progress value={94} className="h-3 bg-slate-200" />
-                  <p className="text-xs text-slate-500 mt-2">
-                    AI monitoring all critical KPIs
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Brain className="w-5 h-5 text-emerald-600" />
-                  AI Quick Actions
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button
-                  variant="outline"
-                  className="w-full justify-start border-2 font-medium bg-transparent"
-                  asChild
-                >
-                  <Link href="/dashboard/chat">
-                    <MessageSquare className="w-4 h-4 mr-2" />
-                    Ask AI Brain
-                  </Link>
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full justify-start border-2 font-medium bg-transparent"
-                >
-                  <AlertTriangle className="w-4 h-4 mr-2" />
-                  View Predictions
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full justify-start border-2 font-medium bg-transparent"
-                >
-                  <Zap className="w-4 h-4 mr-2" />
-                  Approve AI Actions
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full justify-start border-2 font-medium bg-transparent"
-                >
-                  <Target className="w-4 h-4 mr-2" />
-                  Set AI Goals
-                </Button>
               </CardContent>
             </Card>
           </div>

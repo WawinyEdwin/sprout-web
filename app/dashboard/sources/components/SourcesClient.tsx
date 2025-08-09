@@ -620,7 +620,6 @@ export default function SourcesClient() {
       await syncIntegration(sourceId, user?.workspace.workspaceId!);
       toast.success("Sync started successfully!");
     } catch (error) {
-      console.error(error);
       toast.error("Sync failed.", {
         description: "Internal server error",
       });
@@ -630,7 +629,7 @@ export default function SourcesClient() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen">
       <DashboardNav user={user} />
 
       <main className="container mx-auto px-4 py-8">
