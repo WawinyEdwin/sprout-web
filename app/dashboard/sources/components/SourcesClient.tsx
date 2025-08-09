@@ -44,7 +44,6 @@ import {
   ExternalLink,
   Key,
   Loader,
-  Mail,
   Plus,
   RefreshCcw,
   Search,
@@ -56,6 +55,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { connectionHandlers } from "../utils";
+import CustomIntegrationForm from "./CustomIntegrationForm";
 
 interface ConnectionStep {
   id: string;
@@ -817,37 +817,7 @@ export default function SourcesClient() {
                   </TabsContent>
 
                   <TabsContent value="custom" className="space-y-4">
-                    <div className="text-center py-8">
-                      <Database className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold text-slate-600 mb-2">
-                        Custom Integration
-                      </h3>
-                      <p className="text-slate-500 mb-6">
-                        Don't see your data source? We can help you create a
-                        custom integration.
-                      </p>
-                      <div className="space-y-4 max-w-md mx-auto">
-                        <div>
-                          <Label htmlFor="customName">Data Source Name</Label>
-                          <Input
-                            id="customName"
-                            placeholder="e.g., Internal CRM System"
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="customDescription">Description</Label>
-                          <Textarea
-                            id="customDescription"
-                            placeholder="Describe your data source and what metrics you'd like to track"
-                            className="min-h-[100px]"
-                          />
-                        </div>
-                        <Button className="w-full">
-                          <Mail className="w-4 h-4 mr-2" />
-                          Request Custom Integration
-                        </Button>
-                      </div>
-                    </div>
+                    <CustomIntegrationForm user={user!} />
                   </TabsContent>
                 </Tabs>
               )}

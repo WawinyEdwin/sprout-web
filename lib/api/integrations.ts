@@ -109,3 +109,16 @@ export const syncIntegration = async (
   });
   return response.data;
 };
+
+export const submitIntegrationRequest = async (
+  workspaceId: string,
+  name: string,
+  description: string
+) => {
+  const response = await axiosClient.post(`/integrations/custom`, {
+    workspaceId,
+    name,
+    description,
+  });
+  return response.data;
+};
