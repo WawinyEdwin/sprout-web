@@ -1184,14 +1184,11 @@ export default function HomePage() {
           <div className="border-t border-white-800 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="">© 2025 Sprout. All rights reserved.</p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <Link href="#" className="transition-colors">
-                Privacy
+              <Link href="/terms-of-service" className="transition-colors">
+                Terms of Service
               </Link>
-              <Link href="#" className="transition-colors">
-                Terms
-              </Link>
-              <Link href="#" className="transition-colors">
-                Cookies
+              <Link href="/privacy-policy" className="transition-colors">
+                Privacy Policy
               </Link>
             </div>
           </div>
