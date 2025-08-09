@@ -3,4 +3,5 @@ export const QUERY_KEYS = {
     connected: ["connected_sources"],
     available: ["available_sources"],
   },
+  subscription: ["workspace_subscription"],
 };

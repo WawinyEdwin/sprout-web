@@ -19,7 +19,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
-import { setUpPayment, upgradePlan } from "@/lib/api/billing";
+import {
+  getWorkspaceSubscription,
+  manageBilling,
+  setUpPayment,
+} from "@/lib/api/billing";
+import { QUERY_KEYS } from "@/lib/query-keys";
+import { Subscription } from "@/lib/types";
+import { useQuery } from "@tanstack/react-query";
 import {
   AlertCircle,
   ArrowUpRight,
@@ -37,105 +44,28 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-
-const mockSubscription = {
-  planName: "Growth Plan",
-  price: 399,
-  currency: "USD",
-  interval: "month",
-  status: "active",
-  currentPeriodEnd: "2024-02-15",
-  cancelAtPeriodEnd: false,
-};
-
-const mockUsage = {
-  dataSources: { current: 5, limit: 10 },
-  aiQueries: { current: 1250, limit: 2500 },
-  dashboards: { current: 8, limit: 15 },
-  teamMembers: { current: 3, limit: 5 },
-};
-
-const mockInvoices = [
-  {
-    id: "inv_001",
-    number: "INV-2025-001",
-    date: "2025-01-15",
-    amount: 399,
-    status: "paid",
-    description: "Growth Plan - January 2025",
-  },
-  {
-    id: "inv_002",
-    number: "INV-2025-002",
-    date: "2025-02-15",
-    amount: 399,
-    status: "paid",
-    description: "Growth Plan - Feb 2025",
-  },
-  {
-    id: "inv_003",
-    number: "INV-2025-003",
-    date: "2025-03-15",
-    amount: 399,
-    status: "overdue",
-    description: "Growth Plan - Feb 2025",
-  },
-];
-
-const plans = [
-  {
-    name: "Professional",
-    price: 199,
-    features: [
-      "3 Data Sources",
-      "AI KPI Monitoring",
-      "Basic Predictions",
-      "Email alerts",
-      "Standard Support",
-    ],
-    current: false,
-  },
-  {
-    name: "Growth",
-    price: 399,
-    features: [
-      "7 Data Sources",
-      "Advance AI predictions",
-      "Automated Actions",
-      "Custom Dashboards",
-      "Priority Support",
-    ],
-    current: true,
-  },
-  {
-    name: "Enterprise",
-    price: 899,
-    features: [
-      "Unlimited Data Sources",
-      "Full AI brain capabilities",
-      "Custom AI Models",
-      "Dedicated Customer support manager",
-      "24/7 premium support",
-    ],
-    current: false,
-  },
-];
+import { mockInvoices, mockUsage, plans } from "./data";
 
 export default function BillingPage() {
   const { user } = useUser();
   const workspaceId = user?.workspace.workspaceId;
-  const subscription = user?.workspace.subscription;
   const [showPlans, setShowPlans] = useState(false);
 
   const handleUpgrade = async (planName: string) => {
-    await upgradePlan(workspaceId!, planName);
-  };
-
-  const handleManagePayment = async (planName: string = "Professional") => {
     const { url } = await setUpPayment(workspaceId!, planName);
     if (!url) {
       toast.error("Something went wrong", {
         description: "Could not initiate payment",
+      });
+    }
+    window.location.href = url;
+  };
+
+  const handleManagePayment = async () => {
+    const { url } = await manageBilling(workspaceId!);
+    if (!url) {
+      toast.error("Something went wrong", {
+        description: "Could not redirect to billing management",
       });
     }
     window.location.href = url;
@@ -159,6 +89,18 @@ export default function BillingPage() {
         return <Clock className="w-4 h-4 text-gray-600" />;
     }
   };
+
+  const { data: subscription } = useQuery<Subscription>({
+    queryKey: [QUERY_KEYS.subscription, workspaceId],
+    queryFn: () => getWorkspaceSubscription(workspaceId!),
+    enabled: !!workspaceId, // only run if we have an ID
+  });
+
+  const plansWithStatus = plans.map((plan) => ({
+    ...plan,
+    current: subscription?.plan?.toUpperCase() === plan.name.toUpperCase(),
+  }));
+
   return (
     <div className="min-h-screen">
       <DashboardNav user={user} />
@@ -201,10 +143,10 @@ export default function BillingPage() {
                 <div className="grid md:grid-cols-2 gap-8">
                   <div>
                     <h3 className="text-2xl font-bold text-slate-900 mb-2">
-                      {subscription?.plan}
+                      {subscription?.plan || "Free"}
                     </h3>
                     <p className="text-4xl font-bold text-emerald-500 bg-clip-text mb-3">
-                      $0.00
+                      ${subscription?.amount || 0.0}
                       <span className="text-xl font-normal text-slate-600">
                         / Month
                       </span>
@@ -455,7 +397,7 @@ export default function BillingPage() {
               </DialogDescription>
             </DialogHeader>
             <div className="grid md:grid-cols-3 gap-6 mt-6">
-              {plans.map((plan) => (
+              {plansWithStatus.map((plan) => (
                 <Card
                   key={plan.name}
                   className={`cursor-pointer transition-all hover:shadow-lg border-2 ${
@@ -494,7 +436,7 @@ export default function BillingPage() {
                       disabled={plan.current}
                       onClick={() => handleUpgrade(plan.name)}
                     >
-                      {plan.current
+                      {subscription?.plan === plan.name
                         ? "Current Plan"
                         : `Upgrade to ${plan.name}`}
                     </Button>

@@ -174,7 +174,10 @@ export function DashboardNav({ user }: DashboardNavProps) {
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  className="flex items-center gap-2 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                >
                   <div className="w-8 h-8 rounded-full flex items-center justify-center">
                     <User className="w-4 h-4" />
                   </div>
@@ -186,25 +189,26 @@ export function DashboardNav({ user }: DashboardNavProps) {
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <User className="w-4 h-4 mr-2" />
-                  Profile
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => router.push("/dashboard/billing")}
-                >
-                  <CreditCard className="w-4 h-4 mr-2" />
-                  Billing
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => router.push("/dashboard/settings")}
-                >
-                  <Settings className="w-4 h-4 mr-2" />
-                  Settings
-                </DropdownMenuItem>
+                <Link href={"/dashboard/workspace"}>
+                  <DropdownMenuItem className=" cursor-pointer">
+                    <User className="w-4 h-4 mr-2" />
+                    Workspace
+                  </DropdownMenuItem>
+                </Link>
+                <Link href={"/dashboard/billing"}>
+                  <DropdownMenuItem className=" cursor-pointer">
+                    <CreditCard className="w-4 h-4 mr-2" />
+                    Billing
+                  </DropdownMenuItem>
+                </Link>
+                <Link href={"/dashboard/settings"}>
+                  <DropdownMenuItem className=" cursor-pointer">
+                    <Settings className="w-4 h-4 mr-2" /> Settings
+                  </DropdownMenuItem>
+                </Link>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  className="text-red-600"
+                  className="text-red-600 cursor-pointer"
                   onClick={useLogout()}
                 >
                   <LogOut className="w-4 h-4 mr-2" />

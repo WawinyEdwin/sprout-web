@@ -22,7 +22,6 @@ export function SubscriptionBanner() {
   const router = useRouter();
   const { user } = useUser();
   const workspaceId = user?.workspace?.workspaceId;
-
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [bannerData, setBannerData] = useState<BannerConfig | null>(null);
   const [isDismissed, setIsDismissed] = useState(false);

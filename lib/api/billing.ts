@@ -1,9 +1,8 @@
 import axiosClient from "../axiosClient";
 
-export const upgradePlan = async (workspaceId: string, plan: string) => {
-  const response = await axiosClient.post("/subscriptions/upgrade", {
+export const manageBilling = async (workspaceId: string) => {
+  const response = await axiosClient.post("/subscriptions/manage", {
     workspaceId,
-    plan,
   });
   return response.data;
 };

@@ -15,6 +15,7 @@ export interface Subscription {
   id: string;
   plan: string;
   currentPeriodEnd: string;
+  amount: string;
 }
 
 export type IntegrationType =
