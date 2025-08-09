@@ -218,7 +218,7 @@ export default function HomePage() {
                     Natural language question based on your actual business data
                   </p>
                 </div>
-                <div className=" from-emerald-50 to-teal-50 rounded-lg p-4 border border-emerald-200">
+                <div className="rounded-lg p-4 border border-emerald-200">
                   <p className="text-slate-800 font-medium mb-2">
                     🧠 AI analyzes your Shopify, QuickBooks & Google Analytics
                     data...
@@ -418,7 +418,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className=" from-emerald-50 to-teal-50 rounded-xl p-4 border border-emerald-100">
+                <div className="rounded-xl p-4 border border-emerald-100">
                   <div className="flex items-center gap-2 mb-2">
                     <Users className="w-5 h-5 text-emerald-600" />
                     <span className="font-semibold text-emerald-900">
@@ -693,7 +693,7 @@ export default function HomePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className=" from-emerald-50 to-teal-50 rounded-xl p-4 border border-emerald-100">
+                <div className="rounded-xl p-4 border border-emerald-100">
                   <div className="text-sm font-medium text-emerald-700 mb-1">
                     Forecast Accuracy: 94%
                   </div>
@@ -992,7 +992,7 @@ export default function HomePage() {
             </Card>
           </div>
 
-          <div className=" from-emerald-50 to-teal-50 rounded-2xl p-8 border border-emerald-200 max-w-4xl mx-auto">
+          <div className="rounded-2xl p-8 border border-emerald-200 max-w-4xl mx-auto">
             <div className="text-center">
               <div className="w-16 h-16   rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <Zap className="w-8 h-8 " />

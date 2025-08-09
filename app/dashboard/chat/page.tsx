@@ -15,7 +15,7 @@ import {
   Brain,
   Target,
   TrendingUp,
-  Users,
+  UserRound,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -201,7 +201,7 @@ export default function ChatPage() {
                             }`}
                           >
                             {message.type === "user" ? (
-                              <Users className="w-5 h-5" />
+                              <UserRound className="w-5 h-5" />
                             ) : (
                               <Brain className="w-5 h-5" />
                             )}

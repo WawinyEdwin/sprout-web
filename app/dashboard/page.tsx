@@ -89,12 +89,12 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6 mb-10">
-          <Card className="lg:col-span-2  from-white to-slate-50">
+          <Card className="lg:col-span-2  ">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-3 text-xl">
                   <div className="w-10 h-10  from-red-500 to-orange-500 rounded-xl flex items-center justify-center">
-                    <AlertTriangle className="w-5 h-5 text-white" />
+                    <AlertTriangle className="w-5 h-5" />
                   </div>
                   Urgent AI Insights
                 </CardTitle>
@@ -168,7 +168,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-0   from-white to-slate-50">
+          <Card className="border-0   ">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Zap className="w-5 h-5 text-blue-600" />
@@ -231,7 +231,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-          <Card className=" from-white to-slate-50 transition-all duration-300">
+          <Card className="  transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
               <CardTitle className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
                 Revenue (Predicted)
@@ -255,7 +255,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className=" from-white to-slate-50  transition-all duration-300">
+          <Card className="   transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
               <CardTitle className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
                 Churn Risk
@@ -279,7 +279,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className=" from-white to-slate-50 transition-all duration-300">
+          <Card className="  transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
               <CardTitle className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
                 Conversion Forecast
@@ -301,7 +301,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className=" from-white to-slate-50 transition-all duration-300">
+          <Card className="  transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
               <CardTitle className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
                 AI Monitoring
@@ -328,7 +328,7 @@ export default function DashboardPage() {
 
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            <Card className=" from-white to-slate-50">
+            <Card className=" ">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
@@ -420,7 +420,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="space-y-6">
-            <Card className=" from-white to-slate-50">
+            <Card className=" ">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2">

@@ -78,7 +78,7 @@ export function DashboardNav({ user }: DashboardNavProps) {
           <Link href="/dashboard" className="flex items-center space-x-3">
             <div className="relative">
               <div className="w-10 h-10   rounded-xl flex items-center justify-center shadow-lg">
-                <Brain className="w-6 h-6" />
+                <Brain className="w-6 h-6 text-emerald-500" />
               </div>
               <div className="absolute -top-1 -right-1 w-4 h-4  from-emerald-400 to-teal-400 rounded-full animate-pulse-slow"></div>
             </div>

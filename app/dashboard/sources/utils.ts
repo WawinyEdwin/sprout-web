@@ -11,7 +11,7 @@ import {
 } from "@/lib/api/integrations";
 import { IntegrationType } from "@/lib/types";
 
-type ConnectArgs = { shop?: string; workspaceId: string };
+type ConnectArgs = { shop?: string; apiKey?: string; workspaceId: string };
 
 type ConnectionHandler = (args: ConnectArgs) => Promise<string>;
 
@@ -19,7 +19,10 @@ export const connectionHandlers: Record<IntegrationType, ConnectionHandler> = {
   google_analytics: async ({ workspaceId }) => connectGA(workspaceId),
   google_ads: async ({ workspaceId }) => connectGAds(workspaceId),
   facebook_ads: async ({ workspaceId }) => connectFacebookAds(workspaceId),
-  stripe: async ({ workspaceId }) => connectStripe(workspaceId),
+  stripe: async ({ workspaceId, apiKey }) => {
+    if (!apiKey) throw new Error("Missing API key for Stripe connection");
+    return connectStripe(workspaceId, apiKey);
+  },
   quick_books: async ({ workspaceId }) => connectQuickbooks(workspaceId),
   salesforce: async ({ workspaceId }) => connectSalesforce(workspaceId),
   mailchimp: async ({ workspaceId }) => connectMailchimp(workspaceId),

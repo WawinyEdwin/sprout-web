@@ -225,6 +225,7 @@ export default function SourcesClient() {
       const connectFn = connectionHandlers[selectedSource.key];
       const url = await connectFn({
         shop: shopName!,
+        apiKey: credentials.apiKey,
         workspaceId: user?.workspace.workspaceId!,
       });
 
@@ -333,7 +334,7 @@ export default function SourcesClient() {
               </Label>
               <Input
                 id="shopName"
-                type="text"
+                type="url"
                 aria-label="Shop Name"
                 placeholder="your-store-name.myshopify.com"
                 value={shopName!}
@@ -387,11 +388,11 @@ export default function SourcesClient() {
     return (
       <div className="space-y-4">
         <div className="space-y-4">
-          <div>
+          <div className="m-3">
             <Label htmlFor="apiKey">API Key</Label>
             <Input
               id="apiKey"
-              type="text"
+              type="password"
               aria-label="API Key"
               placeholder="Enter your API key"
               value={credentials.apiKey}
@@ -614,11 +615,13 @@ export default function SourcesClient() {
   const handleSync = async (sourceId: string) => {
     try {
       setSyncingId(sourceId);
-      await syncIntegration(user?.workspace.workspaceId!, sourceId);
+      await syncIntegration(sourceId, user?.workspace.workspaceId!);
       toast.success("Sync started successfully!");
-    } catch (err) {
-      console.error(err);
-      toast.error("Sync failed.");
+    } catch (error) {
+      console.error(error);
+      toast.error("Sync failed.", {
+        description: "Internal server error",
+      });
     } finally {
       setSyncingId(null);
     }

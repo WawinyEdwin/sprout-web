@@ -34,9 +34,15 @@ export const connectFacebookAds = async (
   return response.data;
 };
 
-export const connectStripe = async (workspaceId: string): Promise<string> => {
-  const response = await axiosClient.get(
-    `/integrations/stripe/connect?workspaceId=${workspaceId}`
+export const connectStripe = async (
+  workspaceId: string,
+  apiKey: string
+): Promise<string> => {
+  const response = await axiosClient.post(
+    `/integrations/stripe/connect?workspaceId=${workspaceId}`,
+    {
+      apiKey,
+    }
   );
   return response.data;
 };
