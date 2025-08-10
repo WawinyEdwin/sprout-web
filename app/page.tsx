@@ -1190,6 +1190,9 @@ export default function HomePage() {
               <Link href="/privacy-policy" className="transition-colors">
                 Privacy Policy
               </Link>
+              <Link href="mailto:support@sproutai.co" className="transition-colors">
+                Contact Support via support@sproutai.co
+              </Link>
             </div>
           </div>
         </div>
