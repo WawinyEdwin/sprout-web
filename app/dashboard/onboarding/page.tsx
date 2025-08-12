@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { updateUser } from "@/lib/api/auth";
 import {
   ArrowRight,
   BarChart3,
@@ -93,9 +94,9 @@ export default function OnboardingPage() {
   const progress = (currentStep / onboardingSteps.length) * 100;
 
   const completeOnboarding = async () => {
-    // await updateUser({
-    //   completedOnboarding: true,
-    // });
+    await updateUser({
+      completedOnboarding: true,
+    });
     router.push("/dashboard");
   };
 
@@ -114,7 +115,7 @@ export default function OnboardingPage() {
             </div>
             <div className="text-center">
               <span className="text-emerald-600 font-medium">
-                7-Day Free Trial Active
+                14-Day Free Trial Active
               </span>
               <div className="text-sm text-slate-500 mt-1">
                 Full access to all AI features • No credit card required

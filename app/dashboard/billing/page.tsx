@@ -107,7 +107,7 @@ export default function BillingPage() {
 
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+          <h1 className="text-2xl font-bold  mb-3 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
             Billing & Subscription
           </h1>
           <p className="text-slate-600 text-lg">

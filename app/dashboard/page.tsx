@@ -407,7 +407,7 @@ export default function DashboardPage() {
                         timeout increased by 3 seconds.
                       </p>
                       <div className="space-y-2">
-                        <div className="flex justify-between items-center p-3 bg-white rounded-lg shadow-sm">
+                        <div className="flex justify-between items-center p-3 bg-white rounded-lg shadow-lg">
                           <span className="font-medium text-slate-900">
                             Fix payment gateway timeout
                           </span>
@@ -415,7 +415,7 @@ export default function DashboardPage() {
                             Critical
                           </Badge>
                         </div>
-                        <div className="flex justify-between items-center p-3 bg-white rounded-lg shadow-sm">
+                        <div className="flex justify-between items-center p-3 bg-white rounded-lg shadow-lg">
                           <span className="font-medium text-slate-900">
                             A/B test simplified checkout
                           </span>
@@ -423,7 +423,7 @@ export default function DashboardPage() {
                             Recommended
                           </Badge>
                         </div>
-                        <div className="flex justify-between items-center p-3 bg-white rounded-lg shadow-sm">
+                        <div className="flex justify-between items-center p-3 bg-white rounded-lg shadow-lg">
                           <span className="font-medium text-slate-900">
                             Monitor mobile performance
                           </span>

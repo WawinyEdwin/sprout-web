@@ -1,3 +1,5 @@
+import { DataSyncFrequencyEnum } from "./enums";
+
 export interface Integration {
   description: string;
   name: string;
@@ -35,6 +37,7 @@ export interface WorkspaceIntegration {
   integration: Integration;
   lastSynced: string;
   connected: boolean;
+  syncFrequency: DataSyncFrequencyEnum
 }
 export interface IMetric {
   id: string;

@@ -1,6 +1,6 @@
 import { Providers } from "@/utils/providers";
+import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
-import { Outfit } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 
@@ -8,8 +8,6 @@ export const metadata: Metadata = {
   title: "Sprout AI",
   description: `The World's First AI-Native KPI Brain for SMBs`,
 };
-
-const outfit = Outfit({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,
@@ -19,8 +17,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <Providers>
-        <body className={outfit.className}>
-          <main>{children}</main>
+        <body className={GeistSans.className}>
+          <main className="bg-slate-60">{children}</main>
           <Toaster richColors />
         </body>
       </Providers>

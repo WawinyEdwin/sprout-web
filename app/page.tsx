@@ -180,7 +180,7 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <Button
                 size="lg"
-                className="text-lg px-8 py-4  !bg-emerald-500 shadow-xl font-semibold"
+                className="text-lg px-8 py-4  !bg-emerald-500 shadow-lg font-semibold"
                 asChild
               >
                 <Link href="/auth/signup">
@@ -197,7 +197,7 @@ export default function HomePage() {
               </Button>
             </div>
 
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-2xl max-w-3xl mx-auto">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg max-w-3xl mx-auto">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-8 h-8  from-emerald-500 to-teal-500 rounded-full flex items-center justify-center">
                   <Brain className="w-4 h-4 text-white" />
@@ -274,7 +274,7 @@ export default function HomePage() {
           </div>
 
           <div className="grid lg:grid-cols-2 gap-12 mb-20">
-            <Card className="border-0 shadow-2xl  from-white to-blue-50 hover:shadow-3xl transition-all duration-500 hover:-translate-y-2">
+            <Card className="border-0 shadow-lg  from-white to-blue-50 hover:shadow-lg transition-all duration-500 hover:-translate-y-2">
               <CardHeader className="pb-6">
                 <div className="w-16 h-16  rounded-2xl flex items-center justify-center mb-2">
                   <MessageSquare className="w-8 h-8 text-emerald-500" />
@@ -318,7 +318,7 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-2xl  from-white to-red-50 hover:shadow-3xl transition-all duration-500 hover:-translate-y-2">
+            <Card className="border-0 shadow-lg  from-white to-red-50 hover:shadow-lg transition-all duration-500 hover:-translate-y-2">
               <CardHeader className="pb-6">
                 <div className="w-16 h-16  rounded-2xl flex items-center justify-center mb-2">
                   <AlertTriangle className="w-8 h-8 text-emerald-500" />
@@ -361,7 +361,7 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-2xl  from-white to-purple-50 hover:shadow-3xl transition-all duration-500 hover:-translate-y-2">
+            <Card className="border-0 shadow-lg  from-white to-purple-50 hover:shadow-lg transition-all duration-500 hover:-translate-y-2">
               <CardHeader className="pb-6">
                 <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-2">
                   <Target className="w-8 h-8 text-emerald-500" />
@@ -404,7 +404,7 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-2xl  from-white to-emerald-50 hover:shadow-3xl transition-all duration-500 hover:-translate-y-2">
+            <Card className="border-0 shadow-lg  from-white to-emerald-50 hover:shadow-lg transition-all duration-500 hover:-translate-y-2">
               <CardHeader className="pb-6">
                 <div className="w-16 h-16  rounded-2xl flex items-center justify-center mb-2">
                   <Building2 className="w-8 h-8 text-emerald-500" />
@@ -448,7 +448,7 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-2xl  from-white to-cyan-50 hover:shadow-3xl transition-all duration-500 hover:-translate-y-2">
+            <Card className="border-0 shadow-lg  from-white to-cyan-50 hover:shadow-lg transition-all duration-500 hover:-translate-y-2">
               <CardHeader className="pb-6">
                 <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-2">
                   <Database className="w-8 h-8 text-emerald-500" />
@@ -491,7 +491,7 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-2xl  from-white to-yellow-50 hover:shadow-3xl transition-all duration-500 hover:-translate-y-2">
+            <Card className="border-0 shadow-lg  from-white to-yellow-50 hover:shadow-lg transition-all duration-500 hover:-translate-y-2">
               <CardHeader className="pb-6">
                 <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-2">
                   <TrendingUp className="w-8 h-8 text-emerald-500" />
@@ -649,7 +649,7 @@ export default function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 mb-16">
-            <Card className="group border-0 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2  from-white to-slate-50 relative overflow-hidden">
+            <Card className="group border-0 shadow-lg hover:shadow-lg transition-all duration-500 hover:-translate-y-2  from-white to-slate-50 relative overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-1"></div>
               <CardHeader className="pb-4">
                 <div className="w-16 h-16  rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
@@ -678,7 +678,7 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="group border-0 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2  from-white to-slate-50 relative overflow-hidden">
+            <Card className="group border-0 shadow-lg hover:shadow-lg transition-all duration-500 hover:-translate-y-2  from-white to-slate-50 relative overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-1  from-emerald-500 to-teal-500"></div>
               <CardHeader className="pb-4">
                 <div className="w-16 h-16  from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
@@ -704,7 +704,7 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="group border-0 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2  from-white to-slate-50 relative overflow-hidden">
+            <Card className="group border-0 shadow-lg hover:shadow-lg transition-all duration-500 hover:-translate-y-2  from-white to-slate-50 relative overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-1  from-purple-500 to-pink-500"></div>
               <CardHeader className="pb-4">
                 <div className="w-16 h-16  from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
@@ -786,7 +786,7 @@ export default function HomePage() {
             ].map((feature, i) => (
               <Card
                 key={i}
-                className="border-0  from-white to-slate-50 p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                className="border-0  from-white to-slate-50 p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
               >
                 <div
                   className={`w-12 h-12  ${feature.color} rounded-xl flex items-center justify-center mb-4`}
@@ -822,7 +822,7 @@ export default function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-12">
-            <Card className="border-2 border-slate-200 hover:border-emerald-300 transition-all duration-300 hover:shadow-xl  from-white to-slate-50">
+            <Card className="border-2 border-slate-200 hover:border-emerald-300 transition-all duration-300 hover:shadow-lg  from-white to-slate-50">
               <CardHeader className="text-center pb-8">
                 <div className="w-16 h-16  rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <BarChart3 className="w-8 h-8 " />
@@ -872,7 +872,7 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-2 border-emerald-500 hover:border-emerald-600 transition-all duration-300 hover:shadow-2xl  from-white to-emerald-50 relative">
+            <Card className="border-2 border-emerald-500 hover:border-emerald-600 transition-all duration-300 hover:shadow-lg  from-white to-emerald-50 relative">
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                 <Badge className="bg-emerald-600  hover:bg-emerald-600 px-4 py-1">
                   Most Popular
@@ -933,7 +933,7 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-2 border-slate-200 hover:border-purple-300 transition-all duration-300 hover:shadow-xl  from-white to-slate-50">
+            <Card className="border-2 border-slate-200 hover:border-purple-300 transition-all duration-300 hover:shadow-lg  from-white to-slate-50">
               <CardHeader className="text-center pb-8">
                 <div className="w-16 h-16  from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <Target className="w-8 h-8" />
@@ -1050,7 +1050,7 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
               <Button
                 size="lg"
-                className="text-lg px-8 py-4  !bg-emerald-500 shadow-xl font-semibold"
+                className="text-lg px-8 py-4  !bg-emerald-500 shadow-lg font-semibold"
                 asChild
               >
                 <Link href="/auth/signup">
@@ -1190,7 +1190,10 @@ export default function HomePage() {
               <Link href="/privacy-policy" className="transition-colors">
                 Privacy Policy
               </Link>
-              <Link href="mailto:support@sproutai.co" className="transition-colors">
+              <Link
+                href="mailto:support@sproutai.co"
+                className="transition-colors"
+              >
                 Contact Support via support@sproutai.co
               </Link>
             </div>

@@ -27,6 +27,12 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
   fetchIntegrations,
   fetchWorkspaceIntegrations,
   syncIntegration,
@@ -35,8 +41,9 @@ import {
 import { DataSyncFrequencyEnum, HistoricalDataEnum } from "@/lib/enums";
 import { QUERY_KEYS } from "@/lib/query-keys";
 import { IMetric, Integration, WorkspaceIntegration } from "@/lib/types";
-import { enumToSelectOptions } from "@/lib/utils";
+import { enumToSelectOptions, isSyncedRecently } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
+import { formatDistanceToNow, isPast } from "date-fns";
 import {
   AlertCircle,
   CheckCircle,
@@ -493,7 +500,7 @@ export default function SourcesClient() {
         <div className="m-3">
           <Label>Sync Frequency</Label>
           <Select
-            defaultValue="Daily"
+            defaultValue="daily"
             onValueChange={(val) =>
               setConfig((prev) => ({ ...prev, syncFrequency: val }))
             }
@@ -635,7 +642,7 @@ export default function SourcesClient() {
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Data Sources</h1>
+            <h1 className="text-2xl font-bold mb-2">Data Sources</h1>
             <p className="text-slate-600">
               Connect and manage your business data sources.
             </p>
@@ -856,7 +863,7 @@ export default function SourcesClient() {
                   </CardContent>
                 </Card>
               ) : (
-                connectedSources.map((source) => (
+                connectedSources.map((source: WorkspaceIntegration) => (
                   <Card key={source.id}>
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between">
@@ -882,7 +889,14 @@ export default function SourcesClient() {
                                 </span>
                               </div>
                               <span className="text-sm text-slate-500">
-                                Last sync: {source.lastSynced}
+                                Last sync:{" "}
+                                {source.lastSynced &&
+                                isPast(new Date(source.lastSynced))
+                                  ? formatDistanceToNow(
+                                      new Date(source.lastSynced),
+                                      { addSuffix: true }
+                                    )
+                                  : "N/A"}
                               </span>
                             </div>
                             <div className="flex flex-wrap gap-1">
@@ -905,23 +919,43 @@ export default function SourcesClient() {
                             aria-readonly
                             defaultChecked={source.connected}
                           />
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleSync(source.id)}
-                            disabled={
-                              !source.connected || syncingId === source.id
-                            }
-                            className="flex items-center gap-1"
-                          >
-                            {syncingId === source.id ? (
-                              <Loader className="w-4 h-4 animate-spin" />
-                            ) : (
-                              <RefreshCcw className="w-4 h-4" />
-                            )}
-                            <span className="text-sm">Sync</span>
-                          </Button>
-
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleSync(source.id)}
+                                  disabled={
+                                    !source.connected ||
+                                    syncingId === source.id ||
+                                    isSyncedRecently(
+                                      source.lastSynced,
+                                      source.syncFrequency
+                                    )
+                                  }
+                                  className="flex items-center gap-1"
+                                >
+                                  {syncingId === source.id ? (
+                                    <Loader className="w-4 h-4 animate-spin" />
+                                  ) : (
+                                    <RefreshCcw className="w-4 h-4" />
+                                  )}
+                                  <span className="text-sm">Sync</span>
+                                </Button>
+                              </TooltipTrigger>
+                              {isSyncedRecently(
+                                source.lastSynced,
+                                source.syncFrequency
+                              ) && (
+                                <TooltipContent>
+                                  <p>
+                                    This data source has been synced recently.
+                                  </p>
+                                </TooltipContent>
+                              )}
+                            </Tooltip>
+                          </TooltipProvider>
                           <Button variant="ghost" size="sm">
                             <Settings className="w-4 h-4" />
                           </Button>

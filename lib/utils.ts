@@ -20,3 +20,24 @@ function toLabel(value: string): string {
     .replace(/_/g, " ")
     .replace(/\b\w/g, (char) => char.toUpperCase());
 }
+
+export const isSyncedRecently = (
+  lastSynced: string,
+  syncFrequency: string
+): boolean => {
+  if (!lastSynced) return false;
+
+  const now = new Date();
+  const lastSyncDate = new Date(lastSynced);
+  const timeDifferenceInMinutes =
+    (now.getTime() - lastSyncDate.getTime()) / (1000 * 60);
+
+  switch (syncFrequency) {
+    case "daily":
+      return timeDifferenceInMinutes < 24 * 60; // 24 hours in minutes
+    case "every_hour":
+      return timeDifferenceInMinutes < 60; // 60 minutes
+    default:
+      return false;
+  }
+};

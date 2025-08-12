@@ -73,7 +73,7 @@ export default function SignInPage() {
 
         <BrandHeader />
 
-        <Card className="border-0 shadow-sm bg-white/80 backdrop-blur-xl">
+        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-xl">
           <CardHeader className="text-center pb-8">
             <CardTitle className="text-2xl font-bold text-slate-900">
               Welcome back

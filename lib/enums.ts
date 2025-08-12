@@ -1,8 +1,6 @@
 export enum DataSyncFrequencyEnum {
-  REAL_TIME = "realtime",
   EVERY_HOUR = "every_hour",
-  EVERY_15_MINS = "every_fifteen_mins",
-  DAILY = "Daily",
+  DAILY = "daily",
 }
 
 export enum HistoricalDataEnum {

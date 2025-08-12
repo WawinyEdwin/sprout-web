@@ -157,7 +157,7 @@ export default function ChatPage() {
             </div>
           </div>
 
-          <Card className=" flex flex-col border-0 shadow-sm ">
+          <Card className=" flex flex-col border-0 shadow-lg ">
             <CardHeader className="border-b ">
               <CardTitle className="flex items-center gap-3">
                 <Brain className="w-6 h-6 text-emerald-600" />
@@ -222,7 +222,7 @@ export default function ChatPage() {
                                 {message.insights.map((insight, index) => (
                                   <div
                                     key={index}
-                                    className="p-4 bg-white rounded-xl border border-slate-200 shadow-sm"
+                                    className="p-4 bg-white rounded-xl border border-slate-200 shadow-lg"
                                   >
                                     <div className="flex items-start justify-between mb-3">
                                       <div className="flex items-center gap-2">
@@ -344,7 +344,7 @@ export default function ChatPage() {
                     onKeyDown={(e) => e.key === "Enter" && handleSend()}
                     placeholder="Ask anything about your data..."
                     disabled={isLoading}
-                    className="flex-1 h-12 rounded-full px-4 border border-input shadow-sm focus-visible:ring-1 focus-visible:ring-ring transition"
+                    className="flex-1 h-12 rounded-full px-4 border border-input shadow-lg focus-visible:ring-1 focus-visible:ring-ring transition"
                   />
                   <Button
                     onClick={handleSend}

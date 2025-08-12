@@ -9,10 +9,12 @@ import {
   Brain,
   CreditCard,
   Database,
+  Layout,
   LayoutDashboard,
   LogOut,
   Menu,
   Settings,
+  Target,
   User,
 } from "lucide-react";
 import Link from "next/link";
@@ -39,8 +41,7 @@ import {
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "AI Brain", href: "/dashboard/chat", icon: Brain },
-  // { name: "Dashboards", href: "/dashboard/dashboards", icon: Layout },
-  // { name: "KPI Builder", href: "/dashboard/kpi-builder", icon: Target },
+  { name: "KPIs & Metrics", href: "/dashboard/kpi-builder", icon: Target },
   { name: "Data Sources", href: "/dashboard/sources", icon: Database },
 ];
 
