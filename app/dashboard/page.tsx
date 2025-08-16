@@ -345,7 +345,6 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </div>
-
         <div className="grid lg:grid-cols-1 gap-8">
           <div className="lg:col-span-2">
             <Card className=" ">

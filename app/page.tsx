@@ -183,7 +183,7 @@ export default function HomePage() {
                 className="text-lg px-8 py-4  !bg-emerald-500 shadow-lg font-semibold"
                 asChild
               >
-                <Link href="/auth/signup">
+                <Link href="/dashboard/chat">
                   Experience the AI Brain
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Link>
@@ -861,11 +861,9 @@ export default function HomePage() {
                   <CheckCircle className="w-5 h-5 text-emerald-600" />
                   <span className="text-slate-700">Standard support</span>
                 </div>
+                <div className="mt-3 pb-5"></div>
                 <div className="pt-6">
-                  <Button
-                    className="w-full  from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
-                    asChild
-                  >
+                  <Button className="w-full  !bg-emerald-500" asChild>
                     <Link href="/auth/signup">Start Free Trial</Link>
                   </Button>
                 </div>
@@ -923,19 +921,16 @@ export default function HomePage() {
                   <span className="text-slate-700">Priority support</span>
                 </div>
                 <div className="pt-6">
-                  <Button
-                    className="w-full  from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-lg"
-                    asChild
-                  >
+                  <Button className="w-full !bg-emerald-500 shadow-lg" asChild>
                     <Link href="/auth/signup">Start Free Trial</Link>
                   </Button>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-2 border-slate-200 hover:border-purple-300 transition-all duration-300 hover:shadow-lg  from-white to-slate-50">
+            <Card className="border-2border-slate-200 hover:border-emerald-300 transition-all duration-300 hover:shadow-lg  from-white to-slate-50">
               <CardHeader className="text-center pb-8">
-                <div className="w-16 h-16  from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16  rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <Target className="w-8 h-8" />
                 </div>
                 <CardTitle className="text-2xl font-bold mb-2">
@@ -981,10 +976,7 @@ export default function HomePage() {
                   <span className="text-slate-700">24/7 premium support</span>
                 </div>
                 <div className="pt-6">
-                  <Button
-                    className="w-full  from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-                    asChild
-                  >
+                  <Button className="w-full !bg-emerald-500" asChild>
                     <Link href="/auth/signup">Contact Sales</Link>
                   </Button>
                 </div>
@@ -1053,7 +1045,7 @@ export default function HomePage() {
                 className="text-lg px-8 py-4  !bg-emerald-500 shadow-lg font-semibold"
                 asChild
               >
-                <Link href="/auth/signup">
+                <Link href="/dashboard/chat">
                   Experience AI-Native Intelligence
                   <Brain className="ml-2 w-5 h-5" />
                 </Link>

@@ -94,7 +94,7 @@ export default function SourcesClient() {
     customFields: {} as Record<string, string>,
   });
   const [config, setConfig] = useState({
-    syncFrequency: "Daily",
+    syncFrequency: "daily",
     historicalData: "all_available_data",
   });
 
@@ -104,12 +104,13 @@ export default function SourcesClient() {
     enabled: !!workspaceId, // don't run until we have an ID
   });
 
-  const { data: availableSourcesData, error: error2 } = useQuery<Integration[]>(
-    {
-      queryKey: QUERY_KEYS.integrations.available,
-      queryFn: fetchIntegrations,
-    }
-  );
+  const {
+    data: availableSourcesData,
+    error: error2,
+  } = useQuery<Integration[]>({
+    queryKey: QUERY_KEYS.integrations.available,
+    queryFn: fetchIntegrations,
+  });
 
   if (error2) {
     toast.error("Error fetching user integrations", {
@@ -926,14 +927,14 @@ export default function SourcesClient() {
                                   variant="outline"
                                   size="sm"
                                   onClick={() => handleSync(source.id)}
-                                  disabled={
-                                    !source.connected ||
-                                    syncingId === source.id ||
-                                    isSyncedRecently(
-                                      source.lastSynced,
-                                      source.syncFrequency
-                                    )
-                                  }
+                                  // disabled={
+                                  //   !source.connected ||
+                                  //   syncingId === source.id ||
+                                  //   isSyncedRecently(
+                                  //     source.lastSynced,
+                                  //     source.syncFrequency
+                                  //   )
+                                  // }
                                   className="flex items-center gap-1"
                                 >
                                   {syncingId === source.id ? (

@@ -1,5 +1,14 @@
 import { DataSyncFrequencyEnum } from "./enums";
 
+export interface RawData {
+  id: string;
+  integration: WorkspaceIntegration;
+  metric: IMetric;
+  source: string;
+  processedData: Record<string, any>;
+  processedAt: string;
+  eventTimestamp: string;
+}
 export interface Integration {
   description: string;
   name: string;
@@ -37,7 +46,8 @@ export interface WorkspaceIntegration {
   integration: Integration;
   lastSynced: string;
   connected: boolean;
-  syncFrequency: DataSyncFrequencyEnum
+  syncFrequency: DataSyncFrequencyEnum;
+  metrics: IMetric[];
 }
 export interface IMetric {
   id: string;

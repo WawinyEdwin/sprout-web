@@ -18,6 +18,8 @@ import {
   UserRound,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface Message {
   id: string;
@@ -209,13 +211,15 @@ export default function ChatPage() {
                           <div
                             className={`rounded-lg p-6 ${
                               message.type === "user"
-                                ? ""
-                                : " border border-slate-200 text-slate-900"
+                                ? "bg-emerald-600 text-white"
+                                : "bg-white border border-slate-200 text-slate-900"
                             }`}
                           >
-                            <p className="text-sm leading-relaxed">
+                            <ReactMarkdown
+                              remarkPlugins={[remarkGfm]}
+                            >
                               {message.content}
-                            </p>
+                            </ReactMarkdown>
 
                             {message.insights && (
                               <div className="mt-6 space-y-4">

@@ -41,7 +41,7 @@ import {
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "AI Brain", href: "/dashboard/chat", icon: Brain },
-  { name: "KPIs & Metrics", href: "/dashboard/kpi-builder", icon: Target },
+  { name: "KPIs & Metrics", href: "/dashboard/kpi", icon: Target },
   { name: "Data Sources", href: "/dashboard/sources", icon: Database },
 ];
 
