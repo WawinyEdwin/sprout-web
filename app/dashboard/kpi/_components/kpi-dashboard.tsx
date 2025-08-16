@@ -40,6 +40,7 @@ import {
 import { useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
+// Type for our dynamic widgets
 type Widget = {
   id: string;
   type: "card" | "chart";
@@ -403,10 +404,6 @@ export default function KPIDashboard() {
     const metrics = sourceData?.processedData || null;
     const categorized = metrics ? categorizeMetrics(metrics) : null;
 
-    const existingMetricKeys = new Set(
-      widgets.map((widget) => widget.metric).filter(Boolean)
-    );
-
     const allMetrics = metrics
       ? Object.keys(metrics).filter((key) => typeof metrics[key] === "number")
       : [];
@@ -416,16 +413,12 @@ export default function KPIDashboard() {
         )
       : [];
 
-    const filteredAvailableMetrics = [...allMetrics, ...chartMetrics].filter(
-      (metric) => !existingMetricKeys.has(metric)
-    );
-
     return {
       selectedMetrics: metrics,
-      availableMetrics: filteredAvailableMetrics,
+      availableMetrics: [...allMetrics, ...chartMetrics],
       categorizedData: categorized,
     };
-  }, [selectedSource, raw_data, isLoading, widgets]);
+  }, [selectedSource, raw_data, isLoading]);
 
   const sourceOptions = useMemo(() => {
     if (isLoading || isError || !raw_data) {
