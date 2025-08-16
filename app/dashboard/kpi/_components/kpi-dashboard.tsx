@@ -1,7 +1,6 @@
 "use client";
 
 import { useUser } from "@/app/context/UserContext";
-import { DashboardNav } from "@/components/dashboard-nav";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -381,259 +380,244 @@ export default function KPIDashboard() {
   }, [raw_data, isLoading, isError]);
 
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardNav user={user} />
-      <main className="container mx-auto px-4 py-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">KPI Dashboard</h1>
-            <p className="text-muted-foreground">
-              Monitor your key performance indicators
-            </p>
-          </div>
-          <Select
-            value={selectedSource}
-            onValueChange={setSelectedSource}
-            disabled={isLoading || isError}
-          >
-            <SelectTrigger className="w-[280px]">
-              {isLoading ? (
-                <Skeleton className="h-6 w-full" />
-              ) : (
-                <SelectValue placeholder="Select data source" />
-              )}
-            </SelectTrigger>
-            <SelectContent>{sourceOptions}</SelectContent>
-          </Select>
+    <div>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">KPI Dashboard</h1>
+          <p className="text-muted-foreground">
+            Monitor your key performance indicators
+          </p>
         </div>
+        <Select
+          value={selectedSource}
+          onValueChange={setSelectedSource}
+          disabled={isLoading || isError}
+        >
+          <SelectTrigger className="w-[280px]">
+            {isLoading ? (
+              <Skeleton className="h-6 w-full" />
+            ) : (
+              <SelectValue placeholder="Select data source" />
+            )}
+          </SelectTrigger>
+          <SelectContent>{sourceOptions}</SelectContent>
+        </Select>
+      </div>
 
-        {isError ? (
-          <Card className="border-destructive">
-            <CardContent className="flex items-center gap-2 p-6">
-              <AlertCircle className="h-5 w-5 text-destructive" />
-              <span className="text-destructive">
-                Failed to load dashboard data. Please try again.
-              </span>
-            </CardContent>
-          </Card>
-        ) : isLoading ? (
-          <div className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <SkeletonCard key={i} />
-              ))}
-            </div>
+      {isError ? (
+        <Card className="border-destructive">
+          <CardContent className="flex items-center gap-2 p-6">
+            <AlertCircle className="h-5 w-5 text-destructive" />
+            <span className="text-destructive">
+              Failed to load dashboard data. Please try again.
+            </span>
+          </CardContent>
+        </Card>
+      ) : isLoading ? (
+        <div className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <SkeletonCard key={i} />
+            ))}
           </div>
-        ) : categorizedData ? (
-          <div className="space-y-8">
-            {categorizedData.primary.length > 0 && (
-              <section>
-                <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5" />
-                  Key Metrics
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {categorizedData.primary.map(([key, value]) => (
-                    <Card
-                      key={key}
-                      className="hover:shadow-md transition-shadow"
-                    >
-                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium capitalize">
-                          {key.replace(/_/g, " ")}
-                        </CardTitle>
-                        {getMetricIcon(key, selectedSourceName)}
-                      </CardHeader>
-                      <CardContent>
-                        <div
-                          className={`text-2xl font-bold ${getMetricColor(
-                            key,
-                            value
-                          )}`}
-                        >
-                          {formatValue(key, value)}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </section>
-            )}
+        </div>
+      ) : categorizedData ? (
+        <div className="space-y-8">
+          {categorizedData.primary.length > 0 && (
+            <section>
+              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                <TrendingUp className="h-5 w-5" />
+                Key Metrics
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {categorizedData.primary.map(([key, value]) => (
+                  <Card key={key} className="hover:shadow-md transition-shadow">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium capitalize">
+                        {key.replace(/_/g, " ")}
+                      </CardTitle>
+                      {getMetricIcon(key, selectedSourceName)}
+                    </CardHeader>
+                    <CardContent>
+                      <div
+                        className={`text-2xl font-bold ${getMetricColor(
+                          key,
+                          value
+                        )}`}
+                      >
+                        {formatValue(key, value)}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </section>
+          )}
 
-            {categorizedData.performance.length > 0 && (
-              <section>
-                <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5" />
-                  Performance & Conversion
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {categorizedData.performance.map(([key, value]) => (
-                    <Card
-                      key={key}
-                      className="hover:shadow-md transition-shadow"
-                    >
-                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium capitalize">
-                          {key.replace(/_/g, " ")}
-                        </CardTitle>
-                        {getMetricIcon(key, selectedSourceName)}
-                      </CardHeader>
-                      <CardContent>
-                        <div
-                          className={`text-2xl font-bold ${getMetricColor(
-                            key,
-                            value
-                          )}`}
-                        >
-                          {formatValue(key, value)}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </section>
-            )}
+          {categorizedData.performance.length > 0 && (
+            <section>
+              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                <BarChart3 className="h-5 w-5" />
+                Performance & Conversion
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {categorizedData.performance.map(([key, value]) => (
+                  <Card key={key} className="hover:shadow-md transition-shadow">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium capitalize">
+                        {key.replace(/_/g, " ")}
+                      </CardTitle>
+                      {getMetricIcon(key, selectedSourceName)}
+                    </CardHeader>
+                    <CardContent>
+                      <div
+                        className={`text-2xl font-bold ${getMetricColor(
+                          key,
+                          value
+                        )}`}
+                      >
+                        {formatValue(key, value)}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </section>
+          )}
 
-            {categorizedData.engagement.length > 0 && (
-              <section>
-                <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                  <Users className="h-5 w-5" />
-                  Engagement & Traffic
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {categorizedData.engagement.map(([key, value]) => (
-                    <Card
-                      key={key}
-                      className="hover:shadow-md transition-shadow"
-                    >
-                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium capitalize">
-                          {key.replace(/_/g, " ")}
-                        </CardTitle>
-                        {getMetricIcon(key, selectedSourceName)}
-                      </CardHeader>
-                      <CardContent>
-                        <div
-                          className={`text-2xl font-bold ${getMetricColor(
-                            key,
-                            value
-                          )}`}
-                        >
-                          {formatValue(key, value)}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </section>
-            )}
+          {categorizedData.engagement.length > 0 && (
+            <section>
+              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                Engagement & Traffic
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {categorizedData.engagement.map(([key, value]) => (
+                  <Card key={key} className="hover:shadow-md transition-shadow">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium capitalize">
+                        {key.replace(/_/g, " ")}
+                      </CardTitle>
+                      {getMetricIcon(key, selectedSourceName)}
+                    </CardHeader>
+                    <CardContent>
+                      <div
+                        className={`text-2xl font-bold ${getMetricColor(
+                          key,
+                          value
+                        )}`}
+                      >
+                        {formatValue(key, value)}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </section>
+          )}
 
-            {categorizedData.products.length > 0 && (
-              <section>
-                <h2 className="text-xl font-semibold mb-4">
-                  Breakdown by Category
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {categorizedData.products.map((product) => (
-                    <Card
-                      key={product.product}
-                      className="hover:shadow-md transition-shadow"
-                    >
-                      <CardHeader className="pb-2">
-                        <CardTitle
-                          className="text-sm font-medium truncate"
-                          title={product.product}
-                        >
-                          {product.product}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div
-                          className={`text-xl font-bold ${
-                            product.amount >= 0
-                              ? "text-green-600"
-                              : "text-red-600"
-                          }`}
-                        >
-                          {formatValue("amount", product.amount)}
-                        </div>
-                        <Badge
-                          variant={
-                            product.amount >= 0 ? "default" : "destructive"
-                          }
-                          className="text-xs mt-2"
-                        >
-                          {product.amount >= 0 ? "Positive" : "Negative"}
+          {categorizedData.products.length > 0 && (
+            <section>
+              <h2 className="text-xl font-semibold mb-4">
+                Breakdown by Category
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {categorizedData.products.map((product) => (
+                  <Card
+                    key={product.product}
+                    className="hover:shadow-md transition-shadow"
+                  >
+                    <CardHeader className="pb-2">
+                      <CardTitle
+                        className="text-sm font-medium truncate"
+                        title={product.product}
+                      >
+                        {product.product}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div
+                        className={`text-xl font-bold ${
+                          product.amount >= 0
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }`}
+                      >
+                        {formatValue("amount", product.amount)}
+                      </div>
+                      <Badge
+                        variant={
+                          product.amount >= 0 ? "default" : "destructive"
+                        }
+                        className="text-xs mt-2"
+                      >
+                        {product.amount >= 0 ? "Positive" : "Negative"}
+                      </Badge>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {categorizedData.operational.length > 0 && (
+            <section>
+              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                <AlertCircle className="h-5 w-5" />
+                Operational Metrics
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {categorizedData.operational.map(([key, value]) => (
+                  <Card key={key} className="hover:shadow-md transition-shadow">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium capitalize">
+                        {key.replace(/_/g, " ")}
+                      </CardTitle>
+                      {getMetricIcon(key, selectedSourceName)}
+                    </CardHeader>
+                    <CardContent>
+                      <div
+                        className={`text-2xl font-bold ${getMetricColor(
+                          key,
+                          value
+                        )}`}
+                      >
+                        {formatValue(key, value)}
+                      </div>
+                      {value === 0 && key.includes("overdue") && (
+                        <Badge variant="default" className="text-xs mt-2">
+                          Good
                         </Badge>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {categorizedData.operational.length > 0 && (
-              <section>
-                <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                  <AlertCircle className="h-5 w-5" />
-                  Operational Metrics
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {categorizedData.operational.map(([key, value]) => (
-                    <Card
-                      key={key}
-                      className="hover:shadow-md transition-shadow"
-                    >
-                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium capitalize">
-                          {key.replace(/_/g, " ")}
-                        </CardTitle>
-                        {getMetricIcon(key, selectedSourceName)}
-                      </CardHeader>
-                      <CardContent>
-                        <div
-                          className={`text-2xl font-bold ${getMetricColor(
-                            key,
-                            value
-                          )}`}
-                        >
-                          {formatValue(key, value)}
-                        </div>
-                        {value === 0 && key.includes("overdue") && (
-                          <Badge variant="default" className="text-xs mt-2">
-                            Good
+                      )}
+                      {value === 0 &&
+                        (key.includes("paid") ||
+                          key.includes("received") ||
+                          key.includes("recieved")) && (
+                          <Badge variant="secondary" className="text-xs mt-2">
+                            No Activity
                           </Badge>
                         )}
-                        {value === 0 &&
-                          (key.includes("paid") ||
-                            key.includes("received") ||
-                            key.includes("recieved")) && (
-                            <Badge variant="secondary" className="text-xs mt-2">
-                              No Activity
-                            </Badge>
-                          )}
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </section>
-            )}
-          </div>
-        ) : (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <PieChart className="h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium mb-2">
-                No Data Source Selected
-              </h3>
-              <p className="text-muted-foreground text-center">
-                Please select a data source from the dropdown above to view your
-                metrics.
-              </p>
-            </CardContent>
-          </Card>
-        )}
-      </main>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+      ) : (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <PieChart className="h-12 w-12 text-muted-foreground mb-4" />
+            <h3 className="text-lg font-medium mb-2">
+              No Data Source Selected
+            </h3>
+            <p className="text-muted-foreground text-center">
+              Please select a data source from the dropdown above to view your
+              metrics.
+            </p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

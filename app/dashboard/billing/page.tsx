@@ -1,7 +1,6 @@
 "use client";
 
 import { useUser } from "@/app/context/UserContext";
-import { DashboardNav } from "@/components/dashboard-nav";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -103,12 +102,10 @@ export default function BillingPage() {
 
   return (
     <div className="min-h-screen">
-      <DashboardNav user={user} />
 
-      <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-2xl font-bold  mb-3 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-            Billing & Subscription
+            Billing
           </h1>
           <p className="text-slate-600 text-lg">
             Manage your subscription, usage, and billing information.
@@ -455,7 +452,6 @@ export default function BillingPage() {
             </div>
           </DialogContent>
         </Dialog>
-      </main>
     </div>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { useUser } from "@/app/context/UserContext";
-import { DashboardNav } from "@/components/dashboard-nav";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -104,13 +103,12 @@ export default function SourcesClient() {
     enabled: !!workspaceId, // don't run until we have an ID
   });
 
-  const {
-    data: availableSourcesData,
-    error: error2,
-  } = useQuery<Integration[]>({
-    queryKey: QUERY_KEYS.integrations.available,
-    queryFn: fetchIntegrations,
-  });
+  const { data: availableSourcesData, error: error2 } = useQuery<Integration[]>(
+    {
+      queryKey: QUERY_KEYS.integrations.available,
+      queryFn: fetchIntegrations,
+    }
+  );
 
   if (error2) {
     toast.error("Error fetching user integrations", {
@@ -638,8 +636,6 @@ export default function SourcesClient() {
 
   return (
     <div className="min-h-screen">
-      <DashboardNav user={user} />
-
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
           <div>
