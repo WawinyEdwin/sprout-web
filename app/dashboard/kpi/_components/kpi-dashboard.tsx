@@ -1,6 +1,5 @@
 "use client";
 
-import { useUser } from "@/app/context/UserContext";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -325,17 +324,13 @@ const categorizeMetrics = (metrics: Record<string, any>, source: string) => {
 };
 
 export default function KPIDashboard() {
-  const { user } = useUser();
-  const workspaceId = user?.workspace?.workspaceId!;
-
   const {
     data: raw_data,
     isLoading,
     isError,
   } = useQuery<RawData[]>({
-    queryKey: [QUERY_KEYS.raw_data.all, workspaceId],
-    queryFn: () => fetchWorkspaceRawData(workspaceId),
-    enabled: !!workspaceId,
+    queryKey: [QUERY_KEYS.raw_data.all],
+    queryFn: () => fetchWorkspaceRawData(),
   });
 
   const [selectedSource, setSelectedSource] = useState<string>("");

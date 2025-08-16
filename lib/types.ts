@@ -29,6 +29,15 @@ export interface Subscription {
   amount: string;
 }
 
+export interface Usage {
+  currentUsage: {
+    dataSources: {
+      used: number;
+      limit: number;
+    };
+  };
+}
+
 export type IntegrationType =
   | "google_analytics"
   | "facebook_ads"

@@ -73,7 +73,6 @@ interface ConnectionStep {
 
 export default function SourcesClient() {
   const { user } = useUser();
-  const workspaceId = user?.workspace.workspaceId!;
   const [syncingId, setSyncingId] = useState<string | null>(null);
   const syncFrequencyOptions = enumToSelectOptions(DataSyncFrequencyEnum);
   const historicalDataOptions = enumToSelectOptions(HistoricalDataEnum);
@@ -98,9 +97,8 @@ export default function SourcesClient() {
   });
 
   const { data } = useQuery<WorkspaceIntegration[]>({
-    queryKey: [QUERY_KEYS.integrations.connected, workspaceId],
-    queryFn: () => fetchWorkspaceIntegrations(workspaceId),
-    enabled: !!workspaceId, // don't run until we have an ID
+    queryKey: [QUERY_KEYS.integrations.connected],
+    queryFn: () => fetchWorkspaceIntegrations(),
   });
 
   const { data: availableSourcesData, error: error2 } = useQuery<Integration[]>(
@@ -234,7 +232,6 @@ export default function SourcesClient() {
       const url = await connectFn({
         shop: shopName!,
         apiKey: credentials.apiKey,
-        workspaceId: user?.workspace.workspaceId!,
       });
 
       if (!url) {
@@ -623,7 +620,7 @@ export default function SourcesClient() {
   const handleSync = async (sourceId: string) => {
     try {
       setSyncingId(sourceId);
-      await syncIntegration(sourceId, user?.workspace.workspaceId!);
+      await syncIntegration(sourceId);
       toast.success("Sync started successfully!");
     } catch (error) {
       toast.error("Sync failed.", {

@@ -1,37 +1,3 @@
-export const mockUsage = {
-  dataSources: { current: 5, limit: 10 },
-  aiQueries: { current: 1250, limit: 2500 },
-  dashboards: { current: 8, limit: 15 },
-  teamMembers: { current: 3, limit: 5 },
-};
-
-export const mockInvoices = [
-  {
-    id: "inv_001",
-    number: "INV-2025-001",
-    date: "2025-01-15",
-    amount: 399,
-    status: "paid",
-    description: "Growth Plan - January 2025",
-  },
-  {
-    id: "inv_002",
-    number: "INV-2025-002",
-    date: "2025-02-15",
-    amount: 399,
-    status: "paid",
-    description: "Growth Plan - Feb 2025",
-  },
-  {
-    id: "inv_003",
-    number: "INV-2025-003",
-    date: "2025-03-15",
-    amount: 399,
-    status: "overdue",
-    description: "Growth Plan - Feb 2025",
-  },
-];
-
 export const plans = [
   {
     name: "Professional",

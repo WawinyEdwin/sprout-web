@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import axios from "axios";
+import { StoredUser } from "./types";
 
 const axiosClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:9000",
@@ -20,8 +21,24 @@ const supabase =
 axiosClient.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
     const token = localStorage.getItem("sp-access-token");
+    const spUser = localStorage.getItem("sp-user");
+    let workspaceId = null;
+
+    if (spUser) {
+      try {
+        const user: StoredUser | null = JSON.parse(spUser);
+        workspaceId = user?.workspace.workspaceId;
+      } catch (e) {
+        console.error("Failed to parse sp-user from localStorage", e);
+      }
+    }
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    if (workspaceId) {
+      config.headers["x-workspace-id"] = workspaceId;
     }
   }
   return config;

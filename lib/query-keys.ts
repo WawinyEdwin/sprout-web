@@ -4,7 +4,10 @@ export const QUERY_KEYS = {
     available: ["available_sources"],
   },
   raw_data: {
-    all: ["all"]
+    all: ["all"],
   },
-  subscription: ["workspace_subscription"],
+  subscription: {
+    workspace: ["workspace_subscription"],
+    usage: ["workspace_usage"],
+  },
 };

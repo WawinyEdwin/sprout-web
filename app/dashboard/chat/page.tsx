@@ -76,7 +76,7 @@ export default function ChatPage() {
     }
 
     try {
-      const { answer } = await askQuestion(user.workspace.workspaceId, input);
+      const { answer } = await askQuestion(input);
       setMessages((prev) => [
         ...prev,
         {
