@@ -431,7 +431,7 @@ export default function KPIDashboard() {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {categorizedData.primary.map(([key, value]) => (
-                  <Card key={key} className="hover:shadow-md transition-shadow">
+                  <Card key={key} className="border-0 shadow-lg">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                       <CardTitle className="text-sm font-medium capitalize">
                         {key.replace(/_/g, " ")}
@@ -462,7 +462,7 @@ export default function KPIDashboard() {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {categorizedData.performance.map(([key, value]) => (
-                  <Card key={key} className="hover:shadow-md transition-shadow">
+                  <Card key={key} className="border-0 shadow-lg">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                       <CardTitle className="text-sm font-medium capitalize">
                         {key.replace(/_/g, " ")}
@@ -493,7 +493,7 @@ export default function KPIDashboard() {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {categorizedData.engagement.map(([key, value]) => (
-                  <Card key={key} className="hover:shadow-md transition-shadow">
+                  <Card key={key} className="border-0 shadow-lg">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                       <CardTitle className="text-sm font-medium capitalize">
                         {key.replace(/_/g, " ")}
@@ -523,10 +523,7 @@ export default function KPIDashboard() {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {categorizedData.products.map((product) => (
-                  <Card
-                    key={product.product}
-                    className="hover:shadow-md transition-shadow"
-                  >
+                  <Card key={product.product} className="border-0 shadow-lg">
                     <CardHeader className="pb-2">
                       <CardTitle
                         className="text-sm font-medium truncate"
@@ -568,7 +565,7 @@ export default function KPIDashboard() {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {categorizedData.operational.map(([key, value]) => (
-                  <Card key={key} className="hover:shadow-md transition-shadow">
+                  <Card key={key} className="border-0 shadow-lg">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                       <CardTitle className="text-sm font-medium capitalize">
                         {key.replace(/_/g, " ")}
@@ -605,7 +602,7 @@ export default function KPIDashboard() {
           )}
         </div>
       ) : (
-        <Card>
+        <Card className="border-0 shadow-lg">
           <CardContent className="flex flex-col items-center justify-center py-12">
             <PieChart className="h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-medium mb-2">

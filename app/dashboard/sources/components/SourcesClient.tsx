@@ -635,378 +635,372 @@ export default function SourcesClient() {
   };
 
   return (
-    <div className="min-h-screen">
-      <main className="container mx-auto px-4 py-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-bold mb-2">Data Sources</h1>
-            <p className="text-slate-600">
-              Connect and manage your business data sources.
-            </p>
-          </div>
-          <Button
-            className="!bg-emerald-500"
-            onClick={() => setIsAddDialogOpen(true)}
-          >
-            <Plus className="w-4 h-4" />
-            Add Source
-          </Button>
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogContent className="max-w-4xl max-h-[90vh]">
-              <DialogHeader>
-                <DialogTitle className="flex items-center gap-2">
-                  <Database className="w-5 h-5" />
-                  {selectedSource
-                    ? `Connect ${selectedSource.name}`
-                    : "Add Data Source"}
-                </DialogTitle>
-                <DialogDescription>
-                  {selectedSource
-                    ? `Follow the steps below to connect your ${selectedSource.name} account`
-                    : "Choose a data source to connect to your Sprout dashboard"}
-                </DialogDescription>
-              </DialogHeader>
+    <div>
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
+        <div>
+          <h1 className="text-2xl font-bold mb-2">Data Sources</h1>
+          <p className="text-slate-600">
+            Connect and manage your business data sources.
+          </p>
+        </div>
+        <Button
+          className="!bg-emerald-500"
+          onClick={() => setIsAddDialogOpen(true)}
+        >
+          <Plus className="w-4 h-4" />
+          Add Source
+        </Button>
+        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+          <DialogContent className="max-w-4xl max-h-[90vh]">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Database className="w-5 h-5" />
+                {selectedSource
+                  ? `Connect ${selectedSource.name}`
+                  : "Add Data Source"}
+              </DialogTitle>
+              <DialogDescription>
+                {selectedSource
+                  ? `Follow the steps below to connect your ${selectedSource.name} account`
+                  : "Choose a data source to connect to your Sprout dashboard"}
+              </DialogDescription>
+            </DialogHeader>
 
-              {selectedSource ? (
-                <div className="space-y-6">
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Setup Progress</span>
-                      <span>{Math.round(connectionProgress)}%</span>
-                    </div>
-                    <Progress value={connectionProgress} className="h-2" />
+            {selectedSource ? (
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Setup Progress</span>
+                    <span>{Math.round(connectionProgress)}%</span>
                   </div>
+                  <Progress value={connectionProgress} className="h-2" />
+                </div>
 
-                  <div className="flex items-center justify-between mb-6">
-                    {connectionSteps.map((step, index) => (
-                      <div key={step.id} className="flex items-center">
-                        <div
-                          className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                            step.completed
-                              ? "bg-green-600 text-white"
-                              : step.current
-                              ? "bg-emerald-600 text-white"
-                              : "bg-slate-200 text-slate-600"
-                          }`}
-                        >
-                          {step.completed ? (
-                            <CheckCircle className="w-4 h-4" />
-                          ) : (
-                            index + 1
-                          )}
-                        </div>
-                        <div className="ml-2 hidden sm:block">
-                          <div
-                            className={`text-sm font-medium ${
-                              step.current
-                                ? "text-emerald-600"
-                                : "text-slate-600"
-                            }`}
-                          >
-                            {step.title}
-                          </div>
-                        </div>
-                        {index < connectionSteps.length - 1 && (
-                          <div className="w-12 h-px bg-slate-200 mx-4 hidden sm:block" />
+                <div className="flex items-center justify-between mb-6">
+                  {connectionSteps.map((step, index) => (
+                    <div key={step.id} className="flex items-center">
+                      <div
+                        className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                          step.completed
+                            ? "bg-green-600 text-white"
+                            : step.current
+                            ? "bg-emerald-600 text-white"
+                            : "bg-slate-200 text-slate-600"
+                        }`}
+                      >
+                        {step.completed ? (
+                          <CheckCircle className="w-4 h-4" />
+                        ) : (
+                          index + 1
                         )}
                       </div>
-                    ))}
-                  </div>
-
-                  <ScrollArea className="max-h-[400px] overflow-auto">
-                    {renderCurrentStep()}
-                  </ScrollArea>
-
-                  <div className="flex justify-between pt-4 border-t">
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setSelectedSource(null);
-                        setConnectionSteps([]);
-                        setCurrentStep(0);
-                        setConnectionProgress(0);
-                      }}
-                    >
-                      <X className="w-4 h-4 mr-2" />
-                      Cancel
-                    </Button>
-                    <div className="text-sm text-slate-500">
-                      Step {currentStep + 1} of {connectionSteps.length}
+                      <div className="ml-2 hidden sm:block">
+                        <div
+                          className={`text-sm font-medium ${
+                            step.current ? "text-emerald-600" : "text-slate-600"
+                          }`}
+                        >
+                          {step.title}
+                        </div>
+                      </div>
+                      {index < connectionSteps.length - 1 && (
+                        <div className="w-12 h-px bg-slate-200 mx-4 hidden sm:block" />
+                      )}
                     </div>
+                  ))}
+                </div>
+
+                <ScrollArea className="max-h-[400px] overflow-auto">
+                  {renderCurrentStep()}
+                </ScrollArea>
+
+                <div className="flex justify-between pt-4 border-t">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setSelectedSource(null);
+                      setConnectionSteps([]);
+                      setCurrentStep(0);
+                      setConnectionProgress(0);
+                    }}
+                  >
+                    <X className="w-4 h-4 mr-2" />
+                    Cancel
+                  </Button>
+                  <div className="text-sm text-slate-500">
+                    Step {currentStep + 1} of {connectionSteps.length}
                   </div>
                 </div>
-              ) : (
-                <Tabs defaultValue="browse" className="space-y-6">
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="browse">Browse Sources</TabsTrigger>
-                    <TabsTrigger value="custom">Custom Integration</TabsTrigger>
-                  </TabsList>
+              </div>
+            ) : (
+              <Tabs defaultValue="browse" className="space-y-6">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="browse">Browse Sources</TabsTrigger>
+                  <TabsTrigger value="custom">Custom Integration</TabsTrigger>
+                </TabsList>
 
-                  <TabsContent value="browse" className="space-y-4">
-                    <div className="flex gap-4">
-                      <div className="relative flex-1">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
-                        <Input
-                          placeholder="Search data sources..."
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          className="pl-10"
-                        />
-                      </div>
-                      <Select
-                        value={selectedCategory}
-                        onValueChange={setSelectedCategory}
-                      >
-                        <SelectTrigger className="w-48">
-                          <SelectValue placeholder="All Categories" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {categories.map((category) => (
-                            <SelectItem key={category} value={category}>
-                              {category === "all" ? "All Categories" : category}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                <TabsContent value="browse" className="space-y-4">
+                  <div className="flex gap-4">
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+                      <Input
+                        placeholder="Search data sources..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-10"
+                      />
                     </div>
-
-                    <ScrollArea className="h-[500px]">
-                      <div className="grid md:grid-cols-2 gap-4">
-                        {filteredSources.map((source) => {
-                          return (
-                            <Card
-                              key={source.id}
-                              className="cursor-pointer hover:shadow-md transition-all hover:border-emerald-300"
-                              onClick={() => handleSourceSelect(source)}
-                            >
-                              <CardContent className="p-6">
-                                <div className="flex items-start justify-between mb-4">
-                                  <div className="flex items-center gap-3">
-                                    <div>
-                                      <h3 className="font-semibold">
-                                        {source.name}
-                                      </h3>
-                                      <p className="text-sm text-slate-600">
-                                        {source.description}
-                                      </p>
-                                    </div>
-                                  </div>
-                                </div>
-
-                                <div className="space-y-3">
-                                  <div className="flex flex-wrap gap-1">
-                                    {source.metrics
-                                      .slice(0, 3)
-                                      .map((metric) => (
-                                        <Badge
-                                          key={metric.id}
-                                          variant="secondary"
-                                          className="text-xs"
-                                        >
-                                          {metric.name}
-                                        </Badge>
-                                      ))}
-                                    {source.metrics.length > 3 && (
-                                      <Badge
-                                        variant="secondary"
-                                        className="text-xs"
-                                      >
-                                        +{source.metrics.length - 3}
-                                      </Badge>
-                                    )}
-                                  </div>
-                                </div>
-                              </CardContent>
-                            </Card>
-                          );
-                        })}
-                      </div>
-                    </ScrollArea>
-                  </TabsContent>
-
-                  <TabsContent value="custom" className="space-y-4">
-                    <CustomIntegrationForm user={user!} />
-                  </TabsContent>
-                </Tabs>
-              )}
-            </DialogContent>
-          </Dialog>
-        </div>
-
-        <div className="grid lg:grid-cols-2 gap-8">
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Connected Sources</h2>
-            <div className="space-y-4">
-              {connectedSources.length === 0 ? (
-                <Card className="border-dashed border-2 border-gray-300 bg-muted/40 shadow-none">
-                  <CardContent className="p-10 text-center space-y-4">
-                    <div className="flex justify-center">
-                      <AlertCircle className="w-10 h-10 text-gray-400" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-800">
-                      No data sources connected
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      Connect a data source like Google Analytics, Stripe, or
-                      HubSpot to start syncing metrics.
-                    </p>
-                    <Button
-                      className="!bg-emerald-500"
-                      onClick={() => setIsAddDialogOpen(true)}
+                    <Select
+                      value={selectedCategory}
+                      onValueChange={setSelectedCategory}
                     >
-                      <Plus className="w-4 h-4" />
-                      Add Source
-                    </Button>
-                  </CardContent>
-                </Card>
-              ) : (
-                connectedSources.map((source: WorkspaceIntegration) => (
-                  <Card key={source.id}>
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-start gap-4">
-                          <div className="flex-1">
-                            <h3 className="font-semibold mb-1">
-                              {source.integration.name}
-                            </h3>
-                            <p className="text-sm text-slate-600 mb-3">
-                              {source.integration.description}
-                            </p>
-                            <div className="flex items-center gap-4 mb-3">
-                              <div className="flex items-center gap-2">
-                                {source.connected ? (
-                                  <CheckCircle className="w-4 h-4 text-green-600" />
-                                ) : (
-                                  <AlertCircle className="w-4 h-4 text-red-600" />
-                                )}
-                                <span className="text-sm">
-                                  {source.connected
-                                    ? "Connected"
-                                    : "Connection Error"}
-                                </span>
+                      <SelectTrigger className="w-48">
+                        <SelectValue placeholder="All Categories" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((category) => (
+                          <SelectItem key={category} value={category}>
+                            {category === "all" ? "All Categories" : category}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <ScrollArea className="h-[500px]">
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {filteredSources.map((source) => {
+                        return (
+                          <Card
+                            key={source.id}
+                            className="cursor-pointer border-0 shadow-lg hover:border-emerald-300"
+                            onClick={() => handleSourceSelect(source)}
+                          >
+                            <CardContent className="p-6">
+                              <div className="flex items-start justify-between mb-4">
+                                <div className="flex items-center gap-3">
+                                  <div>
+                                    <h3 className="font-semibold">
+                                      {source.name}
+                                    </h3>
+                                    <p className="text-sm text-slate-600">
+                                      {source.description}
+                                    </p>
+                                  </div>
+                                </div>
                               </div>
-                              <span className="text-sm text-slate-500">
-                                Last sync:{" "}
-                                {source.lastSynced &&
-                                isPast(new Date(source.lastSynced))
-                                  ? formatDistanceToNow(
-                                      new Date(source.lastSynced),
-                                      { addSuffix: true }
-                                    )
-                                  : "N/A"}
+
+                              <div className="space-y-3">
+                                <div className="flex flex-wrap gap-1">
+                                  {source.metrics.slice(0, 3).map((metric) => (
+                                    <Badge
+                                      key={metric.id}
+                                      variant="secondary"
+                                      className="text-xs"
+                                    >
+                                      {metric.name}
+                                    </Badge>
+                                  ))}
+                                  {source.metrics.length > 3 && (
+                                    <Badge
+                                      variant="secondary"
+                                      className="text-xs"
+                                    >
+                                      +{source.metrics.length - 3}
+                                    </Badge>
+                                  )}
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        );
+                      })}
+                    </div>
+                  </ScrollArea>
+                </TabsContent>
+
+                <TabsContent value="custom" className="space-y-4">
+                  <CustomIntegrationForm user={user!} />
+                </TabsContent>
+              </Tabs>
+            )}
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-8">
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Connected Sources</h2>
+          <div className="space-y-4">
+            {connectedSources.length === 0 ? (
+              <Card className="border-dashed border-2 border-gray-300 bg-muted/40 shadow-none">
+                <CardContent className="p-10 text-center space-y-4">
+                  <div className="flex justify-center">
+                    <AlertCircle className="w-10 h-10 text-gray-400" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    No data sources connected
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    Connect a data source like Google Analytics, Stripe, or
+                    HubSpot to start syncing metrics.
+                  </p>
+                  <Button
+                    className="!bg-emerald-500"
+                    onClick={() => setIsAddDialogOpen(true)}
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add Source
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : (
+              connectedSources.map((source: WorkspaceIntegration) => (
+                <Card key={source.id} className="border-0 shadow-lg">
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start gap-4">
+                        <div className="flex-1">
+                          <h3 className="font-semibold mb-1">
+                            {source.integration.name}
+                          </h3>
+                          <p className="text-sm text-slate-600 mb-3">
+                            {source.integration.description}
+                          </p>
+                          <div className="flex items-center gap-4 mb-3">
+                            <div className="flex items-center gap-2">
+                              {source.connected ? (
+                                <CheckCircle className="w-4 h-4 text-green-600" />
+                              ) : (
+                                <AlertCircle className="w-4 h-4 text-red-600" />
+                              )}
+                              <span className="text-sm">
+                                {source.connected
+                                  ? "Connected"
+                                  : "Connection Error"}
                               </span>
                             </div>
-                            <div className="flex flex-wrap gap-1">
-                              {source.integration.metrics.map((metric) => (
-                                <Badge
-                                  key={metric.id}
-                                  variant="outline"
-                                  className="text-xs"
-                                >
-                                  {metric.name}
-                                </Badge>
-                              ))}
-                            </div>
+                            <span className="text-sm text-slate-500">
+                              Last sync:{" "}
+                              {source.lastSynced &&
+                              isPast(new Date(source.lastSynced))
+                                ? formatDistanceToNow(
+                                    new Date(source.lastSynced),
+                                    { addSuffix: true }
+                                  )
+                                : "N/A"}
+                            </span>
+                          </div>
+                          <div className="flex flex-wrap gap-1">
+                            {source.integration.metrics.map((metric) => (
+                              <Badge
+                                key={metric.id}
+                                variant="outline"
+                                className="text-xs"
+                              >
+                                {metric.name}
+                              </Badge>
+                            ))}
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Switch
-                            className="bg-emerald-500"
-                            disabled
-                            aria-readonly
-                            defaultChecked={source.connected}
-                          />
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleSync(source.id)}
-                                  // disabled={
-                                  //   !source.connected ||
-                                  //   syncingId === source.id ||
-                                  //   isSyncedRecently(
-                                  //     source.lastSynced,
-                                  //     source.syncFrequency
-                                  //   )
-                                  // }
-                                  className="flex items-center gap-1"
-                                >
-                                  {syncingId === source.id ? (
-                                    <Loader className="w-4 h-4 animate-spin" />
-                                  ) : (
-                                    <RefreshCcw className="w-4 h-4" />
-                                  )}
-                                  <span className="text-sm">Sync</span>
-                                </Button>
-                              </TooltipTrigger>
-                              {isSyncedRecently(
-                                source.lastSynced,
-                                source.syncFrequency
-                              ) && (
-                                <TooltipContent>
-                                  <p>
-                                    This data source has been synced recently.
-                                  </p>
-                                </TooltipContent>
-                              )}
-                            </Tooltip>
-                          </TooltipProvider>
-                          <Button variant="ghost" size="sm">
-                            <Settings className="w-4 h-4" />
-                          </Button>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Switch
+                          className="bg-emerald-500"
+                          disabled
+                          aria-readonly
+                          defaultChecked={source.connected}
+                        />
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleSync(source.id)}
+                                disabled={
+                                  !source.connected ||
+                                  syncingId === source.id ||
+                                  isSyncedRecently(
+                                    source.lastSynced,
+                                    source.syncFrequency
+                                  )
+                                }
+                                className="flex items-center gap-1"
+                              >
+                                {syncingId === source.id ? (
+                                  <Loader className="w-4 h-4 animate-spin" />
+                                ) : (
+                                  <RefreshCcw className="w-4 h-4" />
+                                )}
+                                <span className="text-sm">Sync</span>
+                              </Button>
+                            </TooltipTrigger>
+                            {isSyncedRecently(
+                              source.lastSynced,
+                              source.syncFrequency
+                            ) && (
+                              <TooltipContent>
+                                <p>
+                                  This data source has been synced recently.
+                                </p>
+                              </TooltipContent>
+                            )}
+                          </Tooltip>
+                        </TooltipProvider>
+                        <Button variant="ghost" size="sm">
+                          <Settings className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </div>
+        </div>
+
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Popular Sources</h2>
+          <div className="space-y-4">
+            {filteredAvailableSources &&
+              filteredAvailableSources.map((source) => {
+                return (
+                  <Card
+                    key={source.id}
+                    className="border-0 shadow-lg cursor-pointer"
+                  >
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div>
+                            <h3 className="font-semibold mb-1">
+                              {source.name}
+                            </h3>
+                            <p className="text-sm text-slate-600">
+                              {source.description}
+                            </p>
+                          </div>
                         </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setIsAddDialogOpen(true);
+                            handleSourceSelect(source);
+                          }}
+                        >
+                          <Plus className="w-4 h-4 mr-1" />
+                          Connect
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>
-                ))
-              )}
-            </div>
-          </div>
-
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Popular Sources</h2>
-            <div className="space-y-4">
-              {filteredAvailableSources &&
-                filteredAvailableSources.map((source) => {
-                  return (
-                    <Card
-                      key={source.id}
-                      className="hover:shadow-md transition-shadow cursor-pointer"
-                    >
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-4">
-                            <div>
-                              <h3 className="font-semibold mb-1">
-                                {source.name}
-                              </h3>
-                              <p className="text-sm text-slate-600">
-                                {source.description}
-                              </p>
-                            </div>
-                          </div>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              setIsAddDialogOpen(true);
-                              handleSourceSelect(source);
-                            }}
-                          >
-                            <Plus className="w-4 h-4 mr-1" />
-                            Connect
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-            </div>
+                );
+              })}
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

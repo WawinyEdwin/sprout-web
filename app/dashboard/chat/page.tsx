@@ -115,14 +115,14 @@ export default function ChatPage() {
   }, [messages]);
 
   return (
-    <div >
+    <div>
       <div className="w-full max-w-7xl mx-auto px-4">
         <div className="mb-8">
           <h1 className="font-bold mb-3 flex items-center gap-3">
             <div className="w-12 h-12  from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center">
               <Brain className="w-7 h-7" />
             </div>
-            <span className="  bg-clip-text ">AI Business Brain</span>
+            <span className="text-2xl  bg-clip-text ">AI Business Brain</span>
           </h1>
           <p className="text-slate-600">
             Ask questions, get predictions, understand root causes, and receive

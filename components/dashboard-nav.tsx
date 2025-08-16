@@ -115,7 +115,7 @@ export function DashboardNav({ user, children }: DashboardNavProps) {
                   sidebarCollapsed && "justify-center"
                 )}
               >
-                <div className="w-6 h-6 bg-gray-700 rounded-full flex items-center justify-center">
+                <div className="w-6 h-6 rounded-full flex items-center justify-center">
                   <User className="w-4 h-4" />
                 </div>
                 {!sidebarCollapsed && (
