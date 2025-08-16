@@ -403,6 +403,10 @@ export default function KPIDashboard() {
     const metrics = sourceData?.processedData || null;
     const categorized = metrics ? categorizeMetrics(metrics) : null;
 
+    const existingMetricKeys = new Set(
+      widgets.map((widget) => widget.metric).filter(Boolean)
+    );
+
     const allMetrics = metrics
       ? Object.keys(metrics).filter((key) => typeof metrics[key] === "number")
       : [];
@@ -412,12 +416,16 @@ export default function KPIDashboard() {
         )
       : [];
 
+    const filteredAvailableMetrics = [...allMetrics, ...chartMetrics].filter(
+      (metric) => !existingMetricKeys.has(metric)
+    );
+
     return {
       selectedMetrics: metrics,
-      availableMetrics: [...allMetrics, ...chartMetrics],
+      availableMetrics: filteredAvailableMetrics,
       categorizedData: categorized,
     };
-  }, [selectedSource, raw_data, isLoading]);
+  }, [selectedSource, raw_data, isLoading, widgets]);
 
   const sourceOptions = useMemo(() => {
     if (isLoading || isError || !raw_data) {
