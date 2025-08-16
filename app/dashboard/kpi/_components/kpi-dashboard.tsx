@@ -1,7 +1,14 @@
 "use client";
-
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -12,7 +19,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetchWorkspaceRawData } from "@/lib/api/raw_data";
 import { QUERY_KEYS } from "@/lib/query-keys";
-import type { RawData } from "@/lib/types";
+import { RawData } from "@/lib/types";
 import { useQuery } from "@tanstack/react-query";
 import {
   AlertCircle,
@@ -28,8 +35,18 @@ import {
   TrendingDown,
   TrendingUp,
   Users,
+  XCircle,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+
+type Widget = {
+  id: string;
+  type: "card" | "chart";
+  metric?: string;
+  data?: any[];
+  title?: string;
+};
 
 const SkeletonCard = () => (
   <Card>
@@ -44,7 +61,6 @@ const SkeletonCard = () => (
 );
 
 const formatValue = (key: string, value: number) => {
-  // Currency formatting
   if (
     key.includes("revenue") ||
     key.includes("income") ||
@@ -66,7 +82,6 @@ const formatValue = (key: string, value: number) => {
     }).format(value);
   }
 
-  // Percentage formatting
   if (
     key.includes("rate") ||
     key.includes("margin") ||
@@ -83,14 +98,12 @@ const formatValue = (key: string, value: number) => {
     return `${value.toFixed(2)}%`;
   }
 
-  // Time formatting (seconds to readable format)
   if (key.includes("duration") || key.includes("time")) {
     if (value < 60) return `${value.toFixed(1)}s`;
     if (value < 3600) return `${(value / 60).toFixed(1)}m`;
     return `${(value / 3600).toFixed(1)}h`;
   }
 
-  // Large numbers with K/M formatting
   if (value >= 1000000) {
     return `${(value / 1000000).toFixed(1)}M`;
   }
@@ -101,8 +114,7 @@ const formatValue = (key: string, value: number) => {
   return value.toLocaleString();
 };
 
-const getMetricIcon = (key: string, source?: string) => {
-  // Financial metrics
+const getMetricIcon = (key: string) => {
   if (
     key.includes("profit") ||
     key.includes("income") ||
@@ -117,8 +129,6 @@ const getMetricIcon = (key: string, source?: string) => {
   ) {
     return <TrendingDown className="h-4 w-4 text-red-600" />;
   }
-
-  // Analytics metrics
   if (
     key.includes("users") ||
     key.includes("visitors") ||
@@ -141,8 +151,6 @@ const getMetricIcon = (key: string, source?: string) => {
   ) {
     return <Globe className="h-4 w-4 text-indigo-600" />;
   }
-
-  // E-commerce metrics
   if (
     key.includes("orders") ||
     key.includes("transactions") ||
@@ -150,8 +158,6 @@ const getMetricIcon = (key: string, source?: string) => {
   ) {
     return <ShoppingCart className="h-4 w-4 text-green-600" />;
   }
-
-  // Marketing metrics
   if (
     key.includes("email") ||
     key.includes("campaign") ||
@@ -160,8 +166,6 @@ const getMetricIcon = (key: string, source?: string) => {
   ) {
     return <Mail className="h-4 w-4 text-orange-600" />;
   }
-
-  // Performance metrics
   if (
     key.includes("rate") ||
     key.includes("margin") ||
@@ -170,8 +174,6 @@ const getMetricIcon = (key: string, source?: string) => {
   ) {
     return <BarChart3 className="h-4 w-4 text-blue-600" />;
   }
-
-  // Support metrics
   if (
     key.includes("ticket") ||
     key.includes("response") ||
@@ -180,8 +182,6 @@ const getMetricIcon = (key: string, source?: string) => {
   ) {
     return <Headphones className="h-4 w-4 text-teal-600" />;
   }
-
-  // Advertising metrics
   if (
     key.includes("roas") ||
     key.includes("cpc") ||
@@ -211,7 +211,52 @@ const getMetricColor = (key: string, value: number) => {
   return "text-foreground";
 };
 
-const categorizeMetrics = (metrics: Record<string, any>, source: string) => {
+const SimpleBarChart = ({ data, title }: { data: any[]; title: string }) => {
+  const totalAmount = data.reduce(
+    (sum, item) => sum + Math.abs(item.amount),
+    0
+  );
+
+  return (
+    <Card className="border-0 shadow-lg">
+      <CardHeader>
+        <CardTitle className="text-xl font-semibold flex items-center gap-2">
+          <PieChart className="h-5 w-5" />
+          {title}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="flex flex-col space-y-4">
+          {data.map((item, index) => (
+            <div
+              key={item.product || index}
+              className="flex items-center gap-2"
+            >
+              <span className="text-sm font-medium w-24 truncate">
+                {item.product}
+              </span>
+              <div className="relative flex-grow h-4 bg-gray-200 rounded-full">
+                <div
+                  className="absolute inset-0 rounded-full"
+                  style={{
+                    width: `${(Math.abs(item.amount) / totalAmount) * 100}%`,
+                    backgroundColor:
+                      item.amount >= 0 ? "rgb(22 163 74)" : "rgb(220 38 38)",
+                  }}
+                ></div>
+              </div>
+              <span className="text-xs w-16 text-right">
+                {formatValue("amount", item.amount)}
+              </span>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+const categorizeMetrics = (metrics: Record<string, any>) => {
   const categories = {
     primary: [] as Array<[string, number]>,
     performance: [] as Array<[string, number]>,
@@ -323,6 +368,7 @@ const categorizeMetrics = (metrics: Record<string, any>, source: string) => {
   return categories;
 };
 
+// MAIN COMPONENT
 export default function KPIDashboard() {
   const {
     data: raw_data,
@@ -334,30 +380,44 @@ export default function KPIDashboard() {
   });
 
   const [selectedSource, setSelectedSource] = useState<string>("");
+  const [widgets, setWidgets] = useState<Widget[]>([]);
+  const [isAddWidgetModalOpen, setIsAddWidgetModalOpen] = useState(false);
+  const [newWidgetMetric, setNewWidgetMetric] = useState<string>("");
 
-  const { selectedMetrics, categorizedData, selectedSourceName } =
-    useMemo(() => {
-      if (!selectedSource || isLoading)
-        return {
-          selectedMetrics: null,
-          categorizedData: null,
-          selectedSourceName: "",
-        };
-
-      const sourceData = raw_data?.find(
-        (item) => item.source === selectedSource
-      );
-      const metrics = sourceData?.processedData || null;
-      const categorized = metrics
-        ? categorizeMetrics(metrics, selectedSource)
-        : null;
-
+  const { selectedMetrics, availableMetrics, categorizedData } = useMemo(() => {
+    if (!selectedSource || isLoading) {
       return {
-        selectedMetrics: metrics,
-        categorizedData: categorized,
-        selectedSourceName: sourceData?.source || "",
+        selectedMetrics: null,
+        availableMetrics: [],
+        categorizedData: {
+          primary: [],
+          performance: [],
+          engagement: [],
+          operational: [],
+          products: [],
+        },
       };
-    }, [selectedSource, raw_data, isLoading]);
+    }
+
+    const sourceData = raw_data?.find((item) => item.source === selectedSource);
+    const metrics = sourceData?.processedData || null;
+    const categorized = metrics ? categorizeMetrics(metrics) : null;
+
+    const allMetrics = metrics
+      ? Object.keys(metrics).filter((key) => typeof metrics[key] === "number")
+      : [];
+    const chartMetrics = metrics
+      ? Object.keys(metrics).filter(
+          (key) => Array.isArray(metrics[key]) && key.includes("by_")
+        )
+      : [];
+
+    return {
+      selectedMetrics: metrics,
+      availableMetrics: [...allMetrics, ...chartMetrics],
+      categorizedData: categorized,
+    };
+  }, [selectedSource, raw_data, isLoading]);
 
   const sourceOptions = useMemo(() => {
     if (isLoading || isError || !raw_data) {
@@ -374,6 +434,57 @@ export default function KPIDashboard() {
     ));
   }, [raw_data, isLoading, isError]);
 
+  useMemo(() => {
+    if (categorizedData && widgets.length === 0) {
+      const initialWidgets: Widget[] = [];
+      categorizedData.primary.forEach(([key]) => {
+        initialWidgets.push({ id: uuidv4(), type: "card", metric: key });
+      });
+      categorizedData.operational.forEach(([key]) => {
+        initialWidgets.push({ id: uuidv4(), type: "card", metric: key });
+      });
+      if (categorizedData.products.length > 0) {
+        initialWidgets.push({
+          id: uuidv4(),
+          type: "chart",
+          data: categorizedData.products,
+          title: "Product Revenue Breakdown",
+        });
+      }
+      setWidgets(initialWidgets);
+    }
+  }, [selectedSource, categorizedData]);
+
+  const addWidget = () => {
+    if (!newWidgetMetric || !selectedMetrics) return;
+
+    const value = selectedMetrics[newWidgetMetric];
+    let newWidget: Widget;
+
+    if (Array.isArray(value) && newWidgetMetric.includes("by_")) {
+      newWidget = {
+        id: uuidv4(),
+        type: "chart",
+        data: value,
+        title: newWidgetMetric.replace(/_/g, " ").toUpperCase(),
+      };
+    } else {
+      newWidget = {
+        id: uuidv4(),
+        type: "card",
+        metric: newWidgetMetric,
+      };
+    }
+
+    setWidgets([...widgets, newWidget]);
+    setNewWidgetMetric("");
+    setIsAddWidgetModalOpen(false);
+  };
+
+  const removeWidget = (id: string) => {
+    setWidgets(widgets.filter((widget) => widget.id !== id));
+  };
+
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
@@ -383,20 +494,60 @@ export default function KPIDashboard() {
             Monitor your key performance indicators
           </p>
         </div>
-        <Select
-          value={selectedSource}
-          onValueChange={setSelectedSource}
-          disabled={isLoading || isError}
-        >
-          <SelectTrigger className="w-[280px]">
-            {isLoading ? (
-              <Skeleton className="h-6 w-full" />
-            ) : (
-              <SelectValue placeholder="Select data source" />
-            )}
-          </SelectTrigger>
-          <SelectContent>{sourceOptions}</SelectContent>
-        </Select>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Select
+            value={selectedSource}
+            onValueChange={(value) => {
+              setSelectedSource(value);
+              setWidgets([]); // Clear widgets on source change
+            }}
+            disabled={isLoading || isError}
+          >
+            <SelectTrigger className="w-[280px]">
+              {isLoading ? (
+                <Skeleton className="h-6 w-full" />
+              ) : (
+                <SelectValue placeholder="Select data source" />
+              )}
+            </SelectTrigger>
+            <SelectContent>{sourceOptions}</SelectContent>
+          </Select>
+          {selectedSource && (
+            <Dialog
+              open={isAddWidgetModalOpen}
+              onOpenChange={setIsAddWidgetModalOpen}
+            >
+              <DialogTrigger asChild>
+                <Button className="w-full sm:w-auto">Add New Widget</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add New Widget</DialogTitle>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <Select
+                    value={newWidgetMetric}
+                    onValueChange={setNewWidgetMetric}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select metric" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableMetrics.map((metric) => (
+                        <SelectItem key={metric} value={metric}>
+                          {metric.replace(/_/g, " ").toUpperCase()}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button onClick={addWidget} disabled={!newWidgetMetric}>
+                  Add Widget
+                </Button>
+              </DialogContent>
+            </Dialog>
+          )}
+        </div>
       </div>
 
       {isError ? (
@@ -416,156 +567,28 @@ export default function KPIDashboard() {
             ))}
           </div>
         </div>
-      ) : categorizedData ? (
-        <div className="space-y-8">
-          {categorizedData.primary.length > 0 && (
-            <section>
-              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                <TrendingUp className="h-5 w-5" />
-                Key Metrics
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {categorizedData.primary.map(([key, value]) => (
-                  <Card key={key} className="border-0 shadow-lg">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      ) : widgets.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {widgets.map((widget) => {
+            if (widget.type === "card" && selectedMetrics && widget.metric) {
+              const key = widget.metric;
+              const value = selectedMetrics[key];
+              if (typeof value === "number") {
+                return (
+                  <Card key={widget.id} className="border-0 shadow-lg relative">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute top-2 right-2 text-muted-foreground hover:text-red-500"
+                      onClick={() => removeWidget(widget.id)}
+                    >
+                      <XCircle className="h-4 w-4" />
+                    </Button>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 pr-10">
                       <CardTitle className="text-sm font-medium capitalize">
                         {key.replace(/_/g, " ")}
                       </CardTitle>
-                      {getMetricIcon(key, selectedSourceName)}
-                    </CardHeader>
-                    <CardContent>
-                      <div
-                        className={`text-2xl font-bold ${getMetricColor(
-                          key,
-                          value
-                        )}`}
-                      >
-                        {formatValue(key, value)}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {categorizedData.performance.length > 0 && (
-            <section>
-              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                <BarChart3 className="h-5 w-5" />
-                Performance & Conversion
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {categorizedData.performance.map(([key, value]) => (
-                  <Card key={key} className="border-0 shadow-lg">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium capitalize">
-                        {key.replace(/_/g, " ")}
-                      </CardTitle>
-                      {getMetricIcon(key, selectedSourceName)}
-                    </CardHeader>
-                    <CardContent>
-                      <div
-                        className={`text-2xl font-bold ${getMetricColor(
-                          key,
-                          value
-                        )}`}
-                      >
-                        {formatValue(key, value)}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {categorizedData.engagement.length > 0 && (
-            <section>
-              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                Engagement & Traffic
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {categorizedData.engagement.map(([key, value]) => (
-                  <Card key={key} className="border-0 shadow-lg">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium capitalize">
-                        {key.replace(/_/g, " ")}
-                      </CardTitle>
-                      {getMetricIcon(key, selectedSourceName)}
-                    </CardHeader>
-                    <CardContent>
-                      <div
-                        className={`text-2xl font-bold ${getMetricColor(
-                          key,
-                          value
-                        )}`}
-                      >
-                        {formatValue(key, value)}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {categorizedData.products.length > 0 && (
-            <section>
-              <h2 className="text-xl font-semibold mb-4">
-                Breakdown by Category
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {categorizedData.products.map((product) => (
-                  <Card key={product.product} className="border-0 shadow-lg">
-                    <CardHeader className="pb-2">
-                      <CardTitle
-                        className="text-sm font-medium truncate"
-                        title={product.product}
-                      >
-                        {product.product}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div
-                        className={`text-xl font-bold ${
-                          product.amount >= 0
-                            ? "text-green-600"
-                            : "text-red-600"
-                        }`}
-                      >
-                        {formatValue("amount", product.amount)}
-                      </div>
-                      <Badge
-                        variant={
-                          product.amount >= 0 ? "default" : "destructive"
-                        }
-                        className="text-xs mt-2"
-                      >
-                        {product.amount >= 0 ? "Positive" : "Negative"}
-                      </Badge>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {categorizedData.operational.length > 0 && (
-            <section>
-              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                <AlertCircle className="h-5 w-5" />
-                Operational Metrics
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {categorizedData.operational.map(([key, value]) => (
-                  <Card key={key} className="border-0 shadow-lg">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium capitalize">
-                        {key.replace(/_/g, " ")}
-                      </CardTitle>
-                      {getMetricIcon(key, selectedSourceName)}
+                      {getMetricIcon(key)}
                     </CardHeader>
                     <CardContent>
                       <div
@@ -591,10 +614,31 @@ export default function KPIDashboard() {
                         )}
                     </CardContent>
                   </Card>
-                ))}
-              </div>
-            </section>
-          )}
+                );
+              }
+            } else if (widget.type === "chart" && widget.data) {
+              return (
+                <div
+                  key={widget.id}
+                  className="relative col-span-1 md:col-span-2 lg:col-span-3"
+                >
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute top-2 right-2 z-10 text-muted-foreground hover:text-red-500"
+                    onClick={() => removeWidget(widget.id)}
+                  >
+                    <XCircle className="h-4 w-4" />
+                  </Button>
+                  <SimpleBarChart
+                    data={widget.data}
+                    title={widget.title || ""}
+                  />
+                </div>
+              );
+            }
+            return null;
+          })}
         </div>
       ) : (
         <Card className="border-0 shadow-lg">
