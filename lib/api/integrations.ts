@@ -93,3 +93,8 @@ export const submitIntegrationRequest = async (
   });
   return response.data;
 };
+
+export const fetchWorkspaceRawData = async () => {
+  const response = await axiosClient.get(`/integrations/data/raw`);
+  return response.data;
+};

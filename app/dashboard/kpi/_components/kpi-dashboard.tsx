@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { fetchWorkspaceRawData } from "@/lib/api/raw_data";
+import { fetchWorkspaceRawData } from "@/lib/api/integrations";
 import { QUERY_KEYS } from "@/lib/query-keys";
 import { RawData } from "@/lib/types";
 import { useQuery } from "@tanstack/react-query";
