@@ -65,7 +65,7 @@ export default function BillingPage() {
   };
 
   const { data: subscription } = useQuery<Subscription>({
-    queryKey: [QUERY_KEYS.subscription.workspace],
+    queryKey: QUERY_KEYS.subscription.workspace,
     queryFn: () => getWorkspaceSubscription(),
   });
 
@@ -75,14 +75,13 @@ export default function BillingPage() {
   }));
 
   const { data: usage } = useQuery<Usage>({
-    queryKey: [QUERY_KEYS.subscription.usage],
+    queryKey: QUERY_KEYS.subscription.usage,
     queryFn: () => getWorkspaceUsage(),
   });
 
   const dataSourceLimit = usage?.currentUsage.dataSources?.limit || 0;
   const dataSourcesCurrent = usage?.currentUsage.dataSources?.used || 0;
 
-  console.log("usage", usage);
   return (
     <div className="min-h-screen">
       <div className="mb-8">

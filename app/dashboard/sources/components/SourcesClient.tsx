@@ -97,7 +97,7 @@ export default function SourcesClient() {
   });
 
   const { data } = useQuery<WorkspaceIntegration[]>({
-    queryKey: [QUERY_KEYS.integrations.connected],
+    queryKey: QUERY_KEYS.integrations.connected,
     queryFn: () => fetchWorkspaceIntegrations(),
   });
 

@@ -41,7 +41,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen  from-slate-50 via-white to-slate-50">
+    <div className="min-h-screen  ">
       <header className="sticky top-0 z-50 w-full border-b border-slate-200/60 bg-white/80 backdrop-blur-xl">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -111,7 +111,7 @@ export default function HomePage() {
       </header>
 
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0  from-emerald-50/50 via-teal-50/30 to-cyan-50/50"></div>
+        <div className="absolute inset-0"></div>
         <div className="container mx-auto px-4 py-24 relative">
           <div className="text-center max-w-5xl mx-auto">
             <Badge

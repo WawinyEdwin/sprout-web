@@ -369,14 +369,13 @@ const categorizeMetrics = (metrics: Record<string, any>) => {
   return categories;
 };
 
-// MAIN COMPONENT
 export default function KPIDashboard() {
   const {
     data: raw_data,
     isLoading,
     isError,
   } = useQuery<RawData[]>({
-    queryKey: [QUERY_KEYS.raw_data.all],
+    queryKey: QUERY_KEYS.raw_data.all,
     queryFn: () => fetchWorkspaceRawData(),
   });
 
@@ -490,7 +489,7 @@ export default function KPIDashboard() {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">KPI Dashboard</h1>
+          <h1 className="text-2xl font-bold mb-2">KPI Dashboard</h1>
           <p className="text-muted-foreground">
             Monitor your key performance indicators
           </p>
@@ -519,7 +518,9 @@ export default function KPIDashboard() {
               onOpenChange={setIsAddWidgetModalOpen}
             >
               <DialogTrigger asChild>
-                <Button className="w-full sm:w-auto">Add New Widget</Button>
+                <Button className="w-full sm:w-auto !bg-emerald-500">
+                  Add New Widget
+                </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
@@ -542,7 +543,11 @@ export default function KPIDashboard() {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button onClick={addWidget} disabled={!newWidgetMetric}>
+                <Button
+                  onClick={addWidget}
+                  disabled={!newWidgetMetric}
+                  className="!bg-emerald-500"
+                >
                   Add Widget
                 </Button>
               </DialogContent>

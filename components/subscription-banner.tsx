@@ -36,20 +36,18 @@ export function SubscriptionBanner() {
 
   useEffect(() => {
     const fetchSubscription = async () => {
-      if (workspaceId) {
-        try {
-          const fetchedSubscription = await getWorkspaceSubscription(
-            workspaceId
-          );
-          setSubscription(fetchedSubscription);
-        } catch (error) {
-          console.error("Failed to fetch subscription:", error);
-        }
+      try {
+        const fetchedSubscription = await getWorkspaceSubscription();
+        setSubscription(fetchedSubscription);
+      } catch (error) {
+        console.error("Failed to fetch subscription:", error);
       }
     };
 
     fetchSubscription();
-  }, [workspaceId]);
+  }, []);
+
+  console.log(subscription);
 
   useEffect(() => {
     if (!subscription || isDismissed) {
@@ -65,7 +63,7 @@ export function SubscriptionBanner() {
 
     let calculatedBannerData: BannerConfig | null = null;
 
-    if (subscription.plan === "Free Trial") {
+    if (subscription.plan === "Free") {
       if (daysRemaining <= 0) {
         calculatedBannerData = {
           type: "trial_expired",
@@ -132,7 +130,7 @@ export function SubscriptionBanner() {
 
   return (
     <div className={`${bannerData.color} text-white shadow-lg relative z-50`}>
-      <div className="container mx-auto px-4 py-3">
+      <div className="container mx-auto px-4 py-1">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <IconComponent className="w-5 h-5 flex-shrink-0" />

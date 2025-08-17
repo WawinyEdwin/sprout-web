@@ -68,7 +68,7 @@ export default function SignUpPage() {
       <div className="w-full max-w-md">
         <BrandHeader />
 
-        <Card>
+        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-xl">
           <CardHeader className="text-center">
             <CardTitle>Start Your 7-Day Free Trial</CardTitle>
             <CardDescription>

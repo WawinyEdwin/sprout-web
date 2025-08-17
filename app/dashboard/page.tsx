@@ -31,19 +31,16 @@ import { useUser } from "../context/UserContext";
 
 export default function DashboardPage() {
   const { user } = useUser();
-  const workspaceId = user?.workspace.workspaceId!;
-
   const { data: sources } = useQuery<WorkspaceIntegration[]>({
-    queryKey: [QUERY_KEYS.integrations.connected, workspaceId],
-    queryFn: () => fetchWorkspaceIntegrations(workspaceId),
-    enabled: !!workspaceId, // don't run until we have an ID
+    queryKey: QUERY_KEYS.integrations.connected,
+    queryFn: () => fetchWorkspaceIntegrations(),
   });
 
   return (
     <div>
       <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-10">
         <div>
-          <h1 className="text-4xl font-bold mb-3   bg-clip-text ">
+          <h1 className="text-2xl font-bold mb-3   bg-clip-text ">
             Welcome back, {user?.firstName}
           </h1>
           <p className="text-slate-600 text-lg">

@@ -5,7 +5,6 @@ import { logout } from "@/lib/api/auth";
 import type { StoredUser } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import {
-  Bell,
   Brain,
   CreditCard,
   Database,
@@ -19,7 +18,6 @@ import {
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { Badge } from "./ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,7 +30,7 @@ import {
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "AI Brain", href: "/dashboard/chat", icon: Brain },
-  { name: "KPIs & Metrics", href: "/dashboard/kpi", icon: Target },
+  { name: "KPIs", href: "/dashboard/kpi", icon: Target },
   { name: "Data Sources", href: "/dashboard/sources", icon: Database },
   { name: "Billing", href: "/dashboard/billing", icon: CreditCard },
 ];
