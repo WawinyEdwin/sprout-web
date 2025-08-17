@@ -915,14 +915,14 @@ export default function SourcesClient() {
                                 variant="outline"
                                 size="sm"
                                 onClick={() => handleSync(source.id)}
-                                disabled={
-                                  !source.connected ||
-                                  syncingId === source.id ||
-                                  isSyncedRecently(
-                                    source.lastSynced,
-                                    source.syncFrequency
-                                  )
-                                }
+                                // disabled={
+                                //   !source.connected ||
+                                //   syncingId === source.id ||
+                                //   isSyncedRecently(
+                                //     source.lastSynced,
+                                //     source.syncFrequency
+                                //   )
+                                // }
                                 className="flex items-center gap-1"
                               >
                                 {syncingId === source.id ? (
