@@ -1,5 +1,32 @@
 import { DataSyncFrequencyEnum } from "./enums";
 
+export interface KpiRule {
+  id: string;
+  workspace_id: string;
+  metric_key: string;
+  name: string;
+  time_period: string;
+  condition: string;
+  threshold: number;
+  isEnabled: boolean;
+  lastCheckedAt: string;
+  createdAt: string;
+  updatedAt: string;
+}
+export interface Insight {
+  id: string;
+  metricName: string;
+  workspaceId: string;
+  insight: string;
+  recommendation: {
+    title: string;
+    description: string;
+    impact: string;
+  };
+  isAnomaly: boolean;
+  triggeredAt: Date;
+}
+
 export interface RawData {
   id: string;
   integration: WorkspaceIntegration;

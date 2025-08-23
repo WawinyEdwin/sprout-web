@@ -9,43 +9,119 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
+import { fetchRecentQuestion } from "@/lib/api/chat";
+import { fetchUrgentInsights } from "@/lib/api/insights";
 import { fetchWorkspaceIntegrations } from "@/lib/api/integrations";
 import { QUERY_KEYS } from "@/lib/query-keys";
-import { WorkspaceIntegration } from "@/lib/types";
+import { Insight, WorkspaceIntegration } from "@/lib/types";
 import { useQuery } from "@tanstack/react-query";
 import {
   Activity,
-  AlertTriangle,
   ArrowRight,
-  BarChart3,
   Brain,
   Database,
-  DollarSign,
   MessageSquare,
   Plus,
-  TrendingUp,
-  Users,
+  RefreshCw,
 } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 import { useUser } from "../context/UserContext";
+import InsightsCard from "./_components/insight-card";
 
 export default function DashboardPage() {
+  const [lastUpdate, setLastUpdate] = useState(new Date());
+  const [processedMetrics, setMetrics] = useState<Record<string, any>[]>([]);
   const { user } = useUser();
-  const { data: sources } = useQuery<WorkspaceIntegration[]>({
+
+  const {
+    data: sources,
+    isLoading: loadingSources,
+    refetch: refetchSources,
+  } = useQuery<WorkspaceIntegration[]>({
     queryKey: QUERY_KEYS.integrations.connected,
     queryFn: () => fetchWorkspaceIntegrations(),
   });
+
+  const {
+    data: recentQuestion,
+    isLoading: loadingQuestion,
+    refetch: refetchRecentQuestion,
+  } = useQuery({
+    queryKey: QUERY_KEYS.dashboard.recentQuestion,
+    queryFn: fetchRecentQuestion,
+  });
+
+  const {
+    data: insights,
+    isLoading: loadingInsights,
+    refetch: refetchInsights,
+  } = useQuery<Insight[]>({
+    queryKey: QUERY_KEYS.dashboard.insights,
+    queryFn: fetchUrgentInsights,
+  });
+
+  const isLoading = loadingSources || loadingQuestion || loadingInsights;
+
+  const handleRefresh = async () => {
+    await Promise.all([
+      refetchSources(),
+      refetchRecentQuestion(),
+      refetchInsights(),
+    ]);
+    setLastUpdate(new Date());
+  };
+
+  const anomalies = (insights || []).filter((insight) => insight.isAnomaly);
+  const otherInsights = (insights || []).filter(
+    (insight) => !insight.isAnomaly
+  );
+
+  console.log("insigshts", insights?.[0]);
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <Skeleton className="h-8 w-64 mb-2" />
+            <Skeleton className="h-5 w-96" />
+          </div>
+          <div className="flex gap-3">
+            <Skeleton className="h-10 w-32" />
+            <Skeleton className="h-10 w-32" />
+          </div>
+        </div>
+        <div className="grid lg:grid-cols-3 gap-6">
+          <Skeleton className="lg:col-span-2 h-96" />
+          <Skeleton className="h-96" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
       <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-10">
         <div>
-          <h1 className="text-2xl font-bold mb-3   bg-clip-text ">
-            Welcome back, {user?.firstName}
-          </h1>
-          <p className="text-slate-600 text-lg">
-            Your AI brain has 3 urgent insights and 2 automated actions ready.
+          <p className=" text-lg font-bold">
+            Your AI brain has {anomalies?.length || 0} urgent insights.
           </p>
+          <div className="flex items-center gap-2 mt-2">
+            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+            <span className="text-sm text-slate-500">
+              Last updated: {lastUpdate.toLocaleTimeString()}
+            </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleRefresh}
+              className="ml-2 h-6 w-6 p-0"
+            >
+              <RefreshCw className="w-3 h-3" />
+            </Button>
+          </div>
         </div>
         <div className="flex gap-3 mt-6 lg:mt-0">
           <Button
@@ -68,59 +144,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6 mb-10">
-        <Card className="lg:col-span-2  border-0 shadow-lg">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-3 text-xl">
-                <div className="w-10 h-10  from-red-500 to-orange-500 rounded-xl flex items-center justify-center">
-                  <AlertTriangle className="w-5 h-5" />
-                </div>
-                Urgent AI Insights
-              </CardTitle>
-              <Badge className="bg-red-100 text-red-700 hover:bg-red-100">
-                3 Alerts
-              </Badge>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="p-4  from-red-50 to-orange-50 rounded-xl border border-red-200">
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <AlertTriangle className="w-5 h-5 text-red-600" />
-                  <span className="font-semibold text-red-900">
-                    Revenue Drop Predicted
-                  </span>
-                </div>
-                <Badge className="bg-red-100 text-red-700 hover:bg-red-100">
-                  High Priority
-                </Badge>
-              </div>
-              <p className="text-slate-700 mb-3">
-                AI predicts 15% revenue drop next week due to declining Facebook
-                ad performance in Canada. Root cause: 30% decrease in ad spend
-                correlating with 40% drop in returning users.
-              </p>
-            </div>
-
-            <div className="p-4  from-yellow-50 to-orange-50  border-yellow-200">
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-yellow-600" />
-                  <span className="font-semibold text-yellow-900">
-                    Opportunity Detected
-                  </span>
-                </div>
-                <Badge className="bg-yellow-100 text-yellow-700 hover:bg-yellow-100">
-                  Medium Priority
-                </Badge>
-              </div>
-              <p className="text-slate-700 mb-3">
-                Email campaign performance up 45% this week. AI recommends
-                increasing budget by $2,000 for potential 23% revenue boost.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+        <InsightsCard anomalies={anomalies} otherInsights={otherInsights} />
         <Card className="border-0 shadow-lg">
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -147,7 +171,7 @@ export default function DashboardPage() {
                 sources.map((s) => (
                   <div
                     key={s.id}
-                    className="flex items-center justify-between p-4 rounded-xl border border-green-200"
+                    className="flex items-center justify-between p-4 rounded-xl border border-emerald-200"
                   >
                     <div className="flex items-center gap-3">
                       <div>
@@ -160,8 +184,8 @@ export default function DashboardPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                      <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
+                      <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                      <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
                         Live
                       </Badge>
                     </div>
@@ -220,101 +244,6 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        <Card className="border-0 shadow-lg">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-            <CardTitle className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
-              Revenue (Predicted)
-            </CardTitle>
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center">
-              <DollarSign className="h-5 w-5 text-white" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-slate-900 mb-2">
-              $52,400
-            </div>
-            <div className="flex items-center text-sm mb-2">
-              <div className="flex items-center text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
-                <TrendingUp className="w-3 h-3 mr-1" />
-                <span className="font-semibold">+16%</span>
-              </div>
-              <span className="text-slate-500 ml-2">next month</span>
-            </div>
-            <div className="text-xs text-slate-500">AI Confidence: 94%</div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-0 shadow-lg">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-            <CardTitle className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
-              Churn Risk
-            </CardTitle>
-            <div className="w-10 h-10  from-orange-500 to-red-500 rounded-xl flex items-center justify-center">
-              <Users className="h-5 w-5 text-white" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-slate-900 mb-2">127</div>
-            <div className="flex items-center text-sm mb-2">
-              <div className="flex items-center text-orange-600 bg-orange-50 px-2 py-1 rounded-full">
-                <AlertTriangle className="w-3 h-3 mr-1" />
-                <span className="font-semibold">High Risk</span>
-              </div>
-              <span className="text-slate-500 ml-2">customers</span>
-            </div>
-            <div className="text-xs text-slate-500">
-              Action: Retention campaign ready
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-0 shadow-lg">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-            <CardTitle className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
-              Conversion Forecast
-            </CardTitle>
-            <div className="w-10 h-10  from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center">
-              <BarChart3 className="h-5 w-5 text-white" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-slate-900 mb-2">4.1%</div>
-            <div className="flex items-center text-sm mb-2">
-              <div className="flex items-center text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
-                <TrendingUp className="w-3 h-3 mr-1" />
-                <span className="font-semibold">+0.9%</span>
-              </div>
-              <span className="text-slate-500 ml-2">by Friday</span>
-            </div>
-            <div className="text-xs text-slate-500">Trend: Improving</div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-0 shadow-lg">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-            <CardTitle className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
-              AI Monitoring
-            </CardTitle>
-            <div className="w-10 h-10  from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
-              <Brain className="h-5 w-5 text-white" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-slate-900 mb-2">47</div>
-            <div className="flex items-center text-sm mb-2">
-              <div className="flex items-center text-purple-600 bg-purple-50 px-2 py-1 rounded-full">
-                <Activity className="w-3 h-3 mr-1" />
-                <span className="font-semibold">Active</span>
-              </div>
-              <span className="text-slate-500 ml-2">KPIs tracked</span>
-            </div>
-            <div className="text-xs text-slate-500">
-              Last anomaly: 2 min ago
-            </div>
-          </CardContent>
-        </Card>
-      </div>
       <div className="grid lg:grid-cols-1 gap-8">
         <div className="lg:col-span-2">
           <Card className="border-0 shadow-lg">
@@ -344,64 +273,23 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="rounded-xl p-6 border border-slate-200">
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                    <MessageSquare className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-semibold text-slate-900 mb-2">
-                      Recent Question
-                    </p>
-                    <p className="text-slate-700">
-                      "Why did our conversion rate drop yesterday and what
-                      should we do about it?"
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className=" rounded-xl p-6 border border-emerald-200">
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center">
-                    <Brain className="w-5 h-5" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-semibold text-slate-900 mb-3">
-                      AI Analysis & Recommendations
-                    </p>
-                    <p className="text-slate-700 mb-4">
-                      Conversion dropped 0.8% due to mobile checkout issues
-                      affecting 23% of users. Root cause: Payment gateway
-                      timeout increased by 3 seconds.
-                    </p>
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center p-3 bg-white rounded-lg shadow-lg">
-                        <span className="font-medium text-slate-900">
-                          Fix payment gateway timeout
-                        </span>
-                        <Badge className="bg-red-100 text-red-700 hover:bg-red-100">
-                          Critical
-                        </Badge>
-                      </div>
-                      <div className="flex justify-between items-center p-3 bg-white rounded-lg shadow-lg">
-                        <span className="font-medium text-slate-900">
-                          A/B test simplified checkout
-                        </span>
-                        <Badge className="bg-yellow-100 text-yellow-700 hover:bg-yellow-100">
-                          Recommended
-                        </Badge>
-                      </div>
-                      <div className="flex justify-between items-center p-3 bg-white rounded-lg shadow-lg">
-                        <span className="font-medium text-slate-900">
-                          Monitor mobile performance
-                        </span>
-                        <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">
-                          Ongoing
-                        </Badge>
-                      </div>
+                {loadingQuestion ? (
+                  <Skeleton className="h-20 w-full" />
+                ) : (
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
+                      <MessageSquare className="w-5 h-5 text-emerald-600" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-slate-900 mb-2">
+                        Recent Question
+                      </p>
+                      <p className="text-slate-700">
+                        {recentQuestion?.question}
+                      </p>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             </CardContent>
           </Card>

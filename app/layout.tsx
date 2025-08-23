@@ -1,6 +1,6 @@
 import { Providers } from "@/utils/providers";
+import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 
@@ -8,11 +8,6 @@ export const metadata: Metadata = {
   title: "Sprout AI",
   description: `The World's First AI-Native KPI Brain for SMBs`,
 };
-
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export default function RootLayout({
   children,
@@ -22,8 +17,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <Providers>
-        <body className={inter.className}>
-          <main className="bg-slate-60">{children}</main>
+        <body className={GeistSans.className}>
+          <main className="bg-emerald-60">{children}</main>
           <Toaster richColors />
         </body>
       </Providers>

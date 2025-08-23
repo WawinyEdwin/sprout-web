@@ -130,29 +130,6 @@ export default function ChatPage() {
           </p>
         </div>
 
-        <div className="mb-8 p-4  from-emerald-50 to-teal-50 rounded-xl border border-emerald-200">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10  from-emerald-500 to-teal-500 rounded-full flex items-center justify-center">
-                <Brain className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-emerald-900">
-                  AI Brain Status: Actively Learning
-                </h3>
-                <p className="text-sm text-emerald-700">
-                  Monitoring 47 KPIs • 3 predictions ready • 2 actions pending
-                  approval
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-              <span className="text-sm font-medium text-emerald-700">Live</span>
-            </div>
-          </div>
-        </div>
-
         <Card className=" flex flex-col border-0 shadow-lg ">
           <CardHeader className="border-b ">
             <CardTitle className="flex items-center gap-3">
@@ -187,13 +164,7 @@ export default function ChatPage() {
                             : "flex-row"
                         }`}
                       >
-                        <div
-                          className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                            message.type === "user"
-                              ? " from-blue-600 to-indigo-600"
-                              : " from-emerald-600 to-teal-600"
-                          }`}
-                        >
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center">
                           {message.type === "user" ? (
                             <UserRound className="w-5 h-5" />
                           ) : (
@@ -201,7 +172,7 @@ export default function ChatPage() {
                           )}
                         </div>
                         <div
-                          className={`rounded-lg p-6 ${
+                          className={`rounded-lg p-6 text-sm ${
                             message.type === "user"
                               ? "bg-emerald-600 text-white"
                               : "bg-white border border-slate-200 text-slate-900"

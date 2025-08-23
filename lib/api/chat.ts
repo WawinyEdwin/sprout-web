@@ -6,3 +6,8 @@ export const askQuestion = async (question: string) => {
   });
   return response.data;
 };
+
+export const fetchRecentQuestion = async () => {
+  const response = await axiosClient.get("/chat/recent");
+  return response.data;
+};

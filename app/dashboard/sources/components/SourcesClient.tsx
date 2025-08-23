@@ -452,7 +452,7 @@ export default function SourcesClient() {
             className="flex items-center justify-between p-3 bg-slate-50 rounded-lg"
           >
             <div className="flex items-center gap-3">
-              <CheckCircle className="w-5 h-5 text-green-600" />
+              <CheckCircle className="w-5 h-5 text-emerald-600" />
               <span className="font-medium">{metric.name}</span>
             </div>
             <Badge variant="secondary">Read Only</Badge>
@@ -460,12 +460,12 @@ export default function SourcesClient() {
         ))}
       </div>
 
-      <div className="p-4 bg-green-50 rounded-lg">
+      <div className="p-4 bg-emerald-50 rounded-lg">
         <div className="flex items-start gap-3">
-          <Shield className="w-5 h-5 text-green-600 mt-0.5" />
+          <Shield className="w-5 h-5 text-emerald-600 mt-0.5" />
           <div>
-            <h4 className="font-medium text-green-900 mb-1">Data Security</h4>
-            <p className="text-sm text-green-700">
+            <h4 className="font-medium text-emerald-900 mb-1">Data Security</h4>
+            <p className="text-sm text-emerald-700">
               We only request read-only access and never store sensitive
               information like passwords or payment details.
             </p>
@@ -579,11 +579,11 @@ export default function SourcesClient() {
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span>Connection Status</span>
-            <span className="text-green-600">✓ Connected</span>
+            <span className="text-emerald-600">✓ Connected</span>
           </div>
           <div className="flex justify-between text-sm">
             <span>Data Access</span>
-            <span className="text-green-600">✓ Verified</span>
+            <span className="text-emerald-600">✓ Verified</span>
           </div>
           <div className="flex justify-between text-sm">
             <span>Initial Sync</span>
@@ -679,7 +679,7 @@ export default function SourcesClient() {
                       <div
                         className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
                           step.completed
-                            ? "bg-green-600 text-white"
+                            ? "bg-emerald-600 text-white"
                             : step.current
                             ? "bg-emerald-600 text-white"
                             : "bg-slate-200 text-slate-600"
@@ -867,7 +867,7 @@ export default function SourcesClient() {
                           <div className="flex items-center gap-4 mb-3">
                             <div className="flex items-center gap-2">
                               {source.connected ? (
-                                <CheckCircle className="w-4 h-4 text-green-600" />
+                                <CheckCircle className="w-4 h-4 text-emerald-600" />
                               ) : (
                                 <AlertCircle className="w-4 h-4 text-red-600" />
                               )}

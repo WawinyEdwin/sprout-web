@@ -2,8 +2,11 @@
 
 import { Button } from "@/components/ui/button";
 import { logout } from "@/lib/api/auth";
-import type { StoredUser } from "@/lib/types";
+import { fetchKpiRules } from "@/lib/api/kpi";
+import { QUERY_KEYS } from "@/lib/query-keys";
+import type { KpiRule, StoredUser } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
 import {
   Brain,
   CreditCard,
@@ -62,6 +65,11 @@ export function DashboardNav({ user, children }: DashboardNavProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const handleLogout = useLogout();
 
+  const { data: kpiRules } = useQuery<KpiRule[]>({
+    queryKey: QUERY_KEYS.kpi_rules.all,
+    queryFn: fetchKpiRules,
+  });
+
   return (
     <div className="flex h-screen">
       <aside
@@ -71,8 +79,8 @@ export function DashboardNav({ user, children }: DashboardNavProps) {
         )}
       >
         <div className="flex items-center gap-2 px-4 py-4 border-b">
-          <div className="w-8 h-8 bg-emerald-500 rounded flex items-center justify-center">
-            <Brain className="w-5 h-5 text-white" />
+          <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
+            <Brain className="w-5 h-5 text-emerald-700" />
           </div>
           {!sidebarCollapsed && (
             <span className="text-sm font-semibold">Sprout AI</span>
@@ -174,7 +182,7 @@ export function DashboardNav({ user, children }: DashboardNavProps) {
                   AI Brain Status: <span className="font-semibold">Active</span>
                 </h3>
                 <p className="text-xs text-emerald-700">
-                  Monitoring 47 KPIs • Last prediction: 2 min ago
+                  Monitoring {kpiRules?.length || 0} KPIs.
                 </p>
               </div>
             </div>

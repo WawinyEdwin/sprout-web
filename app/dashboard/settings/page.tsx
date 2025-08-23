@@ -84,7 +84,7 @@ export default function SettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Bell className="w-5 h-5 text-green-600" />
+              <Bell className="w-5 h-5 text-emerald-600" />
               Notifications
             </CardTitle>
             <CardDescription>

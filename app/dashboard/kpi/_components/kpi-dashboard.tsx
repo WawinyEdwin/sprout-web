@@ -17,10 +17,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { fetchWorkspaceRawData } from "@/lib/api/integrations";
+import { fetchKpiRules, saveKpiRules } from "@/lib/api/kpi";
 import { QUERY_KEYS } from "@/lib/query-keys";
-import { RawData } from "@/lib/types";
-import { useQuery } from "@tanstack/react-query";
+import { KpiRule, RawData } from "@/lib/types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   AlertCircle,
   BarChart3,
@@ -37,10 +46,11 @@ import {
   Users,
   XCircle,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { ProfessionalBarChart } from "./custom-recharts";
+import { formatValue } from "./utils";
 
-// Type for our dynamic widgets
 type Widget = {
   id: string;
   type: "card" | "chart";
@@ -50,7 +60,7 @@ type Widget = {
 };
 
 const SkeletonCard = () => (
-  <Card>
+  <Card className="shadow-lg">
     <CardHeader>
       <Skeleton className="h-4 w-1/2 mb-2" />
       <Skeleton className="h-6 w-3/4" />
@@ -61,67 +71,13 @@ const SkeletonCard = () => (
   </Card>
 );
 
-const formatValue = (key: string, value: number) => {
-  if (
-    key.includes("revenue") ||
-    key.includes("income") ||
-    key.includes("profit") ||
-    key.includes("expense") ||
-    key.includes("cost") ||
-    key.includes("value") ||
-    key.includes("amount") ||
-    key.includes("cac") ||
-    key.includes("cltv") ||
-    key.includes("aov") ||
-    key.includes("mrr") ||
-    key.includes("roas")
-  ) {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 2,
-    }).format(value);
-  }
-
-  if (
-    key.includes("rate") ||
-    key.includes("margin") ||
-    key.includes("growth") ||
-    key.includes("ctr") ||
-    key.includes("bounce") ||
-    key.includes("conversion") ||
-    key.includes("engagement") ||
-    key.includes("retention") ||
-    key.includes("churn") ||
-    key.includes("roi") ||
-    key.includes("share")
-  ) {
-    return `${value.toFixed(2)}%`;
-  }
-
-  if (key.includes("duration") || key.includes("time")) {
-    if (value < 60) return `${value.toFixed(1)}s`;
-    if (value < 3600) return `${(value / 60).toFixed(1)}m`;
-    return `${(value / 3600).toFixed(1)}h`;
-  }
-
-  if (value >= 1000000) {
-    return `${(value / 1000000).toFixed(1)}M`;
-  }
-  if (value >= 1000) {
-    return `${(value / 1000).toFixed(1)}K`;
-  }
-
-  return value.toLocaleString();
-};
-
 const getMetricIcon = (key: string) => {
   if (
     key.includes("profit") ||
     key.includes("income") ||
     key.includes("revenue")
   ) {
-    return <TrendingUp className="h-4 w-4 text-green-600" />;
+    return <TrendingUp className="h-4 w-4 text-emerald-600" />;
   }
   if (
     key.includes("expense") ||
@@ -157,7 +113,7 @@ const getMetricIcon = (key: string) => {
     key.includes("transactions") ||
     key.includes("sales")
   ) {
-    return <ShoppingCart className="h-4 w-4 text-green-600" />;
+    return <ShoppingCart className="h-4 w-4 text-emerald-600" />;
   }
   if (
     key.includes("email") ||
@@ -195,13 +151,26 @@ const getMetricIcon = (key: string) => {
   return <DollarSign className="h-4 w-4 text-gray-600" />;
 };
 
-const getMetricColor = (key: string, value: number) => {
+const getMetricColor = (key: string, value: number, rule?: KpiRule) => {
+  if (rule) {
+    // Apply custom rule colors if a rule is defined and the condition is met
+    if (
+      (rule.condition === "greater_than" && value > rule.threshold) ||
+      (rule.condition === "less_than" && value < rule.threshold) ||
+      (rule.condition === "equal_to" && value === rule.threshold)
+    ) {
+      return key.includes("profit") || key.includes("revenue")
+        ? "text-emerald-600"
+        : "text-red-600";
+    }
+  }
+
   if (
     key.includes("profit") ||
     key.includes("income") ||
     key.includes("revenue")
   ) {
-    return value > 0 ? "text-green-600" : "text-red-600";
+    return value > 0 ? "text-emerald-600" : "text-red-600";
   }
   if (key.includes("expense")) {
     return "text-red-600";
@@ -210,51 +179,6 @@ const getMetricColor = (key: string, value: number) => {
     return "text-red-600";
   }
   return "text-foreground";
-};
-
-const SimpleBarChart = ({ data, title }: { data: any[]; title: string }) => {
-  const totalAmount = data.reduce(
-    (sum, item) => sum + Math.abs(item.amount),
-    0
-  );
-
-  return (
-    <Card className="border-0 shadow-lg">
-      <CardHeader>
-        <CardTitle className="text-xl font-semibold flex items-center gap-2">
-          <PieChart className="h-5 w-5" />
-          {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="flex flex-col space-y-4">
-          {data.map((item, index) => (
-            <div
-              key={item.product || index}
-              className="flex items-center gap-2"
-            >
-              <span className="text-sm font-medium w-24 truncate">
-                {item.product}
-              </span>
-              <div className="relative flex-grow h-4 bg-gray-200 rounded-full">
-                <div
-                  className="absolute inset-0 rounded-full"
-                  style={{
-                    width: `${(Math.abs(item.amount) / totalAmount) * 100}%`,
-                    backgroundColor:
-                      item.amount >= 0 ? "rgb(22 163 74)" : "rgb(220 38 38)",
-                  }}
-                ></div>
-              </div>
-              <span className="text-xs w-16 text-right">
-                {formatValue("amount", item.amount)}
-              </span>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  );
 };
 
 const categorizeMetrics = (metrics: Record<string, any>) => {
@@ -370,6 +294,7 @@ const categorizeMetrics = (metrics: Record<string, any>) => {
 };
 
 export default function KPIDashboard() {
+  const queryClient = useQueryClient();
   const {
     data: raw_data,
     isLoading,
@@ -379,9 +304,22 @@ export default function KPIDashboard() {
     queryFn: () => fetchWorkspaceRawData(),
   });
 
+  const { data: kpiRules, isLoading: isLoadingRules } = useQuery<KpiRule[]>({
+    queryKey: QUERY_KEYS.kpi_rules.all,
+    queryFn: fetchKpiRules,
+  });
+
+  const saveRulesMutation = useMutation({
+    mutationFn: (rules: KpiRule[]) => saveKpiRules(rules),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.kpi_rules.all });
+    },
+  });
+
   const [selectedSource, setSelectedSource] = useState<string>("");
   const [widgets, setWidgets] = useState<Widget[]>([]);
   const [isAddWidgetModalOpen, setIsAddWidgetModalOpen] = useState(false);
+  const [isRulesModalOpen, setIsRulesModalOpen] = useState(false);
   const [newWidgetMetric, setNewWidgetMetric] = useState<string>("");
 
   const { selectedMetrics, availableMetrics, categorizedData } = useMemo(() => {
@@ -434,7 +372,14 @@ export default function KPIDashboard() {
     ));
   }, [raw_data, isLoading, isError]);
 
-  useMemo(() => {
+  const numericMetrics = useMemo(() => {
+    if (!selectedMetrics) return [];
+    return Object.keys(selectedMetrics).filter(
+      (key) => typeof selectedMetrics[key] === "number"
+    );
+  }, [selectedMetrics]);
+
+  useEffect(() => {
     if (categorizedData && widgets.length === 0) {
       const initialWidgets: Widget[] = [];
       categorizedData.primary.forEach(([key]) => {
@@ -485,13 +430,63 @@ export default function KPIDashboard() {
     setWidgets(widgets.filter((widget) => widget.id !== id));
   };
 
+  // State for the temporary rule being edited in the dialog
+  const [tempRules, setTempRules] = useState<{ [key: string]: KpiRule | null }>(
+    {}
+  );
+
+  // Effect to sync fetched rules to temp state when dialog opens or rules load
+  useEffect(() => {
+    if (kpiRules && isRulesModalOpen) {
+      const initialTempRules: { [key: string]: KpiRule | null } = {};
+      kpiRules.forEach((rule) => {
+        initialTempRules[rule.metric_key] = rule;
+      });
+      setTempRules(initialTempRules);
+    }
+  }, [kpiRules, isRulesModalOpen]);
+
+  const handleRuleChange = (
+    metricKey: string,
+    field: keyof KpiRule,
+    value: string | number
+  ) => {
+    setTempRules((prev) => {
+      const existingRule = prev[metricKey];
+      const newRule: KpiRule = existingRule
+        ? { ...existingRule, [field]: value }
+        : {
+            id: uuidv4(),
+            metric_key: metricKey,
+            workspace_id: "",
+            name: field === "name" ? (value as string) : "",
+            time_period: "",
+            condition:
+              field === "condition" ? (value as string) : "greater_than",
+            threshold: field === "threshold" ? (value as number) : 0,
+            isEnabled: true,
+            lastCheckedAt: new Date().toISOString(),
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
+      return { ...prev, [metricKey]: newRule };
+    });
+  };
+
+  const removeRule = (metricKey: string) => {
+    const updatedRules =
+      kpiRules?.filter((r) => r.metric_key !== metricKey) || [];
+    saveRulesMutation.mutate(updatedRules);
+  };
+
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold mb-2">KPI Dashboard</h1>
-          <p className="text-muted-foreground">
-            Monitor your key performance indicators
+          <h1 className="text-2xl font-bold text-gray-800">KPI Dashboard</h1>
+          <p className="text-muted-foreground text-md">
+            Monitor your key performance indicators and define custom rules to
+            track your goals.
           </p>
         </div>
         <div className="flex flex-col sm:flex-row gap-2">
@@ -499,11 +494,11 @@ export default function KPIDashboard() {
             value={selectedSource}
             onValueChange={(value) => {
               setSelectedSource(value);
-              setWidgets([]); // Clear widgets on source change
+              setWidgets([]);
             }}
             disabled={isLoading || isError}
           >
-            <SelectTrigger className="w-[280px]">
+            <SelectTrigger className="w-[280px] bg-white shadow-sm">
               {isLoading ? (
                 <Skeleton className="h-6 w-full" />
               ) : (
@@ -513,51 +508,213 @@ export default function KPIDashboard() {
             <SelectContent>{sourceOptions}</SelectContent>
           </Select>
           {selectedSource && (
-            <Dialog
-              open={isAddWidgetModalOpen}
-              onOpenChange={setIsAddWidgetModalOpen}
-            >
-              <DialogTrigger asChild>
-                <Button className="w-full sm:w-auto !bg-emerald-500">
-                  Add New Widget
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Add New Widget</DialogTitle>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <Select
-                    value={newWidgetMetric}
-                    onValueChange={setNewWidgetMetric}
+            <>
+              <Dialog
+                open={isAddWidgetModalOpen}
+                onOpenChange={setIsAddWidgetModalOpen}
+              >
+                <DialogTrigger asChild>
+                  <Button className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 shadow-md transition-all">
+                    Add New Widget
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add New Widget</DialogTitle>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <Select
+                      value={newWidgetMetric}
+                      onValueChange={setNewWidgetMetric}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select metric" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableMetrics.map((metric) => (
+                          <SelectItem key={metric} value={metric}>
+                            {metric.replace(/_/g, " ").toUpperCase()}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Button
+                    onClick={addWidget}
+                    disabled={!newWidgetMetric}
+                    className="bg-emerald-600 hover:bg-emerald-700 transition-all"
                   >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select metric" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableMetrics.map((metric) => (
-                        <SelectItem key={metric} value={metric}>
-                          {metric.replace(/_/g, " ").toUpperCase()}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Button
-                  onClick={addWidget}
-                  disabled={!newWidgetMetric}
-                  className="!bg-emerald-500"
-                >
-                  Add Widget
-                </Button>
-              </DialogContent>
-            </Dialog>
+                    Add Widget
+                  </Button>
+                </DialogContent>
+              </Dialog>
+
+              <Dialog
+                open={isRulesModalOpen}
+                onOpenChange={setIsRulesModalOpen}
+              >
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full sm:w-auto shadow-sm transition-all"
+                  >
+                    Define KPI Rules
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-5xl">
+                  <DialogHeader>
+                    <DialogTitle>Define KPI Rules</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 max-h-[70vh] overflow-y-auto">
+                    <p className="text-sm text-muted-foreground">
+                      Define custom rules to change the color and display a
+                      message for a metric when a certain condition is met. AI
+                      Brain will monitor these KPIs and send you actionable
+                      recommendations.
+                    </p>
+                    {saveRulesMutation.isSuccess && (
+                      <Badge className="bg-emerald-500 text-white shadow-md p-2">
+                        Rules saved successfully!
+                      </Badge>
+                    )}
+                    {saveRulesMutation.isError && (
+                      <Badge className="bg-red-500 text-white shadow-md p-2">
+                        Failed to save rules. Please try again.
+                      </Badge>
+                    )}
+                    {isLoadingRules || !selectedMetrics ? (
+                      <p>Loading rules and metrics...</p>
+                    ) : (
+                      <Table className="bg-white rounded-md shadow-sm">
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="w-1/6">Metric</TableHead>
+                            <TableHead className="w-1/4">Rule Name</TableHead>
+                            <TableHead className="w-1/4">Condition</TableHead>
+                            <TableHead className="w-1/6">Threshold</TableHead>
+                            <TableHead className="w-1/6">Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {numericMetrics.map((metricKey) => {
+                            const rule = tempRules[metricKey];
+                            return (
+                              <TableRow key={metricKey}>
+                                <TableCell className="font-medium capitalize">
+                                  {metricKey.replace(/_/g, " ")}
+                                </TableCell>
+                                <TableCell>
+                                  <input
+                                    type="text"
+                                    value={rule?.name || ""}
+                                    onChange={(e) =>
+                                      handleRuleChange(
+                                        metricKey,
+                                        "name",
+                                        e.target.value
+                                      )
+                                    }
+                                    placeholder="e.g., Target Hit"
+                                    className="p-2 border rounded-md w-full focus:ring-2 focus:ring-emerald-500"
+                                  />
+                                </TableCell>
+                                <TableCell>
+                                  <Select
+                                    value={rule?.condition || "greater_than"}
+                                    onValueChange={(val) =>
+                                      handleRuleChange(
+                                        metricKey,
+                                        "condition",
+                                        val
+                                      )
+                                    }
+                                  >
+                                    <SelectTrigger className="w-full">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="greater_than">
+                                        Greater than (&gt;)
+                                      </SelectItem>
+                                      <SelectItem value="less_than">
+                                        Less than (&lt;)
+                                      </SelectItem>
+                                      <SelectItem value="equal_to">
+                                        Equal to (=)
+                                      </SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </TableCell>
+                                <TableCell>
+                                  <input
+                                    type="number"
+                                    value={rule?.threshold || 0}
+                                    onChange={(e) =>
+                                      handleRuleChange(
+                                        metricKey,
+                                        "threshold",
+                                        Number(e.target.value)
+                                      )
+                                    }
+                                    className="w-20 p-2 border rounded-md focus:ring-2 focus:ring-emerald-500"
+                                  />
+                                </TableCell>
+                                <TableCell>
+                                  {rule ? (
+                                    <div className="flex gap-2 items-center">
+                                      <Button
+                                        size="sm"
+                                        onClick={() =>
+                                          saveRulesMutation.mutate([rule])
+                                        }
+                                        disabled={saveRulesMutation.isPending}
+                                        className="bg-emerald-600 hover:bg-emerald-700"
+                                      >
+                                        Update
+                                      </Button>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => removeRule(metricKey)}
+                                        className="text-red-500 hover:bg-red-50 hover:text-red-600"
+                                      >
+                                        <XCircle className="h-4 w-4" />
+                                      </Button>
+                                    </div>
+                                  ) : (
+                                    <Button
+                                      size="sm"
+                                      onClick={() =>
+                                        saveRulesMutation.mutate([
+                                          tempRules[metricKey]!,
+                                        ])
+                                      }
+                                      disabled={
+                                        !tempRules[metricKey]?.name ||
+                                        saveRulesMutation.isPending
+                                      }
+                                      className="bg-emerald-600 hover:bg-emerald-700"
+                                    >
+                                      Add Rule
+                                    </Button>
+                                  )}
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      </Table>
+                    )}
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </>
           )}
         </div>
       </div>
 
       {isError ? (
-        <Card className="border-destructive">
+        <Card className="border-destructive shadow-md rounded-lg">
           <CardContent className="flex items-center gap-2 p-6">
             <AlertCircle className="h-5 w-5 text-destructive" />
             <span className="text-destructive">
@@ -567,7 +724,7 @@ export default function KPIDashboard() {
         </Card>
       ) : isLoading ? (
         <div className="space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {Array.from({ length: 8 }).map((_, i) => (
               <SkeletonCard key={i} />
             ))}
@@ -580,37 +737,59 @@ export default function KPIDashboard() {
               const key = widget.metric;
               const value = selectedMetrics[key];
               if (typeof value === "number") {
+                const rule = kpiRules?.find((r) => r.metric_key === key);
+                const isRuleMet = rule
+                  ? (rule.condition === "greater_than" &&
+                      value > rule.threshold) ||
+                    (rule.condition === "less_than" &&
+                      value < rule.threshold) ||
+                    (rule.condition === "equal_to" && value === rule.threshold)
+                  : false;
+
                 return (
-                  <Card key={widget.id} className="border-0 shadow-lg relative">
+                  <Card
+                    key={widget.id}
+                    className="border-0 shadow-lg relative bg-white transition-transform transform hover:scale-[1.02]"
+                  >
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="absolute top-2 right-2 text-muted-foreground hover:text-red-500"
+                      className="absolute top-2 right-2 text-muted-foreground hover:text-red-500 transition-colors"
                       onClick={() => removeWidget(widget.id)}
                     >
                       <XCircle className="h-4 w-4" />
                     </Button>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 pr-10">
-                      <CardTitle className="text-sm font-medium capitalize">
+                      <CardTitle className="text-sm font-medium capitalize text-gray-500">
                         {key.replace(/_/g, " ")}
                       </CardTitle>
                       {getMetricIcon(key)}
                     </CardHeader>
                     <CardContent>
                       <div
-                        className={`text-2xl font-bold ${getMetricColor(
+                        className={`text-3xl font-bold ${getMetricColor(
                           key,
-                          value
+                          value,
+                          rule
                         )}`}
                       >
                         {formatValue(key, value)}
                       </div>
-                      {value === 0 && key.includes("overdue") && (
-                        <Badge variant="default" className="text-xs mt-2">
+                      {isRuleMet && rule?.name && (
+                        <Badge className="!bg-emerald-600 text-white text-xs mt-2 font-semibold">
+                          {rule.name}
+                        </Badge>
+                      )}
+                      {!isRuleMet && value === 0 && key.includes("overdue") && (
+                        <Badge
+                          variant="default"
+                          className="text-xs mt-2 bg-emerald-500 text-white font-semibold"
+                        >
                           Good
                         </Badge>
                       )}
-                      {value === 0 &&
+                      {!isRuleMet &&
+                        value === 0 &&
                         (key.includes("paid") ||
                           key.includes("received") ||
                           key.includes("recieved")) && (
@@ -626,7 +805,7 @@ export default function KPIDashboard() {
               return (
                 <div
                   key={widget.id}
-                  className="relative col-span-1 md:col-span-2 lg:col-span-3"
+                  className="relative col-span-1 md:col-span-2 lg:col-span-3 transition-transform transform hover:scale-[1.005]"
                 >
                   <Button
                     variant="ghost"
@@ -636,7 +815,7 @@ export default function KPIDashboard() {
                   >
                     <XCircle className="h-4 w-4" />
                   </Button>
-                  <SimpleBarChart
+                  <ProfessionalBarChart
                     data={widget.data}
                     title={widget.title || ""}
                   />
@@ -647,7 +826,7 @@ export default function KPIDashboard() {
           })}
         </div>
       ) : (
-        <Card className="border-0 shadow-lg">
+        <Card className="border-0 shadow-lg bg-white rounded-lg">
           <CardContent className="flex flex-col items-center justify-center py-12">
             <PieChart className="h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-medium mb-2">

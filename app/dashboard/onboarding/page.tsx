@@ -280,7 +280,7 @@ export default function OnboardingPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      <div className="text-3xl font-bold text-green-600">
+                      <div className="text-3xl font-bold text-emerald-600">
                         $50,000
                       </div>
                       <div className="text-sm text-slate-600">
@@ -351,7 +351,7 @@ export default function OnboardingPage() {
                         "What's our best way to increase Gross Margin?"
                       </p>
                     </div>
-                    <div className="p-3 bg-green-50 rounded-lg border-l-4 border-green-500">
+                    <div className="p-3 bg-emerald-50 rounded-lg border-l-4 border-emerald-500">
                       <p className="text-sm">
                         "Which campaigns are driving the highest ROI?"
                       </p>

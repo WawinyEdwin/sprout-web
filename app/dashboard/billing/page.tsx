@@ -111,7 +111,7 @@ export default function BillingPage() {
                 </div>
                 <Badge
                   variant="secondary"
-                  className="bg-green-100 text-green-800 px-3 py-1 text-sm font-medium"
+                  className="bg-emerald-100 text-emerald-800 px-3 py-1 text-sm font-medium"
                 >
                   Active
                 </Badge>
@@ -291,7 +291,7 @@ export default function BillingPage() {
                         key={index}
                         className="flex items-center gap-3 text-sm"
                       >
-                        <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
+                        <CheckCircle className="w-4 h-4 text-emerald-600 flex-shrink-0" />
                         <span>{feature}</span>
                       </li>
                     ))}
