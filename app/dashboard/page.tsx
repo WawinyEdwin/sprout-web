@@ -78,8 +78,6 @@ export default function DashboardPage() {
     (insight) => !insight.isAnomaly
   );
 
-  console.log("insigshts", insights?.[0]);
-
   if (isLoading) {
     return (
       <div className="space-y-6">

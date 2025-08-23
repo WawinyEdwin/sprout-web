@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { submitIntegrationRequest } from "@/lib/api/integrations";
-import { StoredUser } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle2, Database, Mail } from "lucide-react";
 import { useState } from "react";
@@ -19,11 +18,8 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-interface FormProps {
-  user: StoredUser;
-}
 
-export default function CustomIntegrationForm({ user }: FormProps) {
+export default function CustomIntegrationForm() {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const {
@@ -37,11 +33,7 @@ export default function CustomIntegrationForm({ user }: FormProps) {
   });
 
   const onSubmit = async (data: FormData) => {
-    await submitIntegrationRequest(
-      user.workspace.workspaceId,
-      data.name,
-      data.description
-    );
+    await submitIntegrationRequest(data.name, data.description);
     setIsSubmitted(true);
     reset();
   };

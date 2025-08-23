@@ -47,7 +47,6 @@ export function SubscriptionBanner() {
     fetchSubscription();
   }, []);
 
-  console.log(subscription);
 
   useEffect(() => {
     if (!subscription || isDismissed) {

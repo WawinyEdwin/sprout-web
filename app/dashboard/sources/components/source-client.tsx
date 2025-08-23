@@ -1,6 +1,5 @@
 "use client";
 
-import { useUser } from "@/app/context/UserContext";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -26,34 +25,23 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
   fetchIntegrations,
   fetchWorkspaceIntegrations,
-  syncIntegration,
-  updateUserIntegration,
+  updateUserIntegration
 } from "@/lib/api/integrations";
 import { DataSyncFrequencyEnum, HistoricalDataEnum } from "@/lib/enums";
 import { QUERY_KEYS } from "@/lib/query-keys";
 import { IMetric, Integration, WorkspaceIntegration } from "@/lib/types";
-import { enumToSelectOptions, isSyncedRecently } from "@/lib/utils";
+import { enumToSelectOptions } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import { formatDistanceToNow, isPast } from "date-fns";
 import {
   AlertCircle,
   CheckCircle,
   Database,
   ExternalLink,
   Key,
-  Loader,
   Plus,
-  RefreshCcw,
   Search,
-  Settings,
   Shield,
   X,
 } from "lucide-react";
@@ -61,7 +49,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { connectionHandlers } from "../utils";
-import CustomIntegrationForm from "./CustomIntegrationForm";
+import ConnectedSourceCard from "./connected-source-card";
+import CustomIntegrationForm from "./custom-integration-form";
 
 interface ConnectionStep {
   id: string;
@@ -72,8 +61,6 @@ interface ConnectionStep {
 }
 
 export default function SourcesClient() {
-  const { user } = useUser();
-  const [syncingId, setSyncingId] = useState<string | null>(null);
   const syncFrequencyOptions = enumToSelectOptions(DataSyncFrequencyEnum);
   const historicalDataOptions = enumToSelectOptions(HistoricalDataEnum);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -617,20 +604,6 @@ export default function SourcesClient() {
     }
   };
 
-  const handleSync = async (sourceId: string) => {
-    try {
-      setSyncingId(sourceId);
-      await syncIntegration(sourceId);
-      toast.success("Sync started successfully!");
-    } catch (error) {
-      toast.error("Sync failed.", {
-        description: "Internal server error",
-      });
-    } finally {
-      setSyncingId(null);
-    }
-  };
-
   return (
     <div>
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
@@ -815,9 +788,8 @@ export default function SourcesClient() {
                     </div>
                   </ScrollArea>
                 </TabsContent>
-
                 <TabsContent value="custom" className="space-y-4">
-                  <CustomIntegrationForm user={user!} />
+                  <CustomIntegrationForm />
                 </TabsContent>
               </Tabs>
             )}
@@ -853,105 +825,7 @@ export default function SourcesClient() {
               </Card>
             ) : (
               connectedSources.map((source: WorkspaceIntegration) => (
-                <Card key={source.id} className="border-0 shadow-lg">
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start gap-4">
-                        <div className="flex-1">
-                          <h3 className="font-semibold mb-1">
-                            {source.integration.name}
-                          </h3>
-                          <p className="text-sm text-slate-600 mb-3">
-                            {source.integration.description}
-                          </p>
-                          <div className="flex items-center gap-4 mb-3">
-                            <div className="flex items-center gap-2">
-                              {source.connected ? (
-                                <CheckCircle className="w-4 h-4 text-emerald-600" />
-                              ) : (
-                                <AlertCircle className="w-4 h-4 text-red-600" />
-                              )}
-                              <span className="text-sm">
-                                {source.connected
-                                  ? "Connected"
-                                  : "Connection Error"}
-                              </span>
-                            </div>
-                            <span className="text-sm text-slate-500">
-                              Last sync:{" "}
-                              {source.lastSynced &&
-                              isPast(new Date(source.lastSynced))
-                                ? formatDistanceToNow(
-                                    new Date(source.lastSynced),
-                                    { addSuffix: true }
-                                  )
-                                : "N/A"}
-                            </span>
-                          </div>
-                          <div className="flex flex-wrap gap-1">
-                            {source.integration.metrics.map((metric) => (
-                              <Badge
-                                key={metric.id}
-                                variant="outline"
-                                className="text-xs"
-                              >
-                                {metric.name}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Switch
-                          className="bg-emerald-500"
-                          disabled
-                          aria-readonly
-                          defaultChecked={source.connected}
-                        />
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleSync(source.id)}
-                                // disabled={
-                                //   !source.connected ||
-                                //   syncingId === source.id ||
-                                //   isSyncedRecently(
-                                //     source.lastSynced,
-                                //     source.syncFrequency
-                                //   )
-                                // }
-                                className="flex items-center gap-1"
-                              >
-                                {syncingId === source.id ? (
-                                  <Loader className="w-4 h-4 animate-spin" />
-                                ) : (
-                                  <RefreshCcw className="w-4 h-4" />
-                                )}
-                                <span className="text-sm">Sync</span>
-                              </Button>
-                            </TooltipTrigger>
-                            {isSyncedRecently(
-                              source.lastSynced,
-                              source.syncFrequency
-                            ) && (
-                              <TooltipContent>
-                                <p>
-                                  This data source has been synced recently.
-                                </p>
-                              </TooltipContent>
-                            )}
-                          </Tooltip>
-                        </TooltipProvider>
-                        <Button variant="ghost" size="sm">
-                          <Settings className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                <ConnectedSourceCard source={source} key={source.id} />
               ))
             )}
           </div>

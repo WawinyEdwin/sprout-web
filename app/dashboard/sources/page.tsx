@@ -5,7 +5,7 @@ import {
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
-import SourcesClient from "./components/SourcesClient";
+import SourcesClient from "./components/source-client";
 
 export default async function SourcesPage() {
   const queryClient = new QueryClient();

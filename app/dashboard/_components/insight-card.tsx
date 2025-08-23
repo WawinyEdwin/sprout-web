@@ -52,7 +52,7 @@ export default function InsightsCard({
                 <div className="flex items-center gap-2">
                   <AlertTriangle className="w-5 h-5 text-red-600" />
                   <span className="font-semibold text-red-900">
-                    {insight.metricName}
+                    {insight.metricName.replace(/_/g, " ")}
                   </span>
                 </div>
                 <Badge className="bg-red-100 text-red-700 hover:bg-red-100">
@@ -113,14 +113,14 @@ export default function InsightsCard({
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-emerald-600" />
                   <span className="font-semibold text-emerald-900">
-                    {insight.metricName}
+                    {insight.metricName.replace(/_/g, " ")}
                   </span>
                 </div>
                 <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
                   General
                 </Badge>
               </div>
-              <p className="text-slate-700 mb-3">{insight.insight}</p>
+              <p className="text-slate-700 mb-3 text-sm">{insight.insight}</p>
 
               {insight.recommendation && (
                 <Sheet
@@ -134,7 +134,10 @@ export default function InsightsCard({
                       View Recommendation
                     </Button>
                   </SheetTrigger>
-                  <SheetContent side="right" className="w-[400px] sm:w-[500px]">
+                  <SheetContent
+                    side="right"
+                    className="w-[400px] sm:w-[500px]"
+                  >
                     <SheetHeader>
                       <SheetTitle>{insight.recommendation.title}</SheetTitle>
                       <SheetDescription>
