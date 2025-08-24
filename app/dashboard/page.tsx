@@ -27,13 +27,10 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { useUser } from "../context/UserContext";
 import InsightsCard from "./_components/insight-card";
 
 export default function DashboardPage() {
   const [lastUpdate, setLastUpdate] = useState(new Date());
-  const [processedMetrics, setMetrics] = useState<Record<string, any>[]>([]);
-  const { user } = useUser();
 
   const {
     data: sources,
