@@ -7,6 +7,17 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Sprout AI",
   description: `The World's First AI-Native KPI Brain for SMBs`,
+  keywords:
+    "Sprout isn't another dashboard. It's an AI strategist that understands your business, predicts KPI changes, explains root causes, and automatically recommends actions—turning your business data into proactive intelligence.",
+  robots: "index, follow",
+  openGraph: {
+    title: "Sprout AI",
+    description: `The World's First AI-Native KPI Brain for SMBs`,
+    url: "https://sproutai.co",
+    siteName: "Sprout AI",
+    locale: "en_US",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
