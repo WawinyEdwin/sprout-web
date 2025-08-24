@@ -213,9 +213,9 @@ const categorizeMetrics = (metrics: Record<string, any>) => {
         key.includes("rate") ||
         key.includes("margin") ||
         key.includes("growth") ||
-        key.includes("ctr") ||
+        key.includes("click_through_rate") ||
         key.includes("conversion") ||
-        key.includes("roas") ||
+        key.includes("return_on_ad_spend") ||
         key.includes("roi") ||
         key.includes("score") ||
         key.includes("attainment")
@@ -322,40 +322,57 @@ export default function KPIDashboard() {
   const [isRulesModalOpen, setIsRulesModalOpen] = useState(false);
   const [newWidgetMetric, setNewWidgetMetric] = useState<string>("");
 
-  const { selectedMetrics, availableMetrics, categorizedData } = useMemo(() => {
-    if (!selectedSource || isLoading) {
+  const { selectedMetrics, allMetrics, chartMetrics, categorizedData } =
+    useMemo(() => {
+      if (!selectedSource || isLoading) {
+        return {
+          selectedMetrics: null,
+          allMetrics: [],
+          chartMetrics: [],
+          categorizedData: {
+            primary: [],
+            performance: [],
+            engagement: [],
+            operational: [],
+            products: [],
+          },
+        };
+      }
+
+      const sourceData = raw_data?.find(
+        (item) => item.source === selectedSource
+      );
+      const metrics = sourceData?.processedData || null;
+      const categorized = metrics ? categorizeMetrics(metrics) : null;
+
+      const allNumeric = metrics
+        ? Object.keys(metrics).filter((key) => typeof metrics[key] === "number")
+        : [];
+      const allCharts = metrics
+        ? Object.keys(metrics).filter(
+            (key) => Array.isArray(metrics[key]) && key.includes("by_")
+          )
+        : [];
+
       return {
-        selectedMetrics: null,
-        availableMetrics: [],
-        categorizedData: {
-          primary: [],
-          performance: [],
-          engagement: [],
-          operational: [],
-          products: [],
-        },
+        selectedMetrics: metrics,
+        allMetrics: allNumeric,
+        chartMetrics: allCharts,
+        categorizedData: categorized,
       };
-    }
+    }, [selectedSource, raw_data, isLoading]);
 
-    const sourceData = raw_data?.find((item) => item.source === selectedSource);
-    const metrics = sourceData?.processedData || null;
-    const categorized = metrics ? categorizeMetrics(metrics) : null;
+  const usedMetrics = useMemo(() => {
+    return widgets
+      .filter((w) => w.metric && selectedSource) // only current integration
+      .map((w) => w.metric!) as string[];
+  }, [widgets, selectedSource]);
 
-    const allMetrics = metrics
-      ? Object.keys(metrics).filter((key) => typeof metrics[key] === "number")
-      : [];
-    const chartMetrics = metrics
-      ? Object.keys(metrics).filter(
-          (key) => Array.isArray(metrics[key]) && key.includes("by_")
-        )
-      : [];
-
-    return {
-      selectedMetrics: metrics,
-      availableMetrics: [...allMetrics, ...chartMetrics],
-      categorizedData: categorized,
-    };
-  }, [selectedSource, raw_data, isLoading]);
+  const availableMetrics = useMemo(() => {
+    return [...allMetrics, ...chartMetrics].filter(
+      (m) => !usedMetrics.includes(m)
+    );
+  }, [allMetrics, chartMetrics, usedMetrics]);
 
   const sourceOptions = useMemo(() => {
     if (isLoading || isError || !raw_data) {
